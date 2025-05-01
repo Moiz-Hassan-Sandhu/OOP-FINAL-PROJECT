@@ -1,4 +1,6 @@
 #include<iostream>
+#include<string>
+#include<cstring>
 using namespace std;
 //starting the project
 
@@ -132,7 +134,7 @@ class Junior: public PaidWorkers{
     virtual void print() override{
         cout<<"Name : "<<name<<endl
             <<"ID : "<<ID<<endl
-            <<"Position : "<<position<<endl
+            <<"Position : "<<position<<endl;
     }
 
     
@@ -153,7 +155,6 @@ class Authentication{
         int usercount;
         string name;
         string password;
-        int Accesslevel;
         string OTP;
         
     public:
@@ -175,10 +176,24 @@ class Authentication{
         {
 
         }
-        string hashedName()
+        string hashedpassword()
         {
-            //inputs the name from the user by keeping it hashed on console and returns the original name typed by the user.
+            string password;
+            int ci; //current index
+            char ch;
+            while (cin.get(ch))
+            {
+                if(ch == '\n')
+                {
+                    break;
+                }
+                else if(ch == '')
 
+            }
+            
+            
+            return password;
+            //inputs the password from the user by keeping it hashed on console and returns the original password typed by the user.
         }
 };
 
@@ -198,9 +213,14 @@ int main()
     {
         case 1:
         {
+            string name;
             Authentication auth;
             cout<<"Enter your Username: ";
-            auth.login()
+            cin>>name;
+            cout<<endl
+                <<"Enter your Password: ";
+            string pass = auth.hashedpassword();
+            auth.login(name, pass);
             
             
         }
