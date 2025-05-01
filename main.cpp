@@ -6,11 +6,9 @@ using namespace std;
 
 class PolicyEngine{
     private:
-    PaidWorkers* pw;
-    int accessLevel;
-    string position;
-    
-
+        PaidWorkers* pw;
+        int accessLevel;
+        string position;
     public:
     PolicyEngine(PaidWorkers* p){
         pw = p;
@@ -47,9 +45,11 @@ class PolicyEngine{
     } // ????? what if this can_Assign_Task() ends like return value statment tak puch jata, scope ending pe toh object auto delete ho jata na?
 
 };
+
 class task{
 
 };
+
 class PaidWorkers{
     protected:
     int ID;
@@ -136,18 +136,7 @@ class Junior: public PaidWorkers{
             <<"ID : "<<ID<<endl
             <<"Position : "<<position<<endl;
     }
-
-    
-
 };
-
-
-
-
-
-
-
-
 
 class Authentication{
     protected:
@@ -178,8 +167,9 @@ class Authentication{
         }
         string hashedpassword()
         {
-            string password;
-            int ci; //current index
+            int size = 1;
+            char* pass = new char [size];
+            int ci = 0; //current index
             char ch;
             while (cin.get(ch))
             {
@@ -187,7 +177,18 @@ class Authentication{
                 {
                     break;
                 }
-                else if(ch == '')
+                else if(ch == '\b')
+                {
+                   password[ci] = '\0';
+                }
+                else if( (ch <= 'a' && ch >= 'z') || (ch <= 'A' && ch >='Z') || (ch == '') )     //checks the ch for the valid range of charachters if it lies between valid range then it assigns the ch value to the current index of the charachter array
+                {   //& % $ _ * @ ' . ? (space) (a - z) (A - Z) > < # ! ^ + - 
+
+                }
+
+            }
+            void resize(char* arr)
+            {
 
             }
             
@@ -196,7 +197,6 @@ class Authentication{
             //inputs the password from the user by keeping it hashed on console and returns the original password typed by the user.
         }
 };
-
 
 int main()
 {
@@ -221,9 +221,6 @@ int main()
                 <<"Enter your Password: ";
             string pass = auth.hashedpassword();
             auth.login(name, pass);
-            
-            
         }
-    }
-    
+    }   
 }
