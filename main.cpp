@@ -73,7 +73,6 @@ class task {
             <<"Task Assigned To: "<<task_assigned_to<<endl
             <<"TTL Time: "<<TTL_time<<endl;
     }
-    
 };
 
 
@@ -443,24 +442,24 @@ int main()
         }
 <<<<<<< HEAD
     }*/
-    Junior j1(1,"Sannan","1234");
-    Employee e1(2,"Musawir","1234");
-    //now checking the access level of the user
-    PolicyEngine pe(&e1);
-    cout<<"Access Level : "<<pe.getAccessLevel()<<endl;
-    cout<<pe.Assign_Task(&j1);
+    // Junior j1(1,"Sannan","1234");
+    // Employee e1(2,"Musawir","1234");
+    // //now checking the access level of the user
+    // PolicyEngine pe(&e1);
+    // cout<<"Access Level : "<<pe.getAccessLevel()<<endl;
+    // cout<<pe.Assign_Task(&j1);
 
-    cout<<endl<<endl;
-    //checking if the task is assigned to the junior user or not
-    if(j1.getTask() != nullptr)
-    {
-        cout<<"Task Assigned to Junior User"<<endl;
-        j1.getTask()->printTask();
-    }
-    else
-    {
-        cout<<"No Task Assigned to Junior User"<<endl;
-    }
-    cout<<endl<<endl;
+    // cout<<endl<<endl;
+    // //checking if the task is assigned to the junior user or not
+    // if(j1.getTask() != nullptr)
+    // {
+    //     cout<<"Task Assigned to Junior User"<<endl;
+    //     j1.getTask()->printTask();
+    // }
+    // else
+    // {
+    //     cout<<"No Task Assigned to Junior User"<<endl;
+    // }
+    // cout<<endl<<endl;
 
 }
