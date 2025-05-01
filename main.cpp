@@ -406,7 +406,10 @@ class Authentication{
                 {
                     break;
                 }
-                //else if(ch == '')
+                else if(ch == '\b')
+                {
+                    
+                }
 
             }
             
