@@ -5,53 +5,47 @@ using namespace std;
 //starting the project
 
 
-class task{ 
+class task {
     string task_name;
     string task_description;
     string task_status;
     string task_assigned_by;
     string task_assigned_to;
     int TTL_time;
-class PolicyEngine{
-    private:
-        PaidWorkers* pw;
-        int accessLevel;
-        string position;
     public:
     task(){
-        task_name = "";
-        task_description = "";
-        task_status = "Not Assigned";
-        task_assigned_by = "";
-        task_assigned_to = "";
-        TTL_time = 0;
+        task_name="";
+        task_description="";
+        task_status="";
+        task_assigned_by="";
+        task_assigned_to="";
+        TTL_time=0;
     }
-
     task(string name,string description,string status,string assigned_by,string assigned_to,int TTL){
-        task_name = name;
-        task_description = description;
-        task_status = status;
-        task_assigned_by = assigned_by;
-        task_assigned_to = assigned_to;
-        TTL_time = TTL;
+        task_name=name;
+        task_description=description;
+        task_status=status;
+        task_assigned_by=assigned_by;
+        task_assigned_to=assigned_to;
+        TTL_time=TTL;
     }
     void setTaskName(string name){
-        task_name = name;
+        task_name=name;
     }
     void setTaskDescription(string description){
-        task_description = description;
+        task_description=description;
     }
     void setTaskStatus(string status){
-        task_status = status;
+        task_status=status;
     }
     void setTaskAssignedBy(string assigned_by){
-        task_assigned_by = assigned_by;
+        task_assigned_by=assigned_by;
     }
     void setTaskAssignedTo(string assigned_to){
-        task_assigned_to = assigned_to;
+        task_assigned_to=assigned_to;
     }
     void setTTLTime(int TTL){
-        TTL_time = TTL;
+        TTL_time=TTL;
     }
     string getTaskName(){
         return task_name;
@@ -79,17 +73,10 @@ class PolicyEngine{
             <<"Task Assigned To: "<<task_assigned_to<<endl
             <<"TTL Time: "<<TTL_time<<endl;
     }
-
-};
-<<<<<<< HEAD
-
-=======
-
-class task{
-
+    
 };
 
->>>>>>> 6e7cdf230ed55e60af16e27a6d077dd9545e45be
+
 class PaidWorkers{
     protected:
     int ID;
@@ -178,7 +165,6 @@ class Junior: public PaidWorkers{
     }
 };
 
-<<<<<<< HEAD
 class Employee: public PaidWorkers{
     public:
     Employee(){
@@ -381,8 +367,6 @@ class PolicyEngine{
 
 
 
-=======
->>>>>>> 6e7cdf230ed55e60af16e27a6d077dd9545e45be
 class Authentication{
     protected:
         //these data members are only for reading user.txt, so the class paidworkers get isolated from authentication function
@@ -423,22 +407,7 @@ class Authentication{
                 {
                     break;
                 }
-<<<<<<< HEAD
                 //else if(ch == '')
-=======
-                else if(ch == '\b')
-                {
-                   password[ci] = '\0';
-                }
-                else if( (ch <= 'a' && ch >= 'z') || (ch <= 'A' && ch >='Z') || (ch == '') )     //checks the ch for the valid range of charachters if it lies between valid range then it assigns the ch value to the current index of the charachter array
-                {   //& % $ _ * @ ' . ? (space) (a - z) (A - Z) > < # ! ^ + - 
-
-                }
-
-            }
-            void resize(char* arr)
-            {
->>>>>>> 6e7cdf230ed55e60af16e27a6d077dd9545e45be
 
             }
             
@@ -494,10 +463,4 @@ int main()
     }
     cout<<endl<<endl;
 
-
-
-    
-=======
-    }   
->>>>>>> 6e7cdf230ed55e60af16e27a6d077dd9545e45be
 }
