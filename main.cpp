@@ -12,6 +12,11 @@ class task{
     string task_assigned_by;
     string task_assigned_to;
     int TTL_time;
+class PolicyEngine{
+    private:
+        PaidWorkers* pw;
+        int accessLevel;
+        string position;
     public:
     task(){
         task_name = "";
@@ -21,6 +26,7 @@ class task{
         task_assigned_to = "";
         TTL_time = 0;
     }
+
     task(string name,string description,string status,string assigned_by,string assigned_to,int TTL){
         task_name = name;
         task_description = description;
@@ -75,7 +81,15 @@ class task{
     }
 
 };
+<<<<<<< HEAD
 
+=======
+
+class task{
+
+};
+
+>>>>>>> 6e7cdf230ed55e60af16e27a6d077dd9545e45be
 class PaidWorkers{
     protected:
     int ID;
@@ -162,11 +176,9 @@ class Junior: public PaidWorkers{
             <<"ID : "<<ID<<endl
             <<"Position : "<<position<<endl;
     }
-
-    
-
 };
 
+<<<<<<< HEAD
 class Employee: public PaidWorkers{
     public:
     Employee(){
@@ -369,6 +381,8 @@ class PolicyEngine{
 
 
 
+=======
+>>>>>>> 6e7cdf230ed55e60af16e27a6d077dd9545e45be
 class Authentication{
     protected:
         //these data members are only for reading user.txt, so the class paidworkers get isolated from authentication function
@@ -399,8 +413,9 @@ class Authentication{
         }
         string hashedpassword()
         {
-            string password;
-            int ci; //current index
+            int size = 1;
+            char* pass = new char [size];
+            int ci = 0; //current index
             char ch;
             while (cin.get(ch))
             {
@@ -408,7 +423,22 @@ class Authentication{
                 {
                     break;
                 }
+<<<<<<< HEAD
                 //else if(ch == '')
+=======
+                else if(ch == '\b')
+                {
+                   password[ci] = '\0';
+                }
+                else if( (ch <= 'a' && ch >= 'z') || (ch <= 'A' && ch >='Z') || (ch == '') )     //checks the ch for the valid range of charachters if it lies between valid range then it assigns the ch value to the current index of the charachter array
+                {   //& % $ _ * @ ' . ? (space) (a - z) (A - Z) > < # ! ^ + - 
+
+                }
+
+            }
+            void resize(char* arr)
+            {
+>>>>>>> 6e7cdf230ed55e60af16e27a6d077dd9545e45be
 
             }
             
@@ -417,7 +447,6 @@ class Authentication{
             //inputs the password from the user by keeping it hashed on console and returns the original password typed by the user.
         }
 };
-
 
 int main()
 {
@@ -442,9 +471,8 @@ int main()
                 <<"Enter your Password: ";
             string pass = auth.hashedpassword();
             auth.login(name, pass);
-            
-            
         }
+<<<<<<< HEAD
     }*/
     Junior j1(1,"Sannan","1234");
     Employee e1(2,"Musawir","1234");
@@ -469,4 +497,7 @@ int main()
 
 
     
+=======
+    }   
+>>>>>>> 6e7cdf230ed55e60af16e27a6d077dd9545e45be
 }
