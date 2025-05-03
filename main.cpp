@@ -132,9 +132,6 @@ class PaidWorkers{
     bool getNewMessages(){
         return new_messages;
     }
-    
-    
-
 };
 
 class Junior: public PaidWorkers{
@@ -286,7 +283,7 @@ class Executive: public PaidWorkers{
 
 class PolicyEngine{
     private:
-    PaidWorkers* pw;
+    PaidWorkers* pw;    //is this an array of paidworkers OR a pointer of paidworkers just to pull a single worker at a single instance only??????
     int accessLevel;
     string position;
     
@@ -440,7 +437,8 @@ class PRIVATE:public Messages{
     }
 
     public:
-        PRIVATE(string m, string s, string r):Messages(m,s,r){
+        PRIVATE(string m, string s, string r):Messages(m,s,r)
+        {
             type = "PRIVATE";
             isRead = false;
         }
@@ -503,15 +501,34 @@ class Authentication{
         int usercount;
         string* name;
         string* password;
+        string* userType;
         string OTP;
         
-    public:
+        public:
         Authentication(){
             usercount = 0;
             name = nullptr;
             password = nullptr;
+            userType = nullptr;
             OTP = "";
         }
+        
+        bool registerUser(string name, string password){
+            if(!userExists(name))
+            {
+                ofstream out;
+                out.open("user.txt", ios::app);
+                return true;
+            }
+            else
+            {
+                cout<<"User Already Exists!!"<<endl
+                    <<"Please Login"<<endl;
+                return false;
+            }
+            return 0;
+        }
+
         void readfile()
         {
             delete [] name;
@@ -543,9 +560,6 @@ class Authentication{
         }
 
         //signin/ registeration
-        bool registerUser(string name, string password){
-            return 0;
-        }
         
         //this is not the desided hashing 
         // string hashedpassword()
@@ -614,8 +628,8 @@ void mainMenu()
     {
         case 1:
         {
-            string iname, ipassword;    //input name and input password
             Authentication auth;
+            string iname, ipassword;    //input name and input password
             cout<<"Enter your Username: ";
             cin>>iname;
             cout<<endl
@@ -635,8 +649,8 @@ void mainMenu()
         }
         case 2:
         {
-            string iname, ipassword;    //input name and input password
             Authentication auth;
+            string iname, ipassword;    //input name and input password
             cout<<"Enter your Username: ";
             cin>>iname;
             cout<<endl
