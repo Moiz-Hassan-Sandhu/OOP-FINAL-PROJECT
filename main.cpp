@@ -5,6 +5,7 @@
 using namespace std;
 //starting the project
 
+void mainMenu();
 
 class task {
     string task_name;
@@ -499,11 +500,18 @@ class Authentication{
     protected:
         //these data members are only for reading user.txt, so the class paidworkers get isolated from authentication function
         int usercount;
-        string name;
-        string password;
+        string* name;
+        string* password;
         string OTP;
         
     public:
+        
+        bool userExists(string name)
+        {
+            readfile();
+            return 0;
+
+        }
         bool login(string name, string password)
         {
             if(userExists(name))
@@ -517,63 +525,43 @@ class Authentication{
                     <<"Please Register User"<<endl;
                 return 0;       
             }
-        }
-        bool userExists(string name)
-        {
             return 0;
-
         }
-        string hashedpassword()
-        {
-            int size = 1;
-            char* pass = new char [size];
-            int ci = 0; //current index
-            char ch;
-            while (cin.get(ch))
-            {
-                if(ch == '\n')
-                {
-                    break;
-                }
-                else if(ch == '\b')
-                {
+
+        //signin/ registeration
+        bool registerUser(string name, string password){
+            return 0;
+        }
+        
+        //this is not the desided hashing 
+        // string hashedpassword()
+        // {
+        //     int size = 1;
+        //     char* pass = new char [size];
+        //     int ci = 0; //current index
+        //     char ch;
+        //     while (cin.get(ch))
+        //     {
+        //         if(ch == '\n')
+        //         {
+        //             break;
+        //         }
+        //         else if(ch == '\b')
+        //         {
                     
-                }
+        //         }
 
-            }
+        //     }    
             
             
-            return password;
+            // return password;
             //inputs the password from the user by keeping it hashed on console and returns the original password typed by the user.
-        }
+        // }
 };
 
 int main()
 {
-    /*cout<<endl<<endl<<"compiled sucessfully!"<<endl<<endl;
-    int choice1;
-    cout<<"#===========================================#"<<endl
-        <<"#          Welcome To OFFICE PORTAL         #"<<endl
-        <<"#===========================================#"<<endl
-        <<"#          Press 1 to Login                 #"<<endl
-        <<"#===========================================#"<<endl<<endl;
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
-    switch(choice1)
-    {
-        case 1:
-        {
-            string name;
-            Authentication auth;
-            cout<<"Enter your Username: ";
-            cin>>name;
-            cout<<endl
-                <<"Enter your Password: ";
-            string pass = auth.hashedpassword();
-            auth.login(name, pass);
-        }
-<<<<<<< HEAD
-    }*/
+    mainMenu();
     // Junior j1(1,"Sannan","1234");
     // Employee e1(2,"Musawir","1234");
     // //now checking the access level of the user
@@ -594,4 +582,64 @@ int main()
     // }
     // cout<<endl<<endl;
  
+}
+void mainMenu()
+{
+    cout<<endl<<endl<<"compiled sucessfully!"<<endl<<endl;
+    int choice1;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+        <<"                              #          Welcome To OFFICE PORTAL         #"<<endl
+        <<"                              #===========================================#"<<endl
+        <<"                              #          Press 1 to Login                 #"<<endl
+        <<"                              #          Press 2 to Register              #"<<endl
+        <<"                              #===========================================#"<<endl<<endl<<endl;
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            string iname, ipassword;    //input name and input password
+            Authentication auth;
+            cout<<"Enter your Username: ";
+            cin>>iname;
+            cout<<endl
+                <<"Enter your Password: ";
+            cin>>ipassword;
+            //if we do *** stars wala hashing then we do this: string pass = auth.hashedpassword();
+            if(auth.login(iname, ipassword))
+            {
+                cout<<"Login Successfull"<<endl;
+            }
+            else
+            {
+                cout<<"Login Failed"<<endl<<endl<<endl;
+                mainMenu();
+            }
+            break;
+        }
+        case 2:
+        {
+            string iname, ipassword;    //input name and input password
+            Authentication auth;
+            cout<<"Enter your Username: ";
+            cin>>iname;
+            cout<<endl
+                <<"Enter your Password: ";
+            cin>>ipassword;
+            //if we do *** stars wala hashing then we do this: string pass = auth.hashedpassword();
+            if(auth.registerUser(iname, ipassword))
+            {
+                cout<<"Registration Successfull"<<endl;
+            }
+            else
+            {
+                cout<<"Registration Failed"<<endl<<endl<<endl;
+                mainMenu();
+            }
+            break;
+        }
+        
+    }
 }
