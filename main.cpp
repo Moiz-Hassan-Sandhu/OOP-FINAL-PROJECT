@@ -2,13 +2,21 @@
 #include<string>
 #include<cstring>
 #include<fstream>
+#include<iomanip>
+#include<ctime>
+#include<cstdlib>
 using namespace std;
 //starting the project
 
+// 13 classes ban chuki
+
+//check line 472 for the overloaded setsent_to();
 
 // I am not creating register user function because no one will have a right to register a user, he or she can register himself as Executive if granted permission to register user
 
-int uniqueID = 100000;      //to assign unique ID to each user so every time a user is created the unique ID will be incremented and assinged to the user ID
+//still have to think about the unique ID system
+
+//User file i.e. executive.txt, data writing format : ID|Name|Position|Password|Salary
 
 void mainMenu();
 
@@ -361,7 +369,6 @@ class PolicyEngine{
 
 };
 
-
 class Messages{
     protected:
         string message;
@@ -501,23 +508,23 @@ class Authentication{
         //user.txt is only read and write by authentication class and noting else
         int usercount;
         PaidWorkers* users;
-        string OTP;
+        int OTP;
         
         public:
         Authentication(){
             usercount = 0;
             users = NULL;
-            OTP = "";
+            OTP = 0;
         }
         
         void readfile(string pos)
         {
             ifstream in;
-            
+            string filename = pos + ".txt";
             if(pos == "Executive")
             {
                 string line;
-                in.open("executive.txt", ios::in);
+                in.open(filename, ios::in);
                 if(!in)
                 {
                     cout<<endl<<endl
@@ -529,31 +536,91 @@ class Authentication{
                     usercount++;
                 }
                 users = new Executive [usercount];
+                int id = 0;
+                string name;
+                string password;
+                double salary;
+                string position;
+                int i = 0;
+                while (in>>id)
+                {
+                    //1234|moiz|Executive|1234|1000
+                    in.ignore(1);
+                    getline(in, name, '|');
+                    getline(in, position, '|');
+                    getline(in, password, '|');
+                    in>>salary;
+                    users[i].setID(id);
+                    users[i].setName(name);
+                    users[i].setPassword(password);
+                    users[i].setSalary(salary);
+                    users[i].setPosition(position);
+                    in.ignore(1);
+                    i++;
+                }
             }
-
         }
-        
-        bool userExists(string name, string pos)
+        int userExists(string name, string pos)
         {
             readfile(pos);
-            return 0;
-
+            for(int i = 0; i < usercount; i++)
+            {
+                if(users[i].getName() == name)
+                {
+                    return i;
+                }
+            }           
+            return -1;
         }
+        
+        void otpGenerator()
+        {
+            srand(time(0));
+            OTP = 100000 + rand() % 900000;
+            ofstream out;
+            out.open("OTP.txt", ios::out);
+            out<<OTP;
+            out.close();
+        }
+
         bool login(string pos)  //string to check position
         {
             string iname, ipassword;    //input name and input password
             cout<<"Enter your Username: ";
             cin>>iname;
-            cout<<endl
-                <<"Enter your Password: ";
-            cin>>ipassword;
-            if(userExists(iname, pos))
+            int index = userExists(iname, pos);
+            if(index != -1)
             {
-                
+                cout<<endl
+                <<"Enter your Password: ";
+                cin>>ipassword;
+                if(users[index].getPassword() == ipassword)
+                {
+                    int otp = 0;
+                    cout<<"Enter the OTP: ";
+                    cin>>otp;
+                    if(OTP == otp)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        cout<<endl<<endl
+                            <<"OTP Incorrect"<<endl;
+                        return false;
+                    }
+                    
+                }
+                else
+                {
+                    cout<<endl<<endl
+                        <<"Password Incorrect"<<endl;
+                    return 0;
+                }
             }
             else
             {
-                cout<<endl
+                cout<<endl<<endl
                     <<"User Doesn't Exist"<<endl
                     <<"Please Register User"<<endl;
                 return 0;       
