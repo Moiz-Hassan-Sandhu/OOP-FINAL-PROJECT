@@ -505,7 +505,17 @@ class Authentication{
         string OTP;
         
     public:
-        
+        Authentication(){
+            usercount = 0;
+            name = nullptr;
+        }
+        void readfile()
+        {
+            delete [] name;
+            delete [] password;
+            ifstream in;
+            in.open("user.txt", ios::in);
+        }
         bool userExists(string name)
         {
             readfile();
