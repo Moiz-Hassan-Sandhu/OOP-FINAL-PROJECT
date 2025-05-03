@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 #include<cstring>
+#include<fstream>
 using namespace std;
 //starting the project
 
@@ -358,13 +359,140 @@ class PolicyEngine{
 };
 
 
+class Messages{
+    protected:
+        string message;
+        string sender;
+        string receiver;
+        string type;
+        bool isRead;
+    public:
+        Messages(string m, string s, string r){
+            message = m;
+            sender = s;
+            receiver = r;
+            isRead = false;
+        }
+        void setMessage(string m){
+            message = m;
+        }
+        void setSender(string s){
+            sender = s;
+        }
+        void setReceiver(string r){
+            receiver = r;
+        }
+        void setIsRead(bool r){
+            isRead = r;
+        }
+        string getMessage(){
+            return message;
+        }
+        string getSender(){
+            return sender;
+        }
+        string getReceiver(){
+            return receiver;
+        }
+        bool getIsRead(){
+            return isRead;
+        }
+};
+class INFO:public Messages{
+
+    public:
+        INFO(string m, string s, string r):Messages(m,s,r){
+            message = m;
+            sender = s;
+            receiver = r;
+            type = "INFO";
+            isRead = false;
+        }
+        void printMessage(){
+            cout<<"Message: "<<message<<endl
+                <<"Sender: "<<sender<<endl
+                <<"Receiver: "<<receiver<<endl;
+        }
+        void markAsRead(){
+            isRead = true;
+        }
+
+};
+
+class PRIVATE:public Messages{
+    private:
+    string encrypted_message;
+    string decrypted_message;
+    int sent_to;
+    char caesarShift(char c, int shift) {
+        if (isupper(c))
+            return char((c - 'A' + shift + 260) % 26 + 'A');
+        if (islower(c))
+            return char((c - 'a' + shift + 260) % 26 + 'a');
+        return c;
+    }
+    void encryptMessage() {
+        int key = sent_to % 10;           // last digit of sent_to
+        encrypted_message.clear();
+        for (char c : message)
+            encrypted_message += caesarShift(c, +key);
+    }
+
+    public:
+        PRIVATE(string m, string s, string r):Messages(m,s,r){
+            type = "PRIVATE";
+            isRead = false;
+        }
+        void setSentTo(int id) {
+            sent_to = id;
+            encryptMessage();
+        }
+        void saveToFile(const string& filename = "private_messages.txt") {
+            ofstream out(filename, ios::app);      // open in append mode
+            if (!out) {
+                cerr << "Error opening " << filename << " for writing\n";
+                return;
+            }
+            // Format: sender|receiver|sent_to|encrypted_message\n
+            out << sender << '|'<< receiver << '|'<< sent_to << '|'<< encrypted_message<< '\n';
+            out.close();
+        }
 
 
+      
+        void markAsRead(){
+            isRead = true;
+        }
+        void setSentTo(int s){
+            sent_to = s;
+        }
+        int getSentTo(){
+            return sent_to;
+        }
 
+        
 
+};
 
+class ALERT:public Messages{
+    public:
+        ALERT(string m, string s, string r):Messages(m,s,r){
+            message = m;
+            sender = s;
+            receiver = r;
+            type = "ALERT";
+            isRead = false;
+        }
+        void printMessage(){
+            cout<<"Message: "<<message<<endl
+                <<"Sender: "<<sender<<endl
+                <<"Receiver: "<<receiver<<endl;
+        }
+        void markAsRead(){
+            isRead = true;
+        }
 
-
+};
 
 
 class Authentication{
