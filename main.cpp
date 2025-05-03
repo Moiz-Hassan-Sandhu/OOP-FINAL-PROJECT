@@ -467,9 +467,9 @@ class PRIVATE:public Messages{
         void markAsRead(){
             isRead = true;
         }
-        void setSentTo(int s){
-            sent_to = s;
-        }
+        // void setSentTo(int s){
+        //     sent_to = s;
+        // }
         int getSentTo(){
             return sent_to;
         }
@@ -517,12 +517,18 @@ class Authentication{
             if(pos == "Executive")
             {
                 string line;
-                in.open("user.txt", ios::in);
+                in.open("executive.txt", ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                        <<"Error opening file"<<endl<<endl;
+                    mainMenu();
+                }
                 while(getline(in, line, '\n'))
                 {
                     usercount++;
                 }
-                users = new Executive[usercount];
+                users = new Executive [usercount];
             }
 
         }
@@ -559,44 +565,23 @@ class Authentication{
 int main()
 {
     mainMenu();
-    // Junior j1(1,"Sannan","1234");
-    // Employee e1(2,"Musawir","1234");
-    // //now checking the access level of the user
-    // PolicyEngine pe(&e1);
-    // cout<<"Access Level : "<<pe.getAccessLevel()<<endl;
-    // cout<<pe.Assign_Task(&j1);
-
-    // cout<<endl<<endl;
-    // //checking if the task is assigned to the junior user or not
-    // if(j1.getTask() != nullptr)
-    // {
-    //     cout<<"Task Assigned to Junior User"<<endl;
-    //     j1.getTask()->printTask();
-    // }
-    // else
-    // {
-    //     cout<<"No Task Assigned to Junior User"<<endl;
-    // }
-    // cout<<endl<<endl;
- 
 }
+
 void mainMenu()
 {
-    cout<<endl<<endl<<"compiled sucessfully!"<<endl<<endl;
     int choice1;
     cout<<endl<<endl<<endl;
-    cout<<"                          #===========================================#"<<endl
+    cout<<"                              #===========================================#"<<endl
     <<"                              #          Welcome To OFFICE PORTAL         #"<<endl
     <<"                              #===========================================#"<<endl
-    <<"                              #===========================================#"<<endl<<endl<<endl;
-    cout<<endl<<endl<<endl;
-    cout<<"                          #===========================================#"<<endl
     <<"                              #          Press 1 to Login as Executive    #"<<endl
     <<"                              #          Press 2 to Login as Director     #"<<endl
     <<"                              #          Press 3 to Login as Manager      #"<<endl
     <<"                              #          Press 4 to Login as Employee     #"<<endl
     <<"                              #          Press 5 to Login as Junior       #"<<endl
+    <<"                              #          Press 6 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
+
     cout<<"Press your option to continue: ";
     cin>>choice1;
     switch(choice1)
@@ -669,6 +654,17 @@ void mainMenu()
                 cout<<"Login Failed"<<endl<<endl<<endl;
                 mainMenu();
             }
+        }
+        case 6:
+        {
+            cout<<endl
+                <<"Have a Good Day!"<<endl<<endl<<endl;
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            mainMenu();
         }
     }
 }
