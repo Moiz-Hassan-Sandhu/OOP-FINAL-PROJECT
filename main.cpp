@@ -499,6 +499,7 @@ class ALERT:public Messages{
 class Authentication{
     protected:
         //these data members are only for reading user.txt, so the class paidworkers get isolated from authentication function
+        //user.txt is only read and write by authentication class and noting else
         int usercount;
         string* name;
         string* password;
@@ -508,6 +509,8 @@ class Authentication{
         Authentication(){
             usercount = 0;
             name = nullptr;
+            password = nullptr;
+            OTP = "";
         }
         void readfile()
         {
@@ -515,6 +518,7 @@ class Authentication{
             delete [] password;
             ifstream in;
             in.open("user.txt", ios::in);
+
         }
         bool userExists(string name)
         {
