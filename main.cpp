@@ -468,9 +468,6 @@ class PRIVATE:public Messages{
         int getSentTo(){
             return sent_to;
         }
-
-        
-
 };
 
 class ALERT:public Messages{
@@ -490,7 +487,6 @@ class ALERT:public Messages{
         void markAsRead(){
             isRead = true;
         }
-
 };
 
 
@@ -499,17 +495,12 @@ class Authentication{
         //these data members are only for reading user.txt, so the class paidworkers get isolated from authentication function
         //user.txt is only read and write by authentication class and noting else
         int usercount;
-        string* name;
-        string* password;
-        string* userType;
+        PaidWorkers* users[1];
         string OTP;
         
         public:
         Authentication(){
             usercount = 0;
-            name = nullptr;
-            password = nullptr;
-            userType = nullptr;
             OTP = "";
         }
         
