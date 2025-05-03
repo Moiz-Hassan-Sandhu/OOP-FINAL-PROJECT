@@ -5,6 +5,11 @@
 using namespace std;
 //starting the project
 
+
+// I am not creating register user function because no one will have a right to register a user, he or she can register himself as Executive if granted permission to register user
+
+int uniqueID = 100000;      //to assign unique ID to each user so every time a user is created the unique ID will be incremented and assinged to the user ID
+
 void mainMenu();
 
 class task {
@@ -80,58 +85,58 @@ class task {
 
 class PaidWorkers{
     protected:
-    int ID;
-    string name;
-    string position;
-    string password;
-    float salary;
-    task* t;
-    bool new_messages;
+        int ID;
+        string name;
+        string position;
+        string password;
+        float salary;
+        task* t;
+        bool new_messages;
 
     public:
-    virtual void print() = 0;//making this an abstarct class we donot need an object of this class
-    void setID(int id){
-        ID = id;
-    }
-    void setName(string n){
-        name = n;
-    }
-    void setPosition(string p){
-        position = p;
-    }
-    void setPassword(string p){
-        password = p;
-    }
-    void setSalary(float s){
-        salary = s;
-    }
-    void setTask(task* tsk){
-        t = tsk;
-    }
-    void setNewMessages(bool n){
-        new_messages = n;
-    }
-    int getID(){
-        return ID;
-    }
-    string getName(){
-        return name;
-    }
-    string getPassword(){
-        return password;
-    }
-    string getPosition(){
-        return position;
-    }
-    float getSalary(){
-        return salary;
-    }
-    task* getTask(){
-        return t;
-    }
-    bool getNewMessages(){
-        return new_messages;
-    }
+        virtual void print() = 0;//making this an abstarct class we donot need an object of this class
+        void setID(int id){
+            ID = id;
+        }
+        void setName(string n){
+            name = n;
+        }
+        void setPosition(string p){
+            position = p;
+        }
+        void setPassword(string p){
+            password = p;
+        }
+        void setSalary(float s){
+            salary = s;
+        }
+        void setTask(task* tsk){
+            t = tsk;
+        }
+        void setNewMessages(bool n){
+            new_messages = n;
+        }
+        int getID(){
+            return ID;
+        }
+        string getName(){
+            return name;
+        }
+        string getPassword(){
+            return password;
+        }
+        string getPosition(){
+            return position;
+        }
+        float getSalary(){
+            return salary;
+        }
+        task* getTask(){
+            return t;
+        }
+        bool getNewMessages(){
+            return new_messages;
+        }
 };
 
 class Junior: public PaidWorkers{
@@ -283,11 +288,11 @@ class Executive: public PaidWorkers{
 
 class PolicyEngine{
     private:
-    PaidWorkers* pw;    //is this an array of paidworkers OR a pointer of paidworkers just to pull a single worker at a single instance only??????
+    int n_users;
+    PaidWorkers* pw;
     int accessLevel;
     string position;
     
-
     public:
     PolicyEngine(PaidWorkers* p){
         pw = p;
@@ -495,48 +500,48 @@ class Authentication{
         //these data members are only for reading user.txt, so the class paidworkers get isolated from authentication function
         //user.txt is only read and write by authentication class and noting else
         int usercount;
-        PaidWorkers* users[1];
+        PaidWorkers* users;
         string OTP;
         
         public:
         Authentication(){
             usercount = 0;
+            users = NULL;
             OTP = "";
         }
         
-        bool registerUser(string name, string password){
-            if(!userExists(name))
-            {
-                ofstream out;
-                out.open("user.txt", ios::app);
-                return true;
-            }
-            else
-            {
-                cout<<"User Already Exists!!"<<endl
-                    <<"Please Login"<<endl;
-                return false;
-            }
-            return 0;
-        }
-
-        void readfile()
+        void readfile(string pos)
         {
-            delete [] name;
-            delete [] password;
             ifstream in;
-            in.open("user.txt", ios::in);
+            
+            if(pos == "Executive")
+            {
+                string line;
+                in.open("user.txt", ios::in);
+                while(getline(in, line, '\n'))
+                {
+                    usercount++;
+                }
+                users = new Executive[usercount];
+            }
 
         }
-        bool userExists(string name)
+        
+        bool userExists(string name, string pos)
         {
-            readfile();
+            readfile(pos);
             return 0;
 
         }
-        bool login(string name, string password)
+        bool login(string pos)  //string to check position
         {
-            if(userExists(name))
+            string iname, ipassword;    //input name and input password
+            cout<<"Enter your Username: ";
+            cin>>iname;
+            cout<<endl
+                <<"Enter your Password: ";
+            cin>>ipassword;
+            if(userExists(iname, pos))
             {
                 
             }
@@ -549,33 +554,6 @@ class Authentication{
             }
             return 0;
         }
-
-        //signin/ registeration
-        
-        //this is not the desided hashing 
-        // string hashedpassword()
-        // {
-        //     int size = 1;
-        //     char* pass = new char [size];
-        //     int ci = 0; //current index
-        //     char ch;
-        //     while (cin.get(ch))
-        //     {
-        //         if(ch == '\n')
-        //         {
-        //             break;
-        //         }
-        //         else if(ch == '\b')
-        //         {
-                    
-        //         }
-
-        //     }    
-            
-            
-            // return password;
-            //inputs the password from the user by keeping it hashed on console and returns the original password typed by the user.
-        // }
 };
 
 int main()
@@ -607,12 +585,18 @@ void mainMenu()
     cout<<endl<<endl<<"compiled sucessfully!"<<endl<<endl;
     int choice1;
     cout<<endl<<endl<<endl;
-    cout<<"                              #===========================================#"<<endl
-        <<"                              #          Welcome To OFFICE PORTAL         #"<<endl
-        <<"                              #===========================================#"<<endl
-        <<"                              #          Press 1 to Login                 #"<<endl
-        <<"                              #          Press 2 to Register              #"<<endl
-        <<"                              #===========================================#"<<endl<<endl<<endl;
+    cout<<"                          #===========================================#"<<endl
+    <<"                              #          Welcome To OFFICE PORTAL         #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+    cout<<endl<<endl<<endl;
+    cout<<"                          #===========================================#"<<endl
+    <<"                              #          Press 1 to Login as Executive    #"<<endl
+    <<"                              #          Press 2 to Login as Director     #"<<endl
+    <<"                              #          Press 3 to Login as Manager      #"<<endl
+    <<"                              #          Press 4 to Login as Employee     #"<<endl
+    <<"                              #          Press 5 to Login as Junior       #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
     cout<<"Press your option to continue: ";
     cin>>choice1;
     switch(choice1)
@@ -620,14 +604,7 @@ void mainMenu()
         case 1:
         {
             Authentication auth;
-            string iname, ipassword;    //input name and input password
-            cout<<"Enter your Username: ";
-            cin>>iname;
-            cout<<endl
-                <<"Enter your Password: ";
-            cin>>ipassword;
-            //if we do *** stars wala hashing then we do this: string pass = auth.hashedpassword();
-            if(auth.login(iname, ipassword))
+            if(auth.login("Executive"))
             {
                 cout<<"Login Successfull"<<endl;
             }
@@ -641,24 +618,57 @@ void mainMenu()
         case 2:
         {
             Authentication auth;
-            string iname, ipassword;    //input name and input password
-            cout<<"Enter your Username: ";
-            cin>>iname;
-            cout<<endl
-                <<"Enter your Password: ";
-            cin>>ipassword;
-            //if we do *** stars wala hashing then we do this: string pass = auth.hashedpassword();
-            if(auth.registerUser(iname, ipassword))
+            if(auth.login("Director"))
             {
-                cout<<"Registration Successfull"<<endl;
+                cout<<"Login Successfull"<<endl;
             }
             else
             {
-                cout<<"Registration Failed"<<endl<<endl<<endl;
+                cout<<"Login Failed"<<endl<<endl<<endl;
                 mainMenu();
             }
             break;
         }
-        
+        case 3:
+        {
+            Authentication auth;
+            if(auth.login("Manager"))
+            {
+                cout<<"Login Successfull"<<endl;
+            }
+            else
+            {
+                cout<<"Login Failed"<<endl<<endl<<endl;
+                mainMenu();
+            }
+            break;
+        }
+        case 4:
+        {
+            Authentication auth;
+            if(auth.login("Employee"))
+            {
+                cout<<"Login Successfull"<<endl;
+            }
+            else
+            {
+                cout<<"Login Failed"<<endl<<endl<<endl;
+                mainMenu();
+            }
+            break;
+        }
+        case 5:
+        {
+            Authentication auth;
+            if(auth.login("Junior"))
+            {
+                cout<<"Login Successfull"<<endl;
+            }
+            else
+            {
+                cout<<"Login Failed"<<endl<<endl<<endl;
+                mainMenu();
+            }
+        }
     }
 }
