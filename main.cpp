@@ -22,6 +22,10 @@ using namespace std;
 
 //Added class ActivityLog in Policy Engine Inheritance List 
 
+//Executive Will have full access
+
+//Director can create 
+
 void mainMenu();
 
 class task {
@@ -517,6 +521,7 @@ class Authentication{
         //these data members are only for reading user.txt, so the class paidworkers get isolated from authentication function
         //user.txt is only read and write by authentication class and noting else
         int usercount;
+        int attempts;
         PaidWorkers* users;
         int OTP;
         
@@ -525,6 +530,7 @@ class Authentication{
             usercount = 0;
             users = NULL;
             OTP = 0;
+            attempts = 1;
         }
         
         void readuser(string pos)
@@ -546,6 +552,7 @@ class Authentication{
 
             if(pos == "Executive")
             {
+                attempts++;
                 string line;
                 in.open(filename, ios::in);
                 if(!in)
@@ -818,43 +825,59 @@ class Authentication{
             cout<<"Enter your Username: ";
             cin>>iname;
             int index = userExists(iname, pos);
-            if(index != -1)
+            while(1)
             {
-                cout<<endl
-                <<"Enter your Password: ";
-                cin>>ipassword;
-                if(users[index].getPassword() == ipassword)
+                if(attempts>3)
                 {
-                    int otp = 0;
-                    otpGenerator();
-                    cout<<"Enter the OTP: ";
-                    cin>>otp;
-                    if(OTP == otp)
+                    cout<<endl<<endl
+                        <<"Too many attempts"<<endl
+                        <<"Please try again later"<<endl;
+                        attempts = 1;
+                    return false;
+                }
+                else if(attempts <= 3 && attempts != 1)
+                {
+                    cout<<"Please Try Again!"<<endl;
+                }
+                if(index != -1)
+                {
+                    cout<<endl
+                    <<"Enter your Password: ";
+                    cin>>ipassword;
+                    if(users[index].getPassword() == ipassword)
                     {
-                        remove("./OTP.txt");
-                        return true;
+                        int otp = 0;
+                        otpGenerator();
+                        cout<<"Enter the OTP: ";
+                        cin>>otp;
+                        if(OTP == otp)
+                        {
+                            remove("./OTP.txt");
+                            attempts = 1;
+                            return true;
+                        }
+                        else
+                        {
+                            cout<<endl<<endl
+                            <<"OTP Incorrect"<<endl;
+                            remove("./OTP.txt");
+                            return false;
+                        }
                     }
                     else
                     {
                         cout<<endl<<endl
-                        <<"OTP Incorrect"<<endl;
-                        remove("./OTP.txt");
-                        return false;
+                        <<"Password Incorrect"<<endl;
+                        attempts++;
                     }
                 }
                 else
                 {
                     cout<<endl<<endl
-                        <<"Password Incorrect"<<endl;
-                    return 0;
-                }
-            }
-            else
-            {
-                cout<<endl<<endl
                     <<"User Doesn't Exist"<<endl
                     <<"Please Register User"<<endl;
-                return 0;       
+                    return false;       
+                }
             }
             return 0;
         }
@@ -1028,7 +1051,15 @@ void mainMenu()
 
 void ExecutiveMenu()
 {
-    cout<<"1. Assign Task"<<endl;
-    cout<<"2. View My Tasks"<<endl;
-    cout<<"3. View All Tasks"<<endl;
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Executive Menu                   #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+    cout<<
 }
