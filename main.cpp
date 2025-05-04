@@ -12,6 +12,8 @@ using namespace std;
 
 //check line 472 for the overloaded setsent_to();
 
+//added new data member points in paidworkers class
+
 // I am not creating register user function because no one will have a right to register a user, he or she can register himself as Executive if granted permission to register user
 
 //still have to think about the unique ID system
@@ -100,6 +102,7 @@ class PaidWorkers{
         float salary;
         task* t;
         bool new_messages;
+        int points; //Employee points added New Data member
 
     public:
         virtual void print() = 0;//making this an abstarct class we donot need an object of this class
@@ -144,6 +147,12 @@ class PaidWorkers{
         }
         bool getNewMessages(){
             return new_messages;
+        }
+        void setPoints(int p){
+            points = p;
+        }
+        int getPoints(){
+            return points;
         }
 };
 
@@ -291,7 +300,6 @@ class Executive: public PaidWorkers{
             <<"ID : "<<ID<<endl
             <<"Position : "<<position<<endl;
     }
-
 };
 
 class PolicyEngine{
@@ -519,8 +527,21 @@ class Authentication{
         
         void readuser(string pos)
         {
+            if(usercount != 0)
+            {
+                delete [] users;
+                usercount = 0;
+            }
+            
             ifstream in;
+            int id = 0;
+            int points = 0;
+            double salary = 0;
+            string position;
+            string name;
+            string password;
             string filename = "./" + pos + ".txt";
+
             if(pos == "Executive")
             {
                 string line;
@@ -534,15 +555,9 @@ class Authentication{
                 while(getline(in, line, '\n'))
                 {
                     usercount++;
-                    cout<<line<<endl;
                 }
                 in.close();
                 users = new Executive [usercount];
-                int id = 0;
-                string name;
-                string password;
-                double salary;
-                string position;
                 int i = 0;
                 in.open(filename, ios::in);
                 if(!in)
@@ -553,22 +568,217 @@ class Authentication{
                 }
                 while (in>>id)
                 {
-                    //1234|moiz|Executive|1234|1000
+                    //1234|moiz|Executive|1234|1000|23
                     in.ignore(1);
                     getline(in, name, '|');
                     getline(in, position, '|');
                     getline(in, password, '|');
                     in>>salary;
-                    cout<<id<<" "<<name<<" "<<position<<" "<<password<<" "<<salary<<endl;
+                    in.ignore(1);
+                    in>>points;
+                    in.ignore(1);
+
+                    cout<<id<<" "<<name<<" "<<position<<" "<<password<<" "<<salary<<" "<<points<<endl;
+                    
+                    //initializing data member array of paidworkers
                     users[i].setID(id);
                     users[i].setName(name);
                     users[i].setPassword(password);
                     users[i].setSalary(salary);
                     users[i].setPosition(position);
-                    in.ignore(1);
                     i++;
                 }
                 in.close();
+            }
+            else if(pos == "Director")
+            {
+                string line;
+                in.open(filename, ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                        <<"Error opening file"<<endl<<endl;
+                    mainMenu();
+                }
+                while(getline(in, line, '\n'))
+                {
+                    usercount++;
+                }
+                in.close();
+                users = new Director [usercount];
+                int i = 0;
+                in.open(filename, ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                        <<"Error Reading Users!"<<endl<<endl;
+                    mainMenu();
+                }
+                while (in>>id)
+                {
+                    //1234|moiz|Executive|1234|1000|23
+                    in.ignore(1);
+                    getline(in, name, '|');
+                    getline(in, position, '|');
+                    getline(in, password, '|');
+                    in>>salary;
+                    in.ignore(1);
+                    in>>points;
+                    in.ignore(1);
+                    
+                    //initializing data member array of paidworkers
+                    users[i].setID(id);
+                    users[i].setName(name);
+                    users[i].setPassword(password);
+                    users[i].setSalary(salary);
+                    users[i].setPosition(position);
+                    i++;
+                }
+                in.close();
+            }
+            else if(pos == "Manager")
+            {
+                string line;
+                in.open(filename, ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                        <<"Error opening file"<<endl<<endl;
+                    mainMenu();
+                }
+                while(getline(in, line, '\n'))
+                {
+                    usercount++;
+                }
+                in.close();
+                users = new Manager [usercount];
+                int i = 0;
+                in.open(filename, ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                        <<"Error Reading Users!"<<endl<<endl;
+                    mainMenu();
+                }
+                while (in>>id)
+                {
+                    //1234|moiz|Executive|1234|1000|23
+                    in.ignore(1);
+                    getline(in, name, '|');
+                    getline(in, position, '|');
+                    getline(in, password, '|');
+                    in>>salary;
+                    in.ignore(1);
+                    in>>points;
+                    in.ignore(1);
+                    
+                    //initializing data member array of paidworkers
+                    users[i].setID(id);
+                    users[i].setName(name);
+                    users[i].setPassword(password);
+                    users[i].setSalary(salary);
+                    users[i].setPosition(position);
+                    i++;
+                }
+                in.close();
+            }
+            else if(pos == "Employee")
+            {
+                string line;
+                in.open(filename, ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                        <<"Error opening file"<<endl<<endl;
+                    mainMenu();
+                }
+                while(getline(in, line, '\n'))
+                {
+                    usercount++;
+                }
+                in.close();
+                users = new Employee [usercount];
+                int i = 0;
+                in.open(filename, ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                        <<"Error Reading Users!"<<endl<<endl;
+                    mainMenu();
+                }
+                while (in>>id)
+                {
+                    //1234|moiz|Executive|1234|1000|23
+                    in.ignore(1);
+                    getline(in, name, '|');
+                    getline(in, position, '|');
+                    getline(in, password, '|');
+                    in>>salary;
+                    in.ignore(1);
+                    in>>points;
+                    in.ignore(1);
+                    
+                    //initializing data member array of paidworkers
+                    users[i].setID(id);
+                    users[i].setName(name);
+                    users[i].setPassword(password);
+                    users[i].setSalary(salary);
+                    users[i].setPosition(position);
+                    i++;
+                }
+                in.close();
+            }
+            else if(pos == "Junior")
+            {
+                string line;
+                in.open(filename, ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                    <<"Error opening file"<<endl<<endl;
+                    mainMenu();
+                }
+                while(getline(in, line, '\n'))
+                {
+                    usercount++;
+                }
+                in.close();
+                users = new Junior [usercount];
+                int i = 0;
+                in.open(filename, ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                        <<"Error Reading Users!"<<endl<<endl;
+                    mainMenu();
+                }
+                while (in>>id)
+                {
+                    //1234|moiz|Executive|1234|1000|23
+                    in.ignore(1);
+                    getline(in, name, '|');
+                    getline(in, position, '|');
+                    getline(in, password, '|');
+                    in>>salary;
+                    in.ignore(1);
+                    in>>points;
+                    in.ignore(1);
+                    
+                    //initializing data member array of paidworkers
+                    users[i].setID(id);
+                    users[i].setName(name);
+                    users[i].setPassword(password);
+                    users[i].setSalary(salary);
+                    users[i].setPosition(position);
+                    i++;
+                }
+                in.close();
+            }
+            else
+            {
+                cout<<endl<<endl
+                    <<"Invalid Position!"<<endl<<endl;
+                mainMenu();
             }
         }
         int userExists(string name, string pos)
@@ -646,6 +856,64 @@ class Authentication{
             }
             return 0;
         }
+};
+
+class ActivityLog{
+    protected:
+        int countLogs;
+        string* logs;
+    public:
+        ActivityLog(){
+            countLogs = 0;
+            logs = NULL;
+        }
+        void readSinginLogs()
+        {
+            if(countLogs != 0)
+            {
+                delete [] logs;
+                countLogs = 0;
+            }
+            ifstream in;
+            in.open("./signinlogs.txt", ios::in);
+            if (!in)
+            {
+                cout<<endl<<endl
+                    <<"Error Counting singin Logs!"<<endl<<endl;
+                return;
+            }
+            string line;
+            while(in>>line)
+            {
+                countLogs++;
+            }
+            in.close();
+            logs = new string [countLogs];
+            int i = 0;
+            in.open("./signinlogs.txt", ios::in);
+            if(!in)
+            {
+                cout<<endl<<endl
+                    <<"Error Reading singin Logs!"<<endl<<endl;
+                return;
+            }
+            while(in>>line)
+            {
+                logs[i] = line;
+                i++;
+            }
+            in.close();
+            return;
+        }
+        void displaySinginLogs()
+        {
+            readSinginLogs();
+            for(int i = 0; i < countLogs; i++)
+            {
+                cout<<logs[i]<<endl;
+            }
+        }
+    
 };
 
 int main()
@@ -740,6 +1008,7 @@ void mainMenu()
                 cout<<"Login Failed"<<endl<<endl<<endl;
                 mainMenu();
             }
+            break;
         }
         case 6:
         {
@@ -753,4 +1022,11 @@ void mainMenu()
             mainMenu();
         }
     }
+}
+
+void ExecutiveMenu()
+{
+    cout<<"1. Assign Task"<<endl;
+    cout<<"2. View My Tasks"<<endl;
+    cout<<"3. View All Tasks"<<endl;
 }
