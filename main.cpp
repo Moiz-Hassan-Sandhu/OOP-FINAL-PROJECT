@@ -533,6 +533,22 @@ class Authentication{
             attempts = 1;
         }
         
+        string hashedPassword(string& password)
+        {
+            string hashed;
+            for(int i = 0; i < password.length(); i++)
+            {
+                char original = password[i];
+                int convert = (original * (i + 1) + 31) % 94 + 33;      //keep it under the range of printable charachters
+                if(convert == 124)
+                {
+                    convert = 125; //when hashing fall on | it will assign charchter next to | which is {
+                }
+
+                hashed += static_cast<char>(convert); //type cast the int type assci value to the actual charachter and add to the string 
+            }
+            return hashed;
+        }
         void readuser(string pos)
         {
             if(usercount != 0)
@@ -819,7 +835,7 @@ class Authentication{
             out.close();
         }
 
-        bool login(string pos)  //string to check position
+        PaidWorkers& login(string pos)  //string to check position
         {
             string iname, ipassword;    //input name and input password
             cout<<"Enter your Username: ";
@@ -833,7 +849,7 @@ class Authentication{
                         <<"Too many attempts"<<endl
                         <<"Please try again later"<<endl;
                         attempts = 1;
-                    return false;
+                    return;
                 }
                 else if(attempts <= 3 && attempts != 1)
                 {
@@ -844,6 +860,7 @@ class Authentication{
                     cout<<endl
                     <<"Enter your Password: ";
                     cin>>ipassword;
+                    hashedPassword(ipassword);
                     if(users[index].getPassword() == ipassword)
                     {
                         int otp = 0;
@@ -854,14 +871,16 @@ class Authentication{
                         {
                             remove("./OTP.txt");
                             attempts = 1;
-                            return true;
+                            cout<<"Login Success"<<endl;
+                            return users[index];
                         }
                         else
                         {
                             cout<<endl<<endl
-                            <<"OTP Incorrect"<<endl;
+                                <<"OTP Incorrect"<<endl<<endl
+                                <<"Login Failed"<<endl<<endl;
                             remove("./OTP.txt");
-                            return false;
+                            return;
                         }
                     }
                     else
@@ -876,10 +895,10 @@ class Authentication{
                     cout<<endl<<endl
                     <<"User Doesn't Exist"<<endl
                     <<"Please Register User"<<endl;
-                    return false;       
+                    return;       
                 }
             }
-            return 0;
+            return;
         }
 };
 
@@ -968,16 +987,8 @@ void mainMenu()
         case 1:
         {
             Authentication auth;
-            if(auth.login("Executive"))
-            {
-                cout<<"Login Successfull"<<endl;
-            }
-            else
-            {
-                cout<<"Login Failed"<<endl<<endl<<endl;
-                mainMenu();
-            }
-            break;
+            ExecutiveMenu(auth.login("Executive"));
+            
         }
         case 2:
         {
@@ -1049,8 +1060,9 @@ void mainMenu()
     }
 }
 
-void ExecutiveMenu()
+void ExecutiveMenu(PaidWorkers* pw)
 {
+    PolicyEngine pe(pw);
     int choice1 = 0;
     cout<<endl<<endl<<endl;
     cout<<"                              #===========================================#"<<endl
@@ -1061,5 +1073,31 @@ void ExecutiveMenu()
     <<"                              #          Press 3 to Add New Task          #"<<endl
     <<"                              #          Press 4 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
-    cout<<
+
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            ExecutiveMenu(pw);
+        }
+    }
 }
