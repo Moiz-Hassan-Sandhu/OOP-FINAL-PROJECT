@@ -517,10 +517,10 @@ class Authentication{
             OTP = 0;
         }
         
-        void readfile(string pos)
+        void readuser(string pos)
         {
             ifstream in;
-            string filename = pos + ".txt";
+            string filename = "./" + pos + ".txt";
             if(pos == "Executive")
             {
                 string line;
@@ -534,7 +534,9 @@ class Authentication{
                 while(getline(in, line, '\n'))
                 {
                     usercount++;
+                    cout<<line<<endl;
                 }
+                in.close();
                 users = new Executive [usercount];
                 int id = 0;
                 string name;
@@ -542,6 +544,13 @@ class Authentication{
                 double salary;
                 string position;
                 int i = 0;
+                in.open(filename, ios::in);
+                if(!in)
+                {
+                    cout<<endl<<endl
+                        <<"Error Reading Users!"<<endl<<endl;
+                    mainMenu();
+                }
                 while (in>>id)
                 {
                     //1234|moiz|Executive|1234|1000
@@ -550,6 +559,7 @@ class Authentication{
                     getline(in, position, '|');
                     getline(in, password, '|');
                     in>>salary;
+                    cout<<id<<" "<<name<<" "<<position<<" "<<password<<" "<<salary<<endl;
                     users[i].setID(id);
                     users[i].setName(name);
                     users[i].setPassword(password);
@@ -558,11 +568,12 @@ class Authentication{
                     in.ignore(1);
                     i++;
                 }
+                in.close();
             }
         }
         int userExists(string name, string pos)
         {
-            readfile(pos);
+            readuser(pos);
             for(int i = 0; i < usercount; i++)
             {
                 if(users[i].getName() == name)
@@ -578,7 +589,13 @@ class Authentication{
             srand(time(0));
             OTP = 100000 + rand() % 900000;
             ofstream out;
-            out.open("OTP.txt", ios::out);
+            out.open("./OTP.txt", ios::out);
+            if(!out)
+            {
+                cout<<endl<<endl
+                    <<"Error opening OTP file"<<endl<<endl;
+                mainMenu();
+            }
             out<<OTP;
             out.close();
         }
@@ -597,19 +614,21 @@ class Authentication{
                 if(users[index].getPassword() == ipassword)
                 {
                     int otp = 0;
+                    otpGenerator();
                     cout<<"Enter the OTP: ";
                     cin>>otp;
                     if(OTP == otp)
                     {
+                        remove("./OTP.txt");
                         return true;
                     }
                     else
                     {
                         cout<<endl<<endl
-                            <<"OTP Incorrect"<<endl;
+                        <<"OTP Incorrect"<<endl;
+                        remove("./OTP.txt");
                         return false;
                     }
-                    
                 }
                 else
                 {
