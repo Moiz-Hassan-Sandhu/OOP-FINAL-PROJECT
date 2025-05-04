@@ -18,7 +18,7 @@ using namespace std;
 
 //still have to think about the unique ID system
 
-//User file i.e. executive.txt, data writing format : ID|Name|Position|Password|Salary
+//User file i.e. executive.txt, data writing format : ID|Name|Position|Password|Salary|points
 
 //Added class ActivityLog in Policy Engine Inheritance List 
 
