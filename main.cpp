@@ -8,7 +8,7 @@
 using namespace std;
 //starting the project
 
-// 13 classes ban chuki
+// 14 classes ban chuki
 
 //check line 472 for the overloaded setsent_to();
 
@@ -19,6 +19,8 @@ using namespace std;
 //still have to think about the unique ID system
 
 //User file i.e. executive.txt, data writing format : ID|Name|Position|Password|Salary
+
+//Added class ActivityLog in Policy Engine Inheritance List 
 
 void mainMenu();
 
@@ -273,7 +275,7 @@ class Director: public PaidWorkers{
     }
 
 };
-class Executive: public PaidWorkers{
+class Executive: public PaidWorkers , public ActivityLog{
     public:
     Executive(){
         ID=0;
@@ -302,7 +304,7 @@ class Executive: public PaidWorkers{
     }
 };
 
-class PolicyEngine{
+class PolicyEngine : public ActivityLog{
     private:
     int n_users;
     PaidWorkers* pw;
