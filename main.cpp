@@ -1,32 +1,81 @@
 #include<iostream>
+#include<fstream>
 #include<string>
 #include<cstring>
-#include<fstream>
 #include<iomanip>
-#include<ctime>
 #include<cstdlib>
+#include<ctime>
 using namespace std;
+
+void mainMenu();
+
 //starting the project
 
 // 14 classes ban chuki
 
-//check line 472 for the overloaded setsent_to();
 
-//added new data member points in paidworkers class
 
-// I am not creating register user function because no one will have a right to register a user, he or she can register himself as Executive if granted permission to register user
+
+//-------------Done--------------
+//Runtime polymorphism using base class pointers
+//Authentication done
+//Task Assingment
+//Min 3 level of inheritance
+
+
+
+//-------------In Progress------------
+//Activity Logs (AUDIT LOGOING)
+//Time To Live
+//Messages System                                                 ->Review Statment once again 
+//Tasks can be assigned priority levels: High, Medium, Low.
+//Encryption Key for Decrypting Private Messages, Intended Users functionality
+
+
+
+//-------------To Do------------
+//Task Deligation
+//Employee Performance (points) System
+//Global Notification System
+//ADD USER (HIRE NEW Subordinates)
+//Special Tasks for each position to justify hierarchical levels
+
+
+
+//------------Bouns------------
+//Digital signatures for task approvals (hash of username + timestamp)
+//Cycle detection in task delegation chains
+//Encrypted binary log file.
+// GUI-style dashboard using ASCII art and box formatting
+
+//------------------------------------------------------------------------------------------------------
+
+
+
+//check for the overloaded setsent_to(); //commented out, causing runtime error
+
+//added new data member points in paidworkers class int points and bool login
+
+
+/*Did some changes in inheritance of the user classes : PaidWorkers -> Junior -> Employee -> Manager -> Director -> Executive
+iska matlab ke mimimum 3 inheritance levels wali condtion meet hogai
+iss se koi as such farq nai pardhta but requirement thi
+technically agar Junior hai to woh Employee ke functions ko access nai kar sake ga by any means because it is a Parent class, parent ko apne childclass members ka access nai hotta
+but child class ko parent ke all protected data members ka access hotta 
+Employee inherited Junior,
+Manager inherited Employee,
+and so on till the Executive*/
+
+
 
 //still have to think about the unique ID system
 
-//User file i.e. executive.txt, data writing format : ID|Name|Position|Password|Salary|points
+//User files i.e. executive.txt, data writing format : ID|Name|Position|Password|Salary|points
 
-//Added class ActivityLog in Policy Engine Inheritance List 
+//Policy Engine now Inherits Activity Logs
 
-//Executive Will have full access
+//------------------------------------------------------------------------------------------------------
 
-//Director can create 
-
-void mainMenu();
 
 class task {
     string task_name;
@@ -109,6 +158,7 @@ class PaidWorkers{
         task* t;
         bool new_messages;
         int points; //Employee points added New Data member
+        bool login; //Login as data member to check on the run time in main menus if the user is logged in or not
 
     public:
         virtual void print() = 0;//making this an abstarct class we donot need an object of this class
@@ -160,6 +210,12 @@ class PaidWorkers{
         int getPoints(){
             return points;
         }
+        void setLogin(bool l){
+            login = l;
+        }
+        bool getLogin(){
+            return login;
+        }
 };
 
 class Junior: public PaidWorkers{
@@ -172,6 +228,8 @@ class Junior: public PaidWorkers{
         salary=1000.0;
         t=nullptr;
         new_messages=0;
+        points=0;
+        login=false;
 
     }
     Junior(int id,string n,string pass){
@@ -182,6 +240,8 @@ class Junior: public PaidWorkers{
         salary=1000.0;
         t=nullptr;
         new_messages=0;
+        points=0;
+        login=false;
     }
 
     virtual void print() override{
@@ -191,7 +251,7 @@ class Junior: public PaidWorkers{
     }
 };
 
-class Employee: public PaidWorkers{
+class Employee: public Junior{
     public:
     Employee(){
         ID=0;
@@ -201,6 +261,8 @@ class Employee: public PaidWorkers{
         salary=2000.0;
         t=nullptr;
         new_messages=0;
+        points=0;
+        login=false;
 
     }
     Employee(int id,string n,string pass){
@@ -211,6 +273,8 @@ class Employee: public PaidWorkers{
         salary=2000.0;
         t=nullptr;
         new_messages=0;
+        points=0;
+        login=false;
     }
 
     virtual void print() override{
@@ -220,7 +284,7 @@ class Employee: public PaidWorkers{
     }
 
 };
-class Manager: public PaidWorkers{
+class Manager: public Employee{
     public:
     Manager(){
         ID=0;
@@ -230,6 +294,8 @@ class Manager: public PaidWorkers{
         salary=3000.0;
         t=nullptr;
         new_messages=0;
+        points=0;
+        login=false;
 
     }
     Manager(int id,string n,string pass){
@@ -240,6 +306,8 @@ class Manager: public PaidWorkers{
         salary=3000.0;
         t=nullptr;
         new_messages=0;
+        points=0;
+        login=false;
     }
 
     virtual void print() override{
@@ -250,7 +318,7 @@ class Manager: public PaidWorkers{
 
 };
 
-class Director: public PaidWorkers{
+class Director: public Manager{
     public:
     Director(){
         ID=0;
@@ -260,7 +328,8 @@ class Director: public PaidWorkers{
         salary=4000.0;
         t=nullptr;
         new_messages=0;
-
+        points=0;
+        login=false;
     }
     Director(int id,string n,string pass){
         ID=id;
@@ -270,6 +339,8 @@ class Director: public PaidWorkers{
         salary=4000.0;
         t=nullptr;
         new_messages=0;
+        points=0;
+        login=false;
     }
 
     virtual void print() override{
@@ -279,7 +350,7 @@ class Director: public PaidWorkers{
     }
 
 };
-class Executive: public PaidWorkers , public ActivityLog{
+class Executive: public Director {
     public:
     Executive(){
         ID=0;
@@ -289,6 +360,8 @@ class Executive: public PaidWorkers , public ActivityLog{
         salary=5000.0;
         t=nullptr;
         new_messages=0;
+        points=0;
+        login=false;
 
     }
     Executive(int id,string n,string pass){
@@ -299,6 +372,8 @@ class Executive: public PaidWorkers , public ActivityLog{
         salary=5000.0;
         t=nullptr;
         new_messages=0;
+        points=0;
+        login=false;
     }
 
     virtual void print() override{
@@ -306,6 +381,64 @@ class Executive: public PaidWorkers , public ActivityLog{
             <<"ID : "<<ID<<endl
             <<"Position : "<<position<<endl;
     }
+};
+
+class ActivityLog{
+    protected:
+        int countLogs;
+        string* logs;
+    public:
+        ActivityLog(){
+            countLogs = 0;
+            logs = NULL;
+        }
+        void readSinginLogs()
+        {
+            if(countLogs != 0)
+            {
+                delete [] logs;
+                countLogs = 0;
+            }
+            ifstream in;
+            in.open("./signinlogs.txt", ios::in);
+            if (!in)
+            {
+                cout<<endl<<endl
+                    <<"Error Counting singin Logs!"<<endl<<endl;
+                return;
+            }
+            string line;
+            while(in>>line)
+            {
+                countLogs++;
+            }
+            in.close();
+            logs = new string [countLogs];
+            int i = 0;
+            in.open("./signinlogs.txt", ios::in);
+            if(!in)
+            {
+                cout<<endl<<endl
+                    <<"Error Reading singin Logs!"<<endl<<endl;
+                return;
+            }
+            while(in>>line)
+            {
+                logs[i] = line;
+                i++;
+            }
+            in.close();
+            return;
+        }
+        void displaySinginLogs()
+        {
+            readSinginLogs();
+            for(int i = 0; i < countLogs; i++)
+            {
+                cout<<logs[i]<<endl;
+            }
+        }
+    
 };
 
 class PolicyEngine : public ActivityLog{
@@ -524,6 +657,7 @@ class Authentication{
         int attempts;
         PaidWorkers* users;
         int OTP;
+        long long otptime;
         
         public:
         Authentication(){
@@ -531,6 +665,7 @@ class Authentication{
             users = NULL;
             OTP = 0;
             attempts = 1;
+            otptime = 0;
         }
         
         string hashedPassword(string& password)
@@ -602,8 +737,6 @@ class Authentication{
                     in.ignore(1);
                     in>>points;
                     in.ignore(1);
-
-                    cout<<id<<" "<<name<<" "<<position<<" "<<password<<" "<<salary<<" "<<points<<endl;
                     
                     //initializing data member array of paidworkers
                     users[i].setID(id);
@@ -819,10 +952,26 @@ class Authentication{
             return -1;
         }
         
+        bool OTP_TIME()
+        {
+            ifstream in("./OTP.txt");
+            int inOTP;
+            long long inTime;   //  to store the int form of current time
+            in >> inOTP;
+            in.ignore(1);
+            in >> inTime;
+            in.close();
+
+            // if more than 15 seconds have passed, expire it
+            return (difftime(time(0), inTime) <= 15.0);   //using a difftime() function from the predefined ctime library
+        }
+
         void otpGenerator()
         {
             srand(time(0));
             OTP = 100000 + rand() % 900000;
+            otptime = time(0);
+
             ofstream out;
             out.open("./OTP.txt", ios::out);
             if(!out)
@@ -831,12 +980,15 @@ class Authentication{
                     <<"Error opening OTP file"<<endl<<endl;
                 mainMenu();
             }
-            out<<OTP;
+
+            out<< OTP << "|" << otptime << endl;
             out.close();
         }
 
+
         PaidWorkers& login(string pos)  //string to check position
         {
+            bool login = false;
             string iname, ipassword;    //input name and input password
             cout<<"Enter your Username: ";
             cin>>iname;
@@ -849,30 +1001,42 @@ class Authentication{
                         <<"Too many attempts"<<endl
                         <<"Please try again later"<<endl;
                         attempts = 1;
-                    return;
+                        login = false;
+                        break;
                 }
                 else if(attempts <= 3 && attempts != 1)
                 {
-                    cout<<"Please Try Again!"<<endl;
+
+                    cout<<endl
+                        <<"Please Try Again!"<<endl;
                 }
                 if(index != -1)
                 {
                     cout<<endl
                     <<"Enter your Password: ";
                     cin>>ipassword;
-                    hashedPassword(ipassword);
+                    ipassword = hashedPassword(ipassword);
                     if(users[index].getPassword() == ipassword)
                     {
                         int otp = 0;
                         otpGenerator();
                         cout<<"Enter the OTP: ";
                         cin>>otp;
+
+                        if (!OTP_TIME()) {
+                            cout << "\n\nOTP Expired\nLogin Failed\n";
+                            remove("./OTP.txt");
+                            login = false;
+                            break;
+                        }
+
                         if(OTP == otp)
                         {
                             remove("./OTP.txt");
                             attempts = 1;
                             cout<<"Login Success"<<endl;
-                            return users[index];
+                            login = true;
+                            break;
                         }
                         else
                         {
@@ -880,7 +1044,8 @@ class Authentication{
                                 <<"OTP Incorrect"<<endl<<endl
                                 <<"Login Failed"<<endl<<endl;
                             remove("./OTP.txt");
-                            return;
+                            login = false;
+                            break;
                         }
                     }
                     else
@@ -895,70 +1060,37 @@ class Authentication{
                     cout<<endl<<endl
                     <<"User Doesn't Exist"<<endl
                     <<"Please Register User"<<endl;
-                    return;       
+                    login = false;
+                    break;
                 }
             }
-            return;
+            if(login == true)
+            {
+                users[index].setLogin(true);
+                return users[index];
+            }
+            else
+            {
+                mainMenu();
+            }
+            return users[index];
+        }
+        ~Authentication()
+        {
+            if(users != NULL)
+            {
+                delete[] users;
+                users = NULL;
+            }
         }
 };
 
-class ActivityLog{
-    protected:
-        int countLogs;
-        string* logs;
-    public:
-        ActivityLog(){
-            countLogs = 0;
-            logs = NULL;
-        }
-        void readSinginLogs()
-        {
-            if(countLogs != 0)
-            {
-                delete [] logs;
-                countLogs = 0;
-            }
-            ifstream in;
-            in.open("./signinlogs.txt", ios::in);
-            if (!in)
-            {
-                cout<<endl<<endl
-                    <<"Error Counting singin Logs!"<<endl<<endl;
-                return;
-            }
-            string line;
-            while(in>>line)
-            {
-                countLogs++;
-            }
-            in.close();
-            logs = new string [countLogs];
-            int i = 0;
-            in.open("./signinlogs.txt", ios::in);
-            if(!in)
-            {
-                cout<<endl<<endl
-                    <<"Error Reading singin Logs!"<<endl<<endl;
-                return;
-            }
-            while(in>>line)
-            {
-                logs[i] = line;
-                i++;
-            }
-            in.close();
-            return;
-        }
-        void displaySinginLogs()
-        {
-            readSinginLogs();
-            for(int i = 0; i < countLogs; i++)
-            {
-                cout<<logs[i]<<endl;
-            }
-        }
-    
-};
+
+void ExecutiveMenu(PaidWorkers* user);
+void DirectorMenu(PaidWorkers* user);
+void ManagerMenu(PaidWorkers* user);
+void EmployeeMenu(PaidWorkers* user);
+void JuniorMenu(PaidWorkers* user);
 
 int main()
 {
@@ -987,62 +1119,50 @@ void mainMenu()
         case 1:
         {
             Authentication auth;
-            ExecutiveMenu(auth.login("Executive"));
-            
+            PaidWorkers* pw = &auth.login("Executive");
+            if(pw->getLogin() == true)
+            {
+                ExecutiveMenu(pw);
+            }
+            break;
         }
         case 2:
         {
             Authentication auth;
-            if(auth.login("Director"))
+            PaidWorkers* pw = &auth.login("Director");
+            if(pw->getLogin() == true)
             {
-                cout<<"Login Successfull"<<endl;
-            }
-            else
-            {
-                cout<<"Login Failed"<<endl<<endl<<endl;
-                mainMenu();
+                DirectorMenu(pw);
             }
             break;
         }
         case 3:
         {
             Authentication auth;
-            if(auth.login("Manager"))
+            PaidWorkers* pw = &auth.login("Manager");
+            if(pw->getLogin() == true)
             {
-                cout<<"Login Successfull"<<endl;
-            }
-            else
-            {
-                cout<<"Login Failed"<<endl<<endl<<endl;
-                mainMenu();
+                ManagerMenu(pw);
             }
             break;
         }
         case 4:
         {
             Authentication auth;
-            if(auth.login("Employee"))
+            PaidWorkers* pw = &auth.login("Employee");
+            if(pw->getLogin() == true)
             {
-                cout<<"Login Successfull"<<endl;
-            }
-            else
-            {
-                cout<<"Login Failed"<<endl<<endl<<endl;
-                mainMenu();
+                EmployeeMenu(pw);
             }
             break;
         }
         case 5:
         {
             Authentication auth;
-            if(auth.login("Junior"))
+            PaidWorkers* pw = &auth.login("Junior");
+            if(pw->getLogin() == true)
             {
-                cout<<"Login Successfull"<<endl;
-            }
-            else
-            {
-                cout<<"Login Failed"<<endl<<endl<<endl;
-                mainMenu();
+                JuniorMenu(pw);
             }
             break;
         }
@@ -1098,6 +1218,170 @@ void ExecutiveMenu(PaidWorkers* pw)
         {
             cout<<"Invalid Option"<<endl<<endl<<endl;
             ExecutiveMenu(pw);
+        }
+    }
+}
+void DirectorMenu(PaidWorkers* pw)
+{
+    PolicyEngine pe(pw);
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Director Menu                    #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            DirectorMenu(pw);
+        }
+    }
+}
+void ManagerMenu(PaidWorkers* pw)
+{
+    PolicyEngine pe(pw);
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Manager Menu                     #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            ManagerMenu(pw);
+        }
+    }
+}
+void EmployeeMenu(PaidWorkers* pw)
+{
+    PolicyEngine pe(pw);
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Employee Menu                    #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            EmployeeMenu(pw);
+        }
+    }
+}
+void JuniorMenu(PaidWorkers* pw)
+{
+    PolicyEngine pe(pw);
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Junior Menu                      #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            JuniorMenu(pw);
         }
     }
 }
