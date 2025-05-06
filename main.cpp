@@ -515,6 +515,42 @@ class PolicyEngine : public ActivityLog{
         }
     }
 
+    bool can_send_info(PaidWorkers *p){
+        PolicyEngine pe(p);
+        if(pe.accessLevel < accessLevel){
+             cout<<"You have permission to send information to all "<<p->getPosition()<<endl;
+            
+             INFO* info=new 
+             string name;
+             getline(cin, name);
+             t->setTaskName(name);
+             cout<<"Enter Task Description: ";
+             string description;
+             getline(cin, description);
+             t->setTaskDescription(description);
+             t->setTaskStatus("Assigned");
+             t->setTaskAssignedBy(pw->getName());
+             t->setTaskAssignedTo(p->getName());
+             cout<<"Enter TTL Time: ";
+             int TTL;
+             // I will  start working here for the TTL Assingment ( EXPIREIE DATE )
+             cin>>TTL;
+             t->setTTLTime(TTL);
+             p->setTask(t);
+             cout<<"Task Assigned Successfully"<<endl;
+             cout<<"\n\n===========Task Details============ "<<endl;
+             t->printTask();
+             cout<<"===================================="<<endl;
+             p->setTask(t);
+ 
+             return true;
+         }
+         else{
+             cout<<"You do not have permission to assign task to this user"<<endl;
+             return false;
+         }
+    }
+
 };
 
 class Messages{
@@ -1181,16 +1217,72 @@ void mainMenu()
     }
 }
 
+
+ void show_Message_menu(){
+    cout<<endl<<endl<<endl;
+    cout
+    <<"                              #===============================================#"<<endl
+    <<"                              #               Message Menu                    #"<<endl
+    <<"                              #===============================================#"<<endl
+    <<"                              #          Press 1 to send INFO                 #"<<endl
+    <<"                              #          Press 2 to send a private message    #"<<endl
+    <<"                              #          Press 3 to send an Alert             #"<<endl
+    <<"                              #          Press 4 to view Info                 #"<<endl
+    <<"                              #          Press 5 to view private Message      #"<<endl
+    <<"                              #          Press 6 to Exit                      #"<<endl
+    <<"                              #===============================================#"<<endl<<endl<<endl;
+
+    int choice1;
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        case 5:
+        {
+            break;
+        }
+        case 6:
+        {
+            cout<<endl
+                <<"Have a Good Day!"<<endl<<endl<<endl;
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            mainMenu();
+        }
+    }
+}
+
 void ExecutiveMenu(PaidWorkers* pw)
 {
-    PolicyEngine pe(pw);
     int choice1 = 0;
     cout<<endl<<endl<<endl;
     cout<<"                              #===========================================#"<<endl
     <<"                              #          Executive Menu                   #"<<endl
     <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 1 to View Massanges        #"<<endl
     <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 3 to Add New           #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
     <<"                              #          Press 4 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
@@ -1200,15 +1292,18 @@ void ExecutiveMenu(PaidWorkers* pw)
     switch(choice1)
     {
         case 1:
-        {
+        {   
+            
             break;
         }
         case 2:
         {
+
             break;
         }
         case 3:
         {
+
             break;
         }
         case 4:
@@ -1233,7 +1328,8 @@ void DirectorMenu(PaidWorkers* pw)
     <<"                              #          Press 1 to View All Tasks        #"<<endl
     <<"                              #          Press 2 to View My Tasks         #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
-    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #          Press 4 to Send Message          #"<<endl
+    <<"                              #          Press 5 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
 
     cout<<"Press your option to continue: ";
@@ -1242,6 +1338,7 @@ void DirectorMenu(PaidWorkers* pw)
     {
         case 1:
         {
+            
             break;
         }
         case 2:
