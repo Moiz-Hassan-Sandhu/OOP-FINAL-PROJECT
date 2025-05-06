@@ -442,116 +442,7 @@ class ActivityLog{
     
 };
 
-class PolicyEngine : public ActivityLog{
-    private:
-    int n_users;
-    PaidWorkers* pw;
-    int accessLevel;
-    string position;
-    
-    public:
-    PolicyEngine(PaidWorkers* p){
-        pw = p;
-        if(pw->getPosition() == "Junior"){
-            accessLevel = 1;
-        }
-        else if(pw->getPosition() == "Employee"){
-            accessLevel = 2;
-        }
-        else if(pw->getPosition() == "Manager"){
-            accessLevel = 3;
-        }
-        else if(pw->getPosition() == "Director"){
-            accessLevel = 4;
-        }
-        else if(pw->getPosition() == "Executive"){
-            accessLevel = 5;
-        }
-        else{
-            cout<<"Invalid Position"<<endl;
-        }
-    }
 
-    int getAccessLevel(){
-        return accessLevel;
-    }
-    string getPosition(){
-        return position;
-    }
-
-    bool Assign_Task(PaidWorkers* p){
-       PolicyEngine pe(p);
-       if(pe.accessLevel <= accessLevel){
-            cout<<"You have permission to assign task to this user"<<endl;
-            task* t = new task;
-            cout<<"Enter Task Name: ";
-            string name;
-            getline(cin, name);
-            t->setTaskName(name);
-            cout<<"Enter Task Description: ";
-            string description;
-            getline(cin, description);
-            t->setTaskDescription(description);
-            t->setTaskStatus("Assigned");
-            t->setTaskAssignedBy(pw->getName());
-            t->setTaskAssignedTo(p->getName());
-            cout<<"Enter TTL Time: ";
-            int TTL;
-            // I will  start working here for the TTL Assingment ( EXPIREIE DATE )
-            cin>>TTL;
-            t->setTTLTime(TTL);
-            p->setTask(t);
-            cout<<"Task Assigned Successfully"<<endl;
-            cout<<"\n\n===========Task Details============ "<<endl;
-            t->printTask();
-            cout<<"===================================="<<endl;
-            p->setTask(t);
-
-            return true;
-        }
-        else{
-            cout<<"You do not have permission to assign task to this user"<<endl;
-            return false;
-        }
-    }
-
-    bool can_send_info(PaidWorkers *p){
-        PolicyEngine pe(p);
-        if(pe.accessLevel < accessLevel){
-             cout<<"You have permission to send information to all "<<p->getPosition()<<endl;
-            
-             INFO* info=new 
-             string name;
-             getline(cin, name);
-             t->setTaskName(name);
-             cout<<"Enter Task Description: ";
-             string description;
-             getline(cin, description);
-             t->setTaskDescription(description);
-             t->setTaskStatus("Assigned");
-             t->setTaskAssignedBy(pw->getName());
-             t->setTaskAssignedTo(p->getName());
-             cout<<"Enter TTL Time: ";
-             int TTL;
-             // I will  start working here for the TTL Assingment ( EXPIREIE DATE )
-             cin>>TTL;
-             t->setTTLTime(TTL);
-             p->setTask(t);
-             cout<<"Task Assigned Successfully"<<endl;
-             cout<<"\n\n===========Task Details============ "<<endl;
-             t->printTask();
-             cout<<"===================================="<<endl;
-             p->setTask(t);
- 
-             return true;
-         }
-         else{
-             cout<<"You do not have permission to assign task to this user"<<endl;
-             return false;
-         }
-    }
-
-};
 
 class Messages{
     protected:
@@ -684,7 +575,107 @@ class ALERT:public Messages{
             isRead = true;
         }
 };
+class PolicyEngine : public ActivityLog{
+    private:
+    int n_users;
+    PaidWorkers* pw;
+    int accessLevel;
+    string position;
+    
+    public:
+    PolicyEngine(PaidWorkers* p){
+        pw = p;
+        if(pw->getPosition() == "Junior"){
+            accessLevel = 1;
+        }
+        else if(pw->getPosition() == "Employee"){
+            accessLevel = 2;
+        }
+        else if(pw->getPosition() == "Manager"){
+            accessLevel = 3;
+        }
+        else if(pw->getPosition() == "Director"){
+            accessLevel = 4;
+        }
+        else if(pw->getPosition() == "Executive"){
+            accessLevel = 5;
+        }
+        else{
+            cout<<"Invalid Position"<<endl;
+        }
+    }
 
+    int getAccessLevel(){
+        return accessLevel;
+    }
+    string getPosition(){
+        return position;
+    }
+
+    bool Assign_Task(PaidWorkers* p){
+       PolicyEngine pe(p);
+       if(pe.accessLevel <= accessLevel){
+            cout<<"You have permission to assign task to this user"<<endl;
+            task* t = new task;
+            cout<<"Enter Task Name: ";
+            string name;
+            getline(cin, name);
+            t->setTaskName(name);
+            cout<<"Enter Task Description: ";
+            string description;
+            getline(cin, description);
+            t->setTaskDescription(description);
+            t->setTaskStatus("Assigned");
+            t->setTaskAssignedBy(pw->getName());
+            t->setTaskAssignedTo(p->getName());
+            cout<<"Enter TTL Time: ";
+            int TTL;
+            // I will  start working here for the TTL Assingment ( EXPIREIE DATE )
+            cin>>TTL;
+            t->setTTLTime(TTL);
+            p->setTask(t);
+            cout<<"Task Assigned Successfully"<<endl;
+            cout<<"\n\n===========Task Details============ "<<endl;
+            t->printTask();
+            cout<<"===================================="<<endl;
+            p->setTask(t);
+
+            return true;
+        }
+        else{
+            cout<<"You do not have permission to assign task to this user"<<endl;
+            return false;
+        }
+    }
+
+    bool can_send_info(PaidWorkers *p){
+        PolicyEngine pe(p);
+        if(pe.accessLevel < accessLevel){
+             cout<<"\nYou have permission to send information to all "<<p->getPosition()<<endl;
+
+             cout<<"\nEnter the Information: ";
+                string info_message;
+                cin.ignore(); // Clear the newline character from the input buffer
+                getline(cin, info_message);
+             INFO* info=new INFO(info_message,pw->getPosition(),p->getPosition());
+             //writing the info message to the file
+                ofstream out("Info.txt",ios::app);
+                if(!out){
+                    cout<<"Error opening file"<<endl;
+                    return false;
+                }
+                out<<info->getSender()<<"|"<<info->getReceiver()<<"|"<<info->getMessage()<<"|"<<info->getIsRead()<<endl;    
+                out.close();
+                cout<<"Information sent successfully!"<<endl;
+             return true;
+         }
+         else{
+             cout<<"You do not have permission to send information to the following workers"<<endl;
+             return false;
+         }
+    }
+
+};
 
 class Authentication{
     protected:
@@ -1218,7 +1209,7 @@ void mainMenu()
 }
 
 
- void show_Message_menu(){
+ void show_Message_menu(PaidWorkers * pw){
     cout<<endl<<endl<<endl;
     cout
     <<"                              #===============================================#"<<endl
@@ -1239,6 +1230,56 @@ void mainMenu()
     {
         case 1:
         {
+            PolicyEngine pe(pw);
+            cout<<"Which class of pleople you want to send message to?"<<endl
+                <<"Press 1 for Junior"<<endl
+                <<"Press 2 for Employee"<<endl
+                <<"Press 3 for Manager"<<endl
+                <<"Press 4 for Director"<<endl
+                <<"Press 5 for Executive"<<endl;
+            int choice2;
+            cout<<"Press your option to continue: ";
+            cin>>choice2;
+            PaidWorkers* p = NULL;
+            if(choice2 == 1)
+            {
+                cout<<"Sending message to Junior"<<endl;
+                p = new Junior;
+
+            }
+            else if(choice2 == 2)
+            {
+                cout<<"Sending message to Employee"<<endl;
+                p = new Employee;
+            }
+            else if(choice2 == 3)
+            {
+                cout<<"Sending message to Manager"<<endl;
+                p = new Manager;
+            }
+            else if(choice2 == 4)
+            {
+                cout<<"Sending message to Director"<<endl;
+                p = new Director;
+            }
+            else if(choice2 == 5)
+            {
+                cout<<"Sending message to Executive"<<endl;
+                p = new Executive;
+            }
+            else
+            {
+                cout<<"Invalid Option"<<endl<<endl<<endl;
+                show_Message_menu(pw);
+            }
+            if(pe.can_send_info(p) == true)
+            {
+                cout<<"Message Sent Successfully!"<<endl;
+            }
+            else
+            {
+                cout<<"Message Sending Failed!"<<endl;
+            }
             
             break;
         }
@@ -1279,7 +1320,7 @@ void ExecutiveMenu(PaidWorkers* pw)
     cout<<"                              #===========================================#"<<endl
     <<"                              #          Executive Menu                   #"<<endl
     <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to View Massanges        #"<<endl
+    <<"                              #          Press 1 to View Messages        #"<<endl
     <<"                              #          Press 2 to View My Tasks         #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
     <<"                              #          Press 3 to Add New           #"<<endl
@@ -1293,7 +1334,7 @@ void ExecutiveMenu(PaidWorkers* pw)
     {
         case 1:
         {   
-            
+            show_Message_menu(pw);
             break;
         }
         case 2:
@@ -1325,7 +1366,7 @@ void DirectorMenu(PaidWorkers* pw)
     cout<<"                              #===========================================#"<<endl
     <<"                              #          Director Menu                    #"<<endl
     <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 1 to see messages          #"<<endl
     <<"                              #          Press 2 to View My Tasks         #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
     <<"                              #          Press 4 to Send Message          #"<<endl
@@ -1338,6 +1379,7 @@ void DirectorMenu(PaidWorkers* pw)
     {
         case 1:
         {
+            show_Message_menu(pw);
             
             break;
         }
