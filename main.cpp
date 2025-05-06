@@ -21,16 +21,17 @@ void mainMenu();
 //Runtime polymorphism using base class pointers
 //Authentication done
 //Task Assingment
-//Min 3 level of inheritance
+//Min 3 level of inheritance (We just have to assign special tasks to users)
 
 
 
 //-------------In Progress------------
 //Activity Logs (AUDIT LOGOING)
 //Time To Live
-//Messages System                                                 ->Review Statment once again 
+//Messages System                                                              ----->Review Statment once again 
 //Tasks can be assigned priority levels: High, Medium, Low.
 //Encryption Key for Decrypting Private Messages, Intended Users functionality
+//Info
 
 
 
