@@ -5,6 +5,7 @@
 #include<iomanip>
 #include<cstdlib>
 #include<ctime>
+//check1
 using namespace std;
 
 void mainMenu();
