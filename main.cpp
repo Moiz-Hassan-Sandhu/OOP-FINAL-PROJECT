@@ -8,7 +8,6 @@
 //check1
 using namespace std;
 
-void mainMenu();
 
 //starting the project
 
@@ -1110,13 +1109,21 @@ class Authentication{
         }
 };
 
-
+void mainMenu();
 void ExecutiveMenu(PaidWorkers* user);
 void DirectorMenu(PaidWorkers* user);
 void ManagerMenu(PaidWorkers* user);
 void EmployeeMenu(PaidWorkers* user);
 void JuniorMenu(PaidWorkers* user);
 
+void show_Message_menu(PaidWorkers * pw);
+
+
+
+
+
+
+//-----------------------------------Code Execution start from here--------------------------------
 int main()
 {
     mainMenu();
@@ -1204,8 +1211,6 @@ void mainMenu()
         }
     }
 }
-
- 
 
 void ExecutiveMenu(PaidWorkers* pw)
 {
@@ -1296,8 +1301,7 @@ void DirectorMenu(PaidWorkers* pw)
         }
     }
 }
-void ManagerMenu(PaidWorkers* pw)
-{
+void ManagerMenu(PaidWorkers* pw){
     PolicyEngine pe(pw);
     int choice1 = 0;
     cout<<endl<<endl<<endl;
@@ -1337,7 +1341,6 @@ void ManagerMenu(PaidWorkers* pw)
         }
     }
 }
-//sending code
 
 void EmployeeMenu(PaidWorkers* pw)
 {
@@ -1423,7 +1426,8 @@ void JuniorMenu(PaidWorkers* pw)
 }
 
 
-void show_Message_menu(PaidWorkers * pw){
+void show_Message_menu(PaidWorkers * pw)
+{
     cout<<endl<<endl<<endl;
     cout
     <<"                              #===============================================#"<<endl
@@ -1486,6 +1490,7 @@ void show_Message_menu(PaidWorkers * pw){
                 cout<<"Invalid Option"<<endl<<endl<<endl;
                 show_Message_menu(pw);
             }
+
             if(pe.can_send_info(p) == true)
             {
                 cout<<"Message Sent Successfully!"<<endl;
@@ -1499,21 +1504,11 @@ void show_Message_menu(PaidWorkers * pw){
         }
         case 2:
         {
+            cout<<"-------------Returning to main menu-------------"<<endl<<endl;
+            mainMenu();
             break;
         }
         case 3:
-        {
-            break;
-        }
-        case 4:
-        {
-            break;
-        }
-        case 5:
-        {
-            break;
-        }
-        case 6:
         {
             cout<<endl
                 <<"Have a Good Day!"<<endl<<endl<<endl;
