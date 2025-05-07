@@ -149,7 +149,6 @@ class task {
     }
 };
 
-
 class PaidWorkers{
     protected:
         int ID;
@@ -387,15 +386,26 @@ class Executive: public Director {
 };
 
 class ActivityLog{
-    protected:
+    protected::
         int countLogs;
         int* threatLevel;
         string* logs;
+        string outlog;
     public:
         ActivityLog(){
             countLogs = 0;
             threatLevel = NULL;
             logs = NULL;
+            outlog = "";
+        }
+        ActivityLog(string l) : outlog(l){}
+
+        string getCurrentTime() const {         //just to get the newtime without getting the new line character at the end od the current time
+            time_t now = time(0);                 //current time stamp to now in long long int form
+            string newtime = ctime(&now);        //current timestamp to string
+            if (!newtime.empty() && newtime.back() == '\n') //if string is not empty and the last char is '\n'
+                newtime.pop_back();                         //then remove that charachter
+            return newtime;                                 //return newtime
         }
         void readSinginLogs()
         {
@@ -405,7 +415,7 @@ class ActivityLog{
                 countLogs = 0;
             }
             ifstream in;
-            in.open("./signinlogs.txt", ios::in);
+            in.open("./Activitylogs.txt", ios::in);
             if (!in)
             {
                 cout<<endl<<endl
@@ -422,7 +432,7 @@ class ActivityLog{
             logs = new string [countLogs];
             threatLevel = new int [countLogs]();
             int i = 0;
-            in.open("./signinlogs.txt", ios::in);
+            in.open("./Activitylogs.txt", ios::in);
             if(!in)
             {
                 cout<<endl<<endl
@@ -439,30 +449,28 @@ class ActivityLog{
             in.close();
             return;
         }
-        friend ostream& operator<<(ostream& out, ActivityLog& read);
+        outlog = "";
+        friend ostream& operator<<(ostream& out, ActivityLog& write);
 
-        void writeLog(string log)
-        {
-            ofstream out;
-            out.open("./signinlogs.txt", ios::app);
-            if(!out)
-            {
-                cout<<endl<<endl
-                    <<"Error Writing singin Logs!"<<endl<<endl;
-                return;
-            }
-            out<<log<<endl;
-            out.close();
-        }
+        // void writeLog(string log)
+        // {
+        //     ofstream out;
+        //     out.open("./signinlogs.txt", ios::app);
+        //     if(!out)
+        //     {
+        //         cout<<endl<<endl
+        //             <<"Error Writing singin Logs!"<<endl<<endl;
+        //         return;
+        //     }
+        //     out<<log<<endl;
+        //     out.close();
+        // }
+        
 };
 
-ostream& operator<<(ostream& out, ActivityLog& read)
+ostream& operator<<(ostream& out, ActivityLog& write)
 {
-    read.readSinginLogs();
-    for(int i = 0; i < read.countLogs; i++)
-    {
-        out<<read.logs[i]<<" Threat Level: "<< read.threatLevel[i]<<endl;
-    }
+    out << outlog;
     return out;
 }
 
@@ -1063,7 +1071,7 @@ class Authentication : public ActivityLog{
             in.close();
 
             // if more than 15 seconds have passed, expire it
-            return (difftime(time(0), inTime) <= 15.0);   //using a difftime() function from the predefined ctime library
+            return (difftime(time(0), inTime) <= 30.0);   //using a difftime() function from the predefined ctime library
         }
         
         void otpGenerator()
@@ -1097,8 +1105,11 @@ class Authentication : public ActivityLog{
             {
                 if(attempts>3)
                 {
-                    time_t now;
-                    writeLog(users[index].getName() + "Failed to login (Too many attempts)!" "  " + ctime(&now));
+                    ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed (Too many attempts)! " +  " |1\n");
+                    fstream writelog;
+                    writelog.open("./ActivityLog.txt", ios::app);
+                    writelog << logging;
+                    writelog.close();
                     cout<<endl<<endl
                         <<"Too many attempts"<<endl
                         <<"Please try again later"<<endl;
@@ -1129,13 +1140,17 @@ class Authentication : public ActivityLog{
                         if(OTP == otp)
                         {
                             remove("./OTP.txt");
-                            attempts = 1;
+                            attempts = 0;
                             cout<<"Login Success"<<endl;
                             login = true;
+                            time_t now;
+                            writeLog(string(ctime(&now)) + ", " + users[index].getName() + " Logged in Successfully! " +  " |0\n");
                             break;
                         }
                         else
                         {
+                            time_t now;
+                            writeLog(string(ctime(&now)) + ", " + users[index].getName() + " Failed to login (Incorrect OTP)! " +  " |1\n");
                             cout<<endl<<endl
                                 <<"OTP Incorrect"<<endl<<endl
                                 <<"Login Failed"<<endl<<endl;
@@ -1146,6 +1161,8 @@ class Authentication : public ActivityLog{
                     }
                     else
                     {
+                        time_t now;
+                        writeLog(string(ctime(&now)) + ", " + users[index].getName() + " Failed to login (Incorrect password)! " +  " |2\n");       //|2    is threat level which would be scanned to generrate the auudit reports and to generate Threat Alerts
                         cout<<endl<<endl
                             <<"Password Incorrect"<<endl<<endl
                             <<"Please try again"<<endl<<endl;
