@@ -388,12 +388,10 @@ class Executive: public Director {
 class ActivityLog{
     protected:
         int countLogs;
-        int* threatLevel;
         string* logs;
     public:
         ActivityLog(){
             countLogs = 0;
-            threatLevel = NULL;
             logs = NULL;
         }
         void readSinginLogs()
@@ -417,7 +415,6 @@ class ActivityLog{
                 countLogs++;
             }
             in.close();
-
             logs = new string [countLogs];
             int i = 0;
             in.open("./signinlogs.txt", ios::in);
@@ -427,33 +424,24 @@ class ActivityLog{
                     <<"Error Reading singin Logs!"<<endl<<endl;
                 return;
             }
-            while(getline(in, line, '|'))
+            while(in>>line)
             {
                 logs[i] = line;
-                in>>threatLevel[i];
-                in.ignore(1);   //|
                 i++;
             }
             in.close();
             return;
         }
-        friend ostream& operator<<(ostream& out, ActivityLog& read);
-
-        void writeLog(string log)
+        void displaySinginLogs()
         {
-            
+            readSinginLogs();
+            for(int i = 0; i < countLogs; i++)
+            {
+                cout<<logs[i]<<endl;
+            }
         }
+    
 };
-
-ostream& operator<<(ostream& out, ActivityLog& read)
-{
-    read.readSinginLogs();
-    for(int i = 0; i < read.countLogs; i++)
-    {
-        out<<read.logs[i]<<" Threat Level: "<< read.threatLevel[i]<<endl;
-    }
-    return out;
-}
 
 
 
@@ -1046,6 +1034,7 @@ class Authentication{
                         login = false;
                         break;
                 }
+
                 if(index != -1)
                 {
                     cout<<endl
