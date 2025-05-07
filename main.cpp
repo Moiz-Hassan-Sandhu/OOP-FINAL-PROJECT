@@ -1286,7 +1286,6 @@ void mainMenu()
 
 void readingInfoFile(PaidWorkers* pw)
 {
-    // Open the file for reading
     ifstream in("Info.txt");
     if (!in) {
         cout << "Error opening Info.txt\n";
@@ -1294,34 +1293,31 @@ void readingInfoFile(PaidWorkers* pw)
         return;
     }
 
-    // Variables to hold each field
-    string sender;
-    string sendersPosition;
-    string receiver;
-    string message;
-    string isRead;
-    string dateTime;
+    // temp variables
+    string sender,
+           sendersPosition,
+           receiver,
+           message,
+           isRead,
+           dateTime;
 
-    // Read until EOF
-    while (true) {
-        // 1) Read 'sender' up to the first '|'
-        if (!getline(in, sender, '|')) 
-            break;           // no more records
+    bool foundAny = false;
 
-        // 2) Read each subsequent field up to the next '|'
-        getline(in, sendersPosition, '|');
-        getline(in, receiver,        '|');
-        getline(in, message,         '|');
-        getline(in, isRead,          '|');
-        
-        // 3) The last field goes until end-of-line
-        getline(in, dateTime);
+    // keep looping as long as we can read ALL six parts
+    while (   getline(in, sender,        '|')
+           && getline(in, sendersPosition,'|')
+           && getline(in, receiver,       '|')
+           && getline(in, message,        '|')
+           && getline(in, isRead,         '|')
+           && getline(in, dateTime)  // up to EOL
+          )
+    {
+        // strip any stray '\r' (if your file has Windows CRLF)
+        if (!receiver.empty() && receiver.back() == '\r')
+            receiver.pop_back();
 
-        // 4) Now you have all six strings populated:
-        //    sender, sendersPosition, receiver, message, isRead, dateTime
-
-        // 5) If this record is for our worker, print it:
-        if (pw->getPosition() == receiver) {
+        if (receiver == pw->getPosition()) {
+            foundAny = true;
             cout << "-----------------------------\n"
                  << "Sender:          " << sender          << "\n"
                  << "Position:        " << sendersPosition << "\n"
@@ -1330,8 +1326,12 @@ void readingInfoFile(PaidWorkers* pw)
                  << "Date & Time:     " << dateTime        << "\n";
         }
     }
-    // 'in' closes itself when the function ends
+
+    if (!foundAny) {
+        cout << "\nNo messages found for " << pw->getName() << "\n";
+    }
 }
+
 void ExecutiveMenu(PaidWorkers* pw)
 {
     int choice1 = 0;
