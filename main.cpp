@@ -693,7 +693,7 @@ class Authentication{
             usercount = 0;
             users = NULL;
             OTP = 0;
-            attempts = 1;
+            attempts = 0;
             otptime = 0;
         }
         
@@ -1029,16 +1029,11 @@ class Authentication{
                     cout<<endl<<endl
                         <<"Too many attempts"<<endl
                         <<"Please try again later"<<endl;
-                        attempts = 1;
+                        attempts = 0;
                         login = false;
                         break;
                 }
-                else if(attempts <= 3 && attempts != 1)
-                {
 
-                    cout<<endl
-                        <<"Please Try Again!"<<endl;
-                }
                 if(index != -1)
                 {
                     cout<<endl
@@ -1080,7 +1075,8 @@ class Authentication{
                     else
                     {
                         cout<<endl<<endl
-                        <<"Password Incorrect"<<endl;
+                            <<"Password Incorrect"<<endl<<endl
+                            <<"Please try again"<<endl<<endl;
                         attempts++;
                     }
                 }
@@ -1209,110 +1205,7 @@ void mainMenu()
     }
 }
 
-
- void show_Message_menu(PaidWorkers * pw){
-    cout<<endl<<endl<<endl;
-    cout
-    <<"                              #===============================================#"<<endl
-    <<"                              #               Message Menu                    #"<<endl
-    <<"                              #===============================================#"<<endl
-    <<"                              #          Press 1 to send INFO                 #"<<endl
-    <<"                              #          Press 2 to send a private message    #"<<endl
-    <<"                              #          Press 3 to send an Alert             #"<<endl
-    <<"                              #          Press 4 to view Info                 #"<<endl
-    <<"                              #          Press 5 to view private Message      #"<<endl
-    <<"                              #          Press 6 to Exit                      #"<<endl
-    <<"                              #===============================================#"<<endl<<endl<<endl;
-
-    int choice1;
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
-    switch(choice1)
-    {
-        case 1:
-        {
-            PolicyEngine pe(pw);
-            cout<<"Which class of pleople you want to send message to?"<<endl
-                <<"Press 1 for Junior"<<endl
-                <<"Press 2 for Employee"<<endl
-                <<"Press 3 for Manager"<<endl
-                <<"Press 4 for Director"<<endl
-                <<"Press 5 for Executive"<<endl;
-            int choice2;
-            cout<<"Press your option to continue: ";
-            cin>>choice2;
-            PaidWorkers* p = NULL;
-            if(choice2 == 1)
-            {
-                cout<<"Sending message to Junior"<<endl;
-                p = new Junior;
-
-            }
-            else if(choice2 == 2)
-            {
-                cout<<"Sending message to Employee"<<endl;
-                p = new Employee;
-            }
-            else if(choice2 == 3)
-            {
-                cout<<"Sending message to Manager"<<endl;
-                p = new Manager;
-            }
-            else if(choice2 == 4)
-            {
-                cout<<"Sending message to Director"<<endl;
-                p = new Director;
-            }
-            else if(choice2 == 5)
-            {
-                cout<<"Sending message to Executive"<<endl;
-                p = new Executive;
-            }
-            else
-            {
-                cout<<"Invalid Option"<<endl<<endl<<endl;
-                show_Message_menu(pw);
-            }
-            if(pe.can_send_info(p) == true)
-            {
-                cout<<"Message Sent Successfully!"<<endl;
-            }
-            else
-            {
-                cout<<"Message Sending Failed!"<<endl;
-            }
-            
-            break;
-        }
-        case 2:
-        {
-            break;
-        }
-        case 3:
-        {
-            break;
-        }
-        case 4:
-        {
-            break;
-        }
-        case 5:
-        {
-            break;
-        }
-        case 6:
-        {
-            cout<<endl
-                <<"Have a Good Day!"<<endl<<endl<<endl;
-            break;
-        }
-        default:
-        {
-            cout<<"Invalid Option"<<endl<<endl<<endl;
-            mainMenu();
-        }
-    }
-}
+ 
 
 void ExecutiveMenu(PaidWorkers* pw)
 {
@@ -1525,6 +1418,111 @@ void JuniorMenu(PaidWorkers* pw)
         {
             cout<<"Invalid Option"<<endl<<endl<<endl;
             JuniorMenu(pw);
+        }
+    }
+}
+
+
+void show_Message_menu(PaidWorkers * pw){
+    cout<<endl<<endl<<endl;
+    cout
+    <<"                              #===============================================#"<<endl
+    <<"                              #               Message Menu                    #"<<endl
+    <<"                              #===============================================#"<<endl
+    <<"                              #          Press 1 to send INFO                 #"<<endl
+    <<"                              #          Press 2 to send a private message    #"<<endl
+    <<"                              #          Press 3 to send an Alert             #"<<endl
+    <<"                              #          Press 4 to view Info                 #"<<endl
+    <<"                              #          Press 5 to view private Message      #"<<endl
+    <<"                              #          Press 6 to Exit                      #"<<endl
+    <<"                              #===============================================#"<<endl<<endl<<endl;
+
+    int choice1;
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            PolicyEngine pe(pw);
+            cout<<"Which class of pleople you want to send message to?"<<endl
+                <<"Press 1 for Junior"<<endl
+                <<"Press 2 for Employee"<<endl
+                <<"Press 3 for Manager"<<endl
+                <<"Press 4 for Director"<<endl
+                <<"Press 5 for Executive"<<endl;
+            int choice2;
+            cout<<"Press your option to continue: ";
+            cin>>choice2;
+            PaidWorkers* p = NULL;
+            if(choice2 == 1)
+            {
+                cout<<"Sending message to Junior"<<endl;
+                p = new Junior;
+
+            }
+            else if(choice2 == 2)
+            {
+                cout<<"Sending message to Employee"<<endl;
+                p = new Employee;
+            }
+            else if(choice2 == 3)
+            {
+                cout<<"Sending message to Manager"<<endl;
+                p = new Manager;
+            }
+            else if(choice2 == 4)
+            {
+                cout<<"Sending message to Director"<<endl;
+                p = new Director;
+            }
+            else if(choice2 == 5)
+            {
+                cout<<"Sending message to Executive"<<endl;
+                p = new Executive;
+            }
+            else
+            {
+                cout<<"Invalid Option"<<endl<<endl<<endl;
+                show_Message_menu(pw);
+            }
+            if(pe.can_send_info(p) == true)
+            {
+                cout<<"Message Sent Successfully!"<<endl;
+            }
+            else
+            {
+                cout<<"Message Sending Failed!"<<endl;
+            }
+            
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        case 5:
+        {
+            break;
+        }
+        case 6:
+        {
+            cout<<endl
+                <<"Have a Good Day!"<<endl<<endl<<endl;
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            mainMenu();
         }
     }
 }
