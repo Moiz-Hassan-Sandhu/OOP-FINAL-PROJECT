@@ -534,11 +534,6 @@ class INFO:public Messages{
 
 };
 
-#include <iostream>
-#include <fstream>
-#include <string>
-using namespace std;
-
 class PRIVATE : public Messages {
 private:
     string encrypted_message;
@@ -1551,7 +1546,6 @@ void JuniorMenu(PaidWorkers* pw)
         }
     }
 }
-
 
 void show_Message_menu(PaidWorkers * pw)
 {
