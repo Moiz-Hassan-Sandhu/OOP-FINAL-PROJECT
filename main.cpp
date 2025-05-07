@@ -419,6 +419,7 @@ class ActivityLog{
             in.close();
 
             logs = new string [countLogs];
+            threatLevel = new int [countLogs]();
             int i = 0;
             in.open("./signinlogs.txt", ios::in);
             if(!in)
