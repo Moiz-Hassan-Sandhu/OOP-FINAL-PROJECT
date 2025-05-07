@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<string>
+#include<sstream>
 #include<cstring>
 #include<iomanip>
 #include<cstdlib>
@@ -499,13 +500,19 @@ class Messages{
 };
 class INFO:public Messages{
 
+    string senders_position;
+
     public:
-        INFO(string m, string s, string r):Messages(m,s,r){
+        INFO(string m, string s, string sp, string r):Messages(m,s,r){
+            senders_position = sp;
             message = m;
             sender = s;
             receiver = r;
             type = "INFO";
             isRead = false;
+        }
+        string getSendersPosition(){
+            return senders_position;
         }
         void printMessage(){
             cout<<"Message: "<<message<<endl
@@ -671,14 +678,17 @@ class PolicyEngine : public ActivityLog{
                 string info_message;
                 cin.ignore(); // Clear the newline character from the input buffer
                 getline(cin, info_message);
-             INFO* info=new INFO(info_message,pw->getPosition(),p->getPosition());
+             INFO* info=new INFO(info_message,pw->getName(),pw->getPosition(),p->getPosition());
              //writing the info message to the file
                 ofstream out("Info.txt",ios::app);
                 if(!out){
                     cout<<"Error opening file"<<endl;
                     return false;
                 }
-                out<<info->getSender()<<"|"<<info->getReceiver()<<"|"<<info->getMessage()<<"|"<<info->getIsRead()<<endl;    
+                //outing time also to the file
+                time_t currentTime = time(0); // Get current time
+                char* dateTime = ctime(&currentTime); // Convert to string
+                out<<info->getSender()<<"|"<<info->getSendersPosition()<<"|"<<info->getReceiver()<<"|"<<info->getMessage()<<"|"<<info->getIsRead()<<"|"<< dateTime<< endl;    
                 out.close();
                 cout<<"Information sent successfully!"<<endl;
              return true;
@@ -1225,6 +1235,56 @@ void mainMenu()
     }
 }
 
+void readingInfoFile(PaidWorkers* pw)
+{
+    ifstream in("Info.txt", ios::in);
+    if (!in)
+    {
+        cout << "\n\nError opening file\n\n";
+        mainMenu();
+        return;           // don’t forget to bail out after calling mainMenu
+    }
+
+    string line;
+    bool found = false;
+    // you can just use getline(in, line)
+    while (getline(in, line))
+    {
+        stringstream ss(line);
+        string sender, sendersPosition, receiver, message, isRead, dateTime;
+
+        // parse each field, delimited by '|'
+        getline(ss, sender,            '|');
+        getline(ss, sendersPosition,   '|');
+        getline(ss, receiver,          '|');
+        getline(ss, message,           '|');
+        getline(ss, isRead,            '|');
+        getline(ss, dateTime,          '|');  // this will consume up to either '|' or EOF
+
+        if(pw->getPosition() == receiver)
+        {
+            found = true;
+            cout << "\n\n====================================\n"
+             << "====================================\n"
+             << "Sender (Author) :     " << sender          << "\n"
+             << "Sender Position:      " << sendersPosition << "\n"
+             << "Message For:          " << receiver        << "\n"
+             << "Message:              " << message         << "\n"
+             << "Date and Time:        " << dateTime        << "\n"
+             << "====================================\n";
+        }
+
+    }
+
+    if(found == false)
+    {
+        cout << "\n\nNo messages found for " << pw->getName() << "\n\n";
+    }
+
+    in.close();
+}
+
+
 void ExecutiveMenu(PaidWorkers* pw)
 {
     int choice1 = 0;
@@ -1363,6 +1423,7 @@ void EmployeeMenu(PaidWorkers* pw)
     cout<<"                              #===========================================#"<<endl
     <<"                              #          Employee Menu                    #"<<endl
     <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to open Message menu     #"<<endl
     <<"                              #          Press 1 to View All Tasks        #"<<endl
     <<"                              #          Press 2 to View My Tasks         #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
@@ -1375,6 +1436,7 @@ void EmployeeMenu(PaidWorkers* pw)
     {
         case 1:
         {
+            show_Message_menu(pw);
             break;
         }
         case 2:
@@ -1521,8 +1583,9 @@ void show_Message_menu(PaidWorkers * pw)
             mainMenu();
             break;
         }
-        case 3:
+        case 4:
         {
+            readingInfoFile(pw);
             cout<<endl
                 <<"Have a Good Day!"<<endl<<endl<<endl;
             break;
