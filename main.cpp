@@ -1,7 +1,6 @@
 #include<iostream>
 #include<fstream>
 #include<string>
-#include<sstream>
 #include<cstring>
 #include<iomanip>
 #include<cstdlib>
@@ -1292,54 +1291,52 @@ void mainMenu()
 
 void readingInfoFile(PaidWorkers* pw)
 {
-    ifstream in("Info.txt", ios::in);
-    if (!in)
-    {
-        cout << "\n\nError opening file\n\n";
+    // Open the file for reading
+    ifstream in("Info.txt");
+    if (!in) {
+        cout << "Error opening Info.txt\n";
         mainMenu();
-        return;           // don’t forget to bail out after calling mainMenu
+        return;
     }
 
-    string line;
-    bool found = false;
-    // you can just use getline(in, line)
-    while (getline(in, line))
-    {
-        stringstream ss(line);
-        string sender, sendersPosition, receiver, message, isRead, dateTime;
+    // Variables to hold each field
+    string sender;
+    string sendersPosition;
+    string receiver;
+    string message;
+    string isRead;
+    string dateTime;
 
-        // parse each field, delimited by '|'
-        getline(ss, sender,            '|');
-        getline(ss, sendersPosition,   '|');
-        getline(ss, receiver,          '|');
-        getline(ss, message,           '|');
-        getline(ss, isRead,            '|');
-        getline(ss, dateTime,          '|');  // this will consume up to either '|' or EOF
+    // Read until EOF
+    while (true) {
+        // 1) Read 'sender' up to the first '|'
+        if (!getline(in, sender, '|')) 
+            break;           // no more records
 
-        if(pw->getPosition() == receiver)
-        {
-            found = true;
-            cout << "\n\n====================================\n"
-             << "====================================\n"
-             << "Sender (Author) :     " << sender          << "\n"
-             << "Sender Position:      " << sendersPosition << "\n"
-             << "Message For:          " << receiver        << "\n"
-             << "Message:              " << message         << "\n"
-             << "Date and Time:        " << dateTime        << "\n"
-             << "====================================\n";
+        // 2) Read each subsequent field up to the next '|'
+        getline(in, sendersPosition, '|');
+        getline(in, receiver,        '|');
+        getline(in, message,         '|');
+        getline(in, isRead,          '|');
+        
+        // 3) The last field goes until end-of-line
+        getline(in, dateTime);
+
+        // 4) Now you have all six strings populated:
+        //    sender, sendersPosition, receiver, message, isRead, dateTime
+
+        // 5) If this record is for our worker, print it:
+        if (pw->getPosition() == receiver) {
+            cout << "-----------------------------\n"
+                 << "Sender:          " << sender          << "\n"
+                 << "Position:        " << sendersPosition << "\n"
+                 << "Message for:     " << receiver        << "\n"
+                 << "Message:         " << message         << "\n"
+                 << "Date & Time:     " << dateTime        << "\n";
         }
-
     }
-
-    if(found == false)
-    {
-        cout << "\n\nNo messages found for " << pw->getName() << "\n\n";
-    }
-
-    in.close();
+    // 'in' closes itself when the function ends
 }
-
-
 void ExecutiveMenu(PaidWorkers* pw)
 {
     int choice1 = 0;
@@ -1350,7 +1347,7 @@ void ExecutiveMenu(PaidWorkers* pw)
     <<"                              #          Press 1 to View Messages        #"<<endl
     <<"                              #          Press 2 to View My Tasks         #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
-    <<"                              #          Press 3 to Add New           #"<<endl
+    <<"                              #          Press 3 to Add New               #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
     <<"                              #          Press 4 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
@@ -1682,6 +1679,46 @@ void show_Message_menu(PaidWorkers * pw)
             cin.ignore(); // clear the newline character from the input buffer
             getline(cin, name); // read the entire line including spaces
             //opening the file to check if the person exists or not
+            //finding the person in the file
+            ifstream in;
+            in.open("./"+p->getPosition()+".txt", ios::in);
+            if(!in)
+            {
+                cout<<endl<<endl
+                    <<"Error opening file"<<endl<<endl;
+                mainMenu();
+            }
+            string line;
+            bool found = false;
+            while (getline(in, line))
+            {
+                ifstream ss(line);
+                string id, pname, position, password, salary, points;
+                getline(ss, id, '|');
+                getline(ss, pname, '|');
+                getline(ss, position, '|');
+                getline(ss, password, '|');
+                getline(ss, salary, '|');
+                getline(ss, points, '|');  // this will consume up to either '|' or EOF
+
+                if(pname == name)
+                {
+                    found = true;
+                    p->setID(stoi(id));
+                    p->setName(pname);
+                    p->setPassword(password);
+                    p->setSalary(stod(salary));
+                    break;
+                }
+            }
+            in.close();
+            if(found == false)
+            {
+                cout << "\n\nUser not found\n\n";
+                break;
+            }
+
+
             
             cout<<"Enter the message you want to send: "<<endl;
             string message;
