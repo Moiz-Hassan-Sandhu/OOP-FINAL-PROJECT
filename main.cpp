@@ -77,6 +77,7 @@ and so on till the Executive*/
 
 //------------------------------------------------------------------------------------------------------
 
+void mainMenu();
 
 class task {
     string task_name;
@@ -968,6 +969,7 @@ class Authentication{
             }
         }
         int userExists(string name, string pos)
+        
         {
             readuser(pos);
             for(int i = 0; i < usercount; i++)
@@ -993,7 +995,7 @@ class Authentication{
             // if more than 15 seconds have passed, expire it
             return (difftime(time(0), inTime) <= 15.0);   //using a difftime() function from the predefined ctime library
         }
-
+        
         void otpGenerator()
         {
             srand(time(0));
@@ -1109,7 +1111,6 @@ class Authentication{
         }
 };
 
-void mainMenu();
 void ExecutiveMenu(PaidWorkers* user);
 void DirectorMenu(PaidWorkers* user);
 void ManagerMenu(PaidWorkers* user);
