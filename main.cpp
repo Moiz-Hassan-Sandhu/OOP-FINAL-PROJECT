@@ -321,6 +321,7 @@ class Manager: public Employee{
 
 };
 
+
 class Director: public Manager{
     public:
     Director(){
@@ -524,11 +525,18 @@ class INFO:public Messages{
 
 };
 
-class PRIVATE:public Messages{
-    private:
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+class PRIVATE : public Messages {
+private:
     string encrypted_message;
     string decrypted_message;
-    int sent_to;
+    int    sent_to;  
+
+    // simple Caesar‐shift helper (shift can be positive or negative)
     char caesarShift(char c, int shift) {
         if (isupper(c))
             return char((c - 'A' + shift + 260) % 26 + 'A');
@@ -536,45 +544,81 @@ class PRIVATE:public Messages{
             return char((c - 'a' + shift + 260) % 26 + 'a');
         return c;
     }
+
+    // encrypt using last TWO digits of sent_to
     void encryptMessage() {
-        int key = sent_to % 10;           // last digit of sent_to
+        int key = sent_to % 100;         // now 0..99  
+        int s  = key % 26;               // reduce to 0..25
         encrypted_message.clear();
         for (char c : message)
-            encrypted_message += caesarShift(c, +key);
+            encrypted_message += caesarShift(c, +s);
     }
 
-    public:
-        PRIVATE(string m, string s, string r):Messages(m,s,r)
-        {
-            type = "PRIVATE";
-            isRead = false;
+public:
+    PRIVATE(const string& m, const string& s, const string& r, int id)
+      : Messages(m, s, r)
+    {
+        message = m;
+        sender  = s;
+        receiver = r;
+        sent_to = id;
+        encryptMessage();               // encrypt on construction                
+        type   = "PRIVATE";
+        isRead = false;
+    }
+
+    // setting the recipient ID also re-encrypts
+    void setSentTo(int id) {
+        sent_to = id;
+        encryptMessage();
+    }
+
+    int getSentTo() const {
+        return sent_to;
+    }
+
+    // write to file as before
+    void saveToFile(const string& filename = "private_messages.txt") {
+        ofstream out(filename, ios::app);
+        if (!out) {
+            cerr << "Error opening " << filename << "\n";
+            return;
         }
-        void setSentTo(int id) {
-            sent_to = id;
-            encryptMessage();
-        }
-        void saveToFile(const string& filename = "private_messages.txt") {
-            ofstream out(filename, ios::app);      // open in append mode
-            if (!out) {
-                cerr << "Error opening " << filename << " for writing\n";
-                return;
-            }
-            // Format: sender|receiver|sent_to|encrypted_message\n
-            out << sender << '|'<< receiver << '|'<< sent_to << '|'<< encrypted_message<< '\n';
-            out.close();
+        // sender|receiver|sent_to|encrypted_message
+        out << sender << '|'
+            << receiver << '|'
+            << sent_to << '|'
+            << encrypted_message << "\n";
+    }
+
+    // interactive decryption: asks user for last two digits
+    void decryptInteractive() {
+        if (encrypted_message.empty()) {
+            cout << "No message to decrypt.\n";
+            return;
         }
 
+        cout << "Enter your last two digits of ID to decrypt: ";
+        int userKey;
+        cin  >> userKey;
+        int expected = sent_to % 100;
+        if (userKey != expected) {
+            cout << "Incorrect key—cannot decrypt.\n";
+            return;
+        }
 
-      
-        void markAsRead(){
-            isRead = true;
-        }
-        // void setSentTo(int s){
-        //     sent_to = s;
-        // }
-        int getSentTo(){
-            return sent_to;
-        }
+        int s = userKey % 26;
+        decrypted_message.clear();
+        for (char c : encrypted_message)
+            decrypted_message += caesarShift(c, -s);
+
+        cout << "Decrypted message:\n" 
+             << decrypted_message << "\n";
+    }
+
+    void markAsRead() {
+        isRead = true;
+    }
 };
 
 class ALERT:public Messages{
@@ -1578,8 +1622,62 @@ void show_Message_menu(PaidWorkers * pw)
         }
         case 2:
         {
-            cout<<"-------------Returning to main menu-------------"<<endl<<endl;
-            mainMenu();
+            //sending private message
+            cout<<"Sending private message"<<endl;
+            cout<<"Enter the position of the person you want to send message to"<<endl
+                <<"Press 1 for Junior"<<endl
+                <<"Press 2 for Employee"<<endl
+                <<"Press 3 for Manager"<<endl
+                <<"Press 4 for Director"<<endl
+                <<"Press 5 for Executive"<<endl;
+            int choice2;
+            cout<<"Press your option to continue: ";
+            cin>>choice2;
+            PaidWorkers* p = NULL;
+            if(choice2 == 1)
+            {
+                cout<<"Sending message to Junior"<<endl;
+                p = new Junior;
+
+            }
+            else if(choice2 == 2)
+            {
+                cout<<"Sending message to Employee"<<endl;
+                p = new Employee;
+            }
+            else if(choice2 == 3)
+            {
+                cout<<"Sending message to Manager"<<endl;
+                p = new Manager;
+            }
+            else if(choice2 == 4)
+            {
+                cout<<"Sending message to Director"<<endl;
+                p = new Director;
+            }
+            else if(choice2 == 5)
+            {
+                cout<<"Sending message to Executive"<<endl;
+                p = new Executive;
+            }
+            else
+            {
+                cout<<"Invalid Option"<<endl<<endl<<endl;
+                show_Message_menu(pw);
+            }
+            cout<<"Enter the name of the person you want to send message to: "<<endl;
+            string name;
+            cin.ignore(); // clear the newline character from the input buffer
+            getline(cin, name); // read the entire line including spaces
+            //opening the file to check if the person exists or not
+            
+            cout<<"Enter the message you want to send: "<<endl;
+            string message;
+            cin.ignore(); // clear the newline character from the input buffer
+            getline(cin, message); // read the entire line including spaces
+            //PRIVATE(const string& m, const string& s, const string& r, int id)
+            PRIVATE *pmsg = new PRIVATE(message, pw->getName(), p->getName(), p->getID());
+            
             break;
         }
         case 4:
@@ -1587,6 +1685,11 @@ void show_Message_menu(PaidWorkers * pw)
             readingInfoFile(pw);
             cout<<endl
                 <<"Have a Good Day!"<<endl<<endl<<endl;
+            break;
+        }
+        case 5:
+        {
+            
             break;
         }
         default:
