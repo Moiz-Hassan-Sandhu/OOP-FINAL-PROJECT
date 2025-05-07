@@ -421,6 +421,7 @@ class ActivityLog{
             in.close();
 
             logs = new string [countLogs];
+            threatLevel = new int [countLogs]();
             int i = 0;
             in.open("./signinlogs.txt", ios::in);
             if(!in)
@@ -443,7 +444,16 @@ class ActivityLog{
 
         void writeLog(string log)
         {
-            
+            ofstream out;
+            out.open("./signinlogs.txt", ios::app);
+            if(!out)
+            {
+                cout<<endl<<endl
+                    <<"Error Writing singin Logs!"<<endl<<endl;
+                return;
+            }
+            out<<log<<endl;
+            out.close();
         }
 };
 
@@ -744,7 +754,7 @@ class PolicyEngine : public ActivityLog{
 
 };
 
-class Authentication{
+class Authentication : public ActivityLog{
     protected:
         //these data members are only for reading user.txt, so the class paidworkers get isolated from authentication function
         //user.txt is only read and write by authentication class and noting else
@@ -1093,6 +1103,8 @@ class Authentication{
             {
                 if(attempts>3)
                 {
+                    time_t now;
+                    writeLog(users[index].getName() + "Failed to login (Too many attempts)!" "  " + ctime(&now));
                     cout<<endl<<endl
                         <<"Too many attempts"<<endl
                         <<"Please try again later"<<endl;
@@ -1548,7 +1560,7 @@ void show_Message_menu(PaidWorkers * pw)
 {
     cout<<endl<<endl<<endl;
     cout
-    <<"                              #===============================================#"<<endl
+    <<"                                 #===============================================#"<<endl
     <<"                              #               Message Menu                    #"<<endl
     <<"                              #===============================================#"<<endl
     <<"                              #          Press 1 to send INFO                 #"<<endl
