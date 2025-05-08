@@ -456,12 +456,6 @@ class ActivityLog{
             in.close();
             return;
         }
-        ~ActivityLog(){
-            delete [] logs;
-            delete [] threatLevel;
-            logs = NULL;
-            threatLevel = NULL;
-        }
         friend ostream& operator<<(ostream& out, ActivityLog& write);
 };
 
@@ -551,7 +545,8 @@ private:
     int    sent_to;  
 
     // simple Caesar‐shift helper (shift can be positive or negative)
-    char caesarShift(char c, int shift) {
+    char caesarShift(char c, int shift) 
+    {
         if (isupper(c))
             return char((c - 'A' + shift + 260) % 26 + 'A');
         if (islower(c))
@@ -1102,109 +1097,122 @@ class Authentication : public ActivityLog{
         PaidWorkers& login(string pos)  //string to check position
         {
             bool islogin = false;
+            attempts = 0;
             string iname, ipassword;    //input name and input password
             cout<<"Enter your Username: ";
             cin>>iname;
             int index = userExists(iname, pos);
-            while(true)
+            if(index != -1)
             {
-                if(attempts>3)
+                while(attempts <= 3)
                 {
-                    ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed (Too many attempts)! " +  " |3\n");
-                    fstream writelog;
-                    writelog.open("./ActivityLog.txt", ios::app);
-                    writelog << logging;
-                    writelog.close();
-                    cout<<endl<<endl
-                        <<"Too many attempts"<<endl
-                        <<"Please try again later"<<endl;
-                        attempts = 0;
-                        islogin = false;
+                    if(attempts > 3)
+                    {
+                        ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed (Too many attempts)! " +  " |3\n");
+                        fstream writelog;
+                        writelog.open("./ActivityLog.txt", ios::app);
+                        writelog << logging;
+                        writelog.close();
+                        cout<<endl<<endl;
+                        cout<<"Too Many Attempts Please Try Again Later!"<<endl<<endl;
+                        users[index].setLogin(false);
                         return users[index];
-                }
-                if(index != -1)
-                {
-                    cout<<endl
-                    <<"Enter your Password: ";
+                    }
+                    cout<<"Password: ";
                     cin>>ipassword;
                     ipassword = hashedPassword(ipassword);
                     if(users[index].getPassword() == ipassword)
                     {
-                        int otp = 0;
                         otpGenerator();
-                        cout<<"Enter the OTP: ";
+                        int otp = 0;
+                        cout<<"Enter OTP: ";
                         cin>>otp;
-
-                        if (!OTP_TIME()) {
-                            cout << "\n\nOTP Expired\nLogin Failed\n";
-                            remove("./OTP.txt");
-                            islogin = false;
+                        if(!OTP_TIME())
+                        {
+                            ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed Login Attempt (OTP EXPIRED)! " +  " |0\n");
+                            fstream writelog;
+                            writelog.open("./ActivityLog.txt", ios::app);
+                            writelog << logging;
+                            writelog.close();
+                            cout<<endl<<endl;
+                            cout<<"OTP Expired!"<<endl<<endl;
+                            cout<<"Please Try Again Later!"<<endl<<endl;
+                            users[index].setLogin(false);
                             break;
                         }
-
-                        if(OTP == otp)
+                        if(otp == OTP)
                         {
-                            remove("./OTP.txt");
-                            attempts = 0;
-                            cout<<"Login Success"<<endl;
                             ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Successfully! " +  " |0\n");
                             fstream writelog;
                             writelog.open("./ActivityLog.txt", ios::app);
                             writelog << logging;
                             writelog.close();
-                            cout<<"Sucessfully written";
-                            islogin = true;
-                            return users[index];
+                            cout<<endl<<endl;
+                            cout<<"Login Successful!"<<endl<<endl;
+                            users[index].setLogin(true);
+                            remove("./OTP.txt");
+                            break;
                         }
                         else
                         {
-                            ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed to login (Incorrect OTP)! " +  " |1\n");
+                            ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed Login Attempt (Wrong OTP)! " +  " |1\n");
                             fstream writelog;
                             writelog.open("./ActivityLog.txt", ios::app);
                             writelog << logging;
                             writelog.close();
-                            cout<<endl<<endl
-                                <<"OTP Incorrect"<<endl<<endl
-                                <<"Login Failed"<<endl<<endl;
+                            cout<<endl<<endl;
+                            cout<<"Wrong OTP!"<<endl<<endl;
+                            cout<<"Please Try Again Later!"<<endl<<endl;
+                            users[index].setLogin(false);
                             remove("./OTP.txt");
-                            islogin = false;
                             break;
                         }
                     }
                     else
                     {
-                        ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed to login (Incorrect Password)! " +  " |2\n");
+                        ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed! () " +  " |2\n");
                         fstream writelog;
                         writelog.open("./ActivityLog.txt", ios::app);
                         writelog << logging;
                         writelog.close();
-                        cout<<endl<<endl
-                            <<"Password Incorrect"<<endl<<endl
-                            <<"Please try again"<<endl<<endl;
+                        cout<<endl<<endl;
+                        cout<<"Invalid Password!"<<endl<<endl;
+                        cout<<"Please Try Again!"<<endl<<endl;
                         attempts++;
-                        continue;
+                        cout<<"Attempts: "<<attempts<<endl;
                     }
                 }
-                else
-                {
-                    cout<<endl<<endl
-                    <<"User Doesn't Exist"<<endl
-                    <<"Please Register User"<<endl;
-                    islogin = false;
-                    break;
-                }
-            }
-            cout<<endl<<"Breaking the loop"<<endl;
-            if(islogin == true)
-            {
-                cout<<endl<<"Reaching return"<<endl;
-                users[index].setLogin(true);
-                return users[index];
+                cout<<"End of loop"<<endl;
             }
             else
             {
+                cout<<endl<<endl;
+                cout<<"Invalid Username!"<<endl<<endl;
+                cout<<"Please Try Again!"<<endl<<endl;
                 mainMenu();
             }
+
+            // PaidWorkers* usertoreturn;
+            // if(pos == "Executive")
+            // {
+            //     usertoreturn = new Executive(users[index]);
+            // }
+            // else if(pos == "Director")
+            // {
+            //     usertoreturn = new Director(users[index]);
+            // }
+            // else if(pos == "Manager")
+            // {
+            //     usertoreturn = new Manager(users[index]);
+            // }
+            // else if(pos == "Employee")
+            // {
+            //     usertoreturn = new Employee(users[index]);
+            // }
+            // else if(pos == "Junior")
+            // {
+            //     usertoreturn = &users[index];
+            // } 
             return users[index];
         }
         ~Authentication()
