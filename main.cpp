@@ -79,6 +79,7 @@ and so on till the Executive*/
 
 void mainMenu();
 
+
 class task {
     string task_name;
     string task_description;
@@ -147,7 +148,9 @@ class task {
             <<"Task Assigned To: "<<task_assigned_to<<endl
             <<"TTL Time: "<<TTL_time<<endl;
     }
+    ~task(){}
 };
+
 
 class PaidWorkers{
     protected:
@@ -219,6 +222,7 @@ class PaidWorkers{
         }
 };
 
+
 class Junior: public PaidWorkers{
     public:
     Junior(){
@@ -251,6 +255,7 @@ class Junior: public PaidWorkers{
             <<"Position : "<<position<<endl;
     }
 };
+
 
 class Employee: public Junior{
     public:
@@ -385,12 +390,13 @@ class Executive: public Director {
     }
 };
 
+
 class ActivityLog{
-    protected::
+    protected:
         int countLogs;
         int* threatLevel;
-        string* logs;
         string outlog;
+        string* logs;
     public:
         ActivityLog(){
             countLogs = 0;
@@ -449,31 +455,22 @@ class ActivityLog{
             in.close();
             return;
         }
-        outlog = "";
+        ~ActivityLog(){
+            delete [] logs;
+            delete [] threatLevel;
+            logs = NULL;
+            threatLevel = NULL;
+        }
         friend ostream& operator<<(ostream& out, ActivityLog& write);
-
-        // void writeLog(string log)
-        // {
-        //     ofstream out;
-        //     out.open("./signinlogs.txt", ios::app);
-        //     if(!out)
-        //     {
-        //         cout<<endl<<endl
-        //             <<"Error Writing singin Logs!"<<endl<<endl;
-        //         return;
-        //     }
-        //     out<<log<<endl;
-        //     out.close();
-        // }
-        
 };
+
 
 ostream& operator<<(ostream& out, ActivityLog& write)
 {
-    out << outlog;
+    out << write.outlog;
+    write.outlog = "";
     return out;
 }
-
 
 
 class Messages{
@@ -514,6 +511,9 @@ class Messages{
         bool getIsRead(){
             return isRead;
         }
+        ~Messages(){
+            
+        }
 };
 class INFO:public Messages{
 
@@ -539,8 +539,9 @@ class INFO:public Messages{
         void markAsRead(){
             isRead = true;
         }
-
+        ~INFO(){}
 };
+
 
 class PRIVATE : public Messages {
 private:
@@ -631,7 +632,9 @@ public:
     void markAsRead() {
         isRead = true;
     }
+    ~PRIVATE(){}
 };
+
 
 class ALERT:public Messages{
     public:
@@ -650,6 +653,7 @@ class ALERT:public Messages{
         void markAsRead(){
             isRead = true;
         }
+        ~ALERT(){}
 };
 class PolicyEngine : public ActivityLog{
     private:
@@ -753,8 +757,8 @@ class PolicyEngine : public ActivityLog{
              return false;
          }
     }
-
 };
+
 
 class Authentication : public ActivityLog{
     protected:
@@ -1096,7 +1100,7 @@ class Authentication : public ActivityLog{
 
         PaidWorkers& login(string pos)  //string to check position
         {
-            bool login = false;
+            bool islogin = false;
             string iname, ipassword;    //input name and input password
             cout<<"Enter your Username: ";
             cin>>iname;
@@ -1105,7 +1109,7 @@ class Authentication : public ActivityLog{
             {
                 if(attempts>3)
                 {
-                    ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed (Too many attempts)! " +  " |1\n");
+                    ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed (Too many attempts)! " +  " |3\n");
                     fstream writelog;
                     writelog.open("./ActivityLog.txt", ios::app);
                     writelog << logging;
@@ -1114,8 +1118,8 @@ class Authentication : public ActivityLog{
                         <<"Too many attempts"<<endl
                         <<"Please try again later"<<endl;
                         attempts = 0;
-                        login = false;
-                        break;
+                        islogin = false;
+                        return users[index];
                 }
                 if(index != -1)
                 {
@@ -1133,7 +1137,7 @@ class Authentication : public ActivityLog{
                         if (!OTP_TIME()) {
                             cout << "\n\nOTP Expired\nLogin Failed\n";
                             remove("./OTP.txt");
-                            login = false;
+                            islogin = false;
                             break;
                         }
 
@@ -1142,31 +1146,42 @@ class Authentication : public ActivityLog{
                             remove("./OTP.txt");
                             attempts = 0;
                             cout<<"Login Success"<<endl;
-                            login = true;
-                            time_t now;
-                            writeLog(string(ctime(&now)) + ", " + users[index].getName() + " Logged in Successfully! " +  " |0\n");
-                            break;
+                            ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Successfully! " +  " |0\n");
+                            fstream writelog;
+                            writelog.open("./ActivityLog.txt", ios::app);
+                            writelog << logging;
+                            writelog.close();
+                            cout<<"Sucessfully written";
+                            islogin = true;
+                            return users[index];
                         }
                         else
                         {
-                            time_t now;
-                            writeLog(string(ctime(&now)) + ", " + users[index].getName() + " Failed to login (Incorrect OTP)! " +  " |1\n");
+                            ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed to login (Incorrect OTP)! " +  " |1\n");
+                            fstream writelog;
+                            writelog.open("./ActivityLog.txt", ios::app);
+                            writelog << logging;
+                            writelog.close();
                             cout<<endl<<endl
                                 <<"OTP Incorrect"<<endl<<endl
                                 <<"Login Failed"<<endl<<endl;
                             remove("./OTP.txt");
-                            login = false;
+                            islogin = false;
                             break;
                         }
                     }
                     else
                     {
-                        time_t now;
-                        writeLog(string(ctime(&now)) + ", " + users[index].getName() + " Failed to login (Incorrect password)! " +  " |2\n");       //|2    is threat level which would be scanned to generrate the auudit reports and to generate Threat Alerts
+                        ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed to login (Incorrect Password)! " +  " |2\n");
+                        fstream writelog;
+                        writelog.open("./ActivityLog.txt", ios::app);
+                        writelog << logging;
+                        writelog.close();
                         cout<<endl<<endl
                             <<"Password Incorrect"<<endl<<endl
                             <<"Please try again"<<endl<<endl;
                         attempts++;
+                        continue;
                     }
                 }
                 else
@@ -1174,12 +1189,14 @@ class Authentication : public ActivityLog{
                     cout<<endl<<endl
                     <<"User Doesn't Exist"<<endl
                     <<"Please Register User"<<endl;
-                    login = false;
+                    islogin = false;
                     break;
                 }
             }
-            if(login == true)
+            cout<<endl<<"Breaking the loop"<<endl;
+            if(islogin == true)
             {
+                cout<<endl<<"Reaching return"<<endl;
                 users[index].setLogin(true);
                 return users[index];
             }
@@ -1206,17 +1223,20 @@ void EmployeeMenu(PaidWorkers* user);
 void JuniorMenu(PaidWorkers* user);
 
 void show_Message_menu(PaidWorkers * pw);
-
+void readingInfoFile(PaidWorkers* pw);
 
 
 
 
 
 //-----------------------------------Code Execution start from here--------------------------------
+
+
 int main()
 {
     mainMenu();
 }
+
 
 void mainMenu()
 {
@@ -1240,10 +1260,16 @@ void mainMenu()
         case 1:
         {
             Authentication auth;
+            auth.login("Executive");
+            cout<<"insidemain"<<endl;
             PaidWorkers* pw = &auth.login("Executive");
             if(pw->getLogin() == true)
             {
                 ExecutiveMenu(pw);
+            }
+            else
+            {
+                mainMenu();
             }
             break;
         }
@@ -1301,53 +1327,6 @@ void mainMenu()
     }
 }
 
-void readingInfoFile(PaidWorkers* pw)
-{
-    ifstream in("Info.txt");
-    if (!in) {
-        cout << "Error opening Info.txt\n";
-        mainMenu();
-        return;
-    }
-
-    // temp variables
-    string sender,
-           sendersPosition,
-           receiver,
-           message,
-           isRead,
-           dateTime;
-
-    bool foundAny = false;
-
-    // keep looping as long as we can read ALL six parts
-    while (   getline(in, sender,        '|')
-           && getline(in, sendersPosition,'|')
-           && getline(in, receiver,       '|')
-           && getline(in, message,        '|')
-           && getline(in, isRead,         '|')
-           && getline(in, dateTime)  // up to EOL
-          )
-    {
-        // strip any stray '\r' (if your file has Windows CRLF)
-        if (!receiver.empty() && receiver.back() == '\r')
-            receiver.pop_back();
-
-        if (receiver == pw->getPosition()) {
-            foundAny = true;
-            cout << "-----------------------------\n"
-                 << "Sender:          " << sender          << "\n"
-                 << "Position:        " << sendersPosition << "\n"
-                 << "Message for:     " << receiver        << "\n"
-                 << "Message:         " << message         << "\n"
-                 << "Date & Time:     " << dateTime        << "\n";
-        }
-    }
-
-    if (!foundAny) {
-        cout << "\nNo messages found for " << pw->getName() << "\n";
-    }
-}
 
 void ExecutiveMenu(PaidWorkers* pw)
 {
@@ -1394,6 +1373,8 @@ void ExecutiveMenu(PaidWorkers* pw)
         }
     }
 }
+
+
 void DirectorMenu(PaidWorkers* pw)
 {
     PolicyEngine pe(pw);
@@ -1438,6 +1419,8 @@ void DirectorMenu(PaidWorkers* pw)
         }
     }
 }
+
+
 void ManagerMenu(PaidWorkers* pw){
     PolicyEngine pe(pw);
     int choice1 = 0;
@@ -1478,6 +1461,7 @@ void ManagerMenu(PaidWorkers* pw){
         }
     }
 }
+
 
 void EmployeeMenu(PaidWorkers* pw)
 {
@@ -1522,6 +1506,8 @@ void EmployeeMenu(PaidWorkers* pw)
         }
     }
 }
+
+
 void JuniorMenu(PaidWorkers* pw)
 {
     PolicyEngine pe(pw);
@@ -1563,6 +1549,7 @@ void JuniorMenu(PaidWorkers* pw)
         }
     }
 }
+
 
 void show_Message_menu(PaidWorkers * pw)
 {
@@ -1759,3 +1746,53 @@ void show_Message_menu(PaidWorkers * pw)
         }
     }
 }
+
+
+void readingInfoFile(PaidWorkers* pw)
+{
+    ifstream in("Info.txt");
+    if (!in) {
+        cout << "Error opening Info.txt\n";
+        mainMenu();
+        return;
+    }
+
+    // temp variables
+    string sender,
+           sendersPosition,
+           receiver,
+           message,
+           isRead,
+           dateTime;
+
+    bool foundAny = false;
+
+    // keep looping as long as we can read ALL six parts
+    while (   getline(in, sender,        '|')
+           && getline(in, sendersPosition,'|')
+           && getline(in, receiver,       '|')
+           && getline(in, message,        '|')
+           && getline(in, isRead,         '|')
+           && getline(in, dateTime)  // up to EOL
+          )
+    {
+        // strip any stray '\r' (if your file has Windows CRLF)
+        if (!receiver.empty() && receiver.back() == '\r')
+            receiver.pop_back();
+
+        if (receiver == pw->getPosition()) {
+            foundAny = true;
+            cout << "-----------------------------\n"
+                 << "Sender:          " << sender          << "\n"
+                 << "Position:        " << sendersPosition << "\n"
+                 << "Message for:     " << receiver        << "\n"
+                 << "Message:         " << message         << "\n"
+                 << "Date & Time:     " << dateTime        << "\n";
+        }
+    }
+
+    if (!foundAny) {
+        cout << "\nNo messages found for " << pw->getName() << "\n";
+    }
+}
+
