@@ -220,6 +220,7 @@ class PaidWorkers{
         bool getLogin(){
             return login;
         }
+        virtual ~PaidWorkers(){}
 };
 
 
@@ -1105,7 +1106,7 @@ class Authentication : public ActivityLog{
             cout<<"Enter your Username: ";
             cin>>iname;
             int index = userExists(iname, pos);
-            while(1)
+            while(true)
             {
                 if(attempts>3)
                 {
@@ -1260,9 +1261,8 @@ void mainMenu()
         case 1:
         {
             Authentication auth;
-            auth.login("Executive");
-            cout<<"insidemain"<<endl;
             PaidWorkers* pw = &auth.login("Executive");
+            cout<<"insidemain"<<endl;
             if(pw->getLogin() == true)
             {
                 ExecutiveMenu(pw);
