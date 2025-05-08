@@ -5,7 +5,7 @@
 #include<iomanip>
 #include<cstdlib>
 #include<ctime>
-//check1
+
 using namespace std;
 
 
@@ -21,16 +21,17 @@ using namespace std;
 //Authentication done
 //Task Assingment
 //Min 3 level of inheritance (We just have to assign special tasks to users)
+//Activity Logs (AUDIT LOGOING)
 
 
 
 //-------------In Progress------------
-//Activity Logs (AUDIT LOGOING)
 //Time To Live
 //Messages System                                                              ----->Review Statment once again 
 //Tasks can be assigned priority levels: High, Medium, Low.
 //Encryption Key for Decrypting Private Messages, Intended Users functionality
 //Info
+//ADD USER (HIRE NEW Subordinates)
 
 
 
@@ -38,8 +39,8 @@ using namespace std;
 //Task Deligation
 //Employee Performance (points) System
 //Global Notification System
-//ADD USER (HIRE NEW Subordinates)
 //Special Tasks for each position to justify hierarchical levels
+//still have to think about the unique ID system
 
 
 
@@ -57,19 +58,6 @@ using namespace std;
 
 //added new data member points in paidworkers class int points and bool login
 
-
-/*Did some changes in inheritance of the user classes : PaidWorkers -> Junior -> Employee -> Manager -> Director -> Executive
-iska matlab ke mimimum 3 inheritance levels wali condtion meet hogai
-iss se koi as such farq nai pardhta but requirement thi
-technically agar Junior hai to woh Employee ke functions ko access nai kar sake ga by any means because it is a Parent class, parent ko apne childclass members ka access nai hotta
-but child class ko parent ke all protected data members ka access hotta 
-Employee inherited Junior,
-Manager inherited Employee,
-and so on till the Executive*/
-
-
-
-//still have to think about the unique ID system
 
 //User files i.e. executive.txt, data writing format : ID|Name|Position|Password|Salary|points
 
@@ -291,6 +279,8 @@ class Employee: public Junior{
     }
 
 };
+
+
 class Manager: public Employee{
     public:
     Manager(){
@@ -358,6 +348,8 @@ class Director: public Manager{
     }
 
 };
+
+
 class Executive: public Director {
     public:
     Executive(){
