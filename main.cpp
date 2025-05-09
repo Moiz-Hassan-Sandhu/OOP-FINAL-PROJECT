@@ -5,7 +5,10 @@
 #include<iomanip>
 #include<cstdlib>
 #include<ctime>
-//check1
+<<<<<<< HEAD
+=======
+
+>>>>>>> a6b168735017dee33804fa17c1bc1ceada7df13c
 using namespace std;
 
 
@@ -21,16 +24,17 @@ using namespace std;
 //Authentication done
 //Task Assingment
 //Min 3 level of inheritance (We just have to assign special tasks to users)
+//Activity Logs (AUDIT LOGOING)
 
 
 
 //-------------In Progress------------
-//Activity Logs (AUDIT LOGOING)
 //Time To Live
 //Messages System                                                              ----->Review Statment once again 
 //Tasks can be assigned priority levels: High, Medium, Low.
 //Encryption Key for Decrypting Private Messages, Intended Users functionality
 //Info
+//ADD USER (HIRE NEW Subordinates)
 
 
 
@@ -38,8 +42,8 @@ using namespace std;
 //Task Deligation
 //Employee Performance (points) System
 //Global Notification System
-//ADD USER (HIRE NEW Subordinates)
 //Special Tasks for each position to justify hierarchical levels
+//still have to think about the unique ID system
 
 
 
@@ -57,19 +61,6 @@ using namespace std;
 
 //added new data member points in paidworkers class int points and bool login
 
-
-/*Did some changes in inheritance of the user classes : PaidWorkers -> Junior -> Employee -> Manager -> Director -> Executive
-iska matlab ke mimimum 3 inheritance levels wali condtion meet hogai
-iss se koi as such farq nai pardhta but requirement thi
-technically agar Junior hai to woh Employee ke functions ko access nai kar sake ga by any means because it is a Parent class, parent ko apne childclass members ka access nai hotta
-but child class ko parent ke all protected data members ka access hotta 
-Employee inherited Junior,
-Manager inherited Employee,
-and so on till the Executive*/
-
-
-
-//still have to think about the unique ID system
 
 //User files i.e. executive.txt, data writing format : ID|Name|Position|Password|Salary|points
 
@@ -291,6 +282,8 @@ class Employee: public Junior{
     }
 
 };
+
+
 class Manager: public Employee{
     public:
     Manager(){
@@ -358,6 +351,8 @@ class Director: public Manager{
     }
 
 };
+
+
 class Executive: public Director {
     public:
     Executive(){
@@ -456,12 +451,6 @@ class ActivityLog{
             in.close();
             return;
         }
-        ~ActivityLog(){
-            delete [] logs;
-            delete [] threatLevel;
-            logs = NULL;
-            threatLevel = NULL;
-        }
         friend ostream& operator<<(ostream& out, ActivityLog& write);
 };
 
@@ -549,9 +538,13 @@ private:
     string encrypted_message;
     string decrypted_message;
     int    sent_to;  
+<<<<<<< HEAD
+    
+=======
 
     // simple Caesar‐shift helper (shift can be positive or negative)
-    char caesarShift(char c, int shift) {
+    char caesarShift(char c, int shift) 
+    {
         if (isupper(c))
             return char((c - 'A' + shift + 260) % 26 + 'A');
         if (islower(c))
@@ -559,6 +552,7 @@ private:
         return c;
     }
 
+>>>>>>> a6b168735017dee33804fa17c1bc1ceada7df13c
     // encrypt using last TWO digits of sent_to
     void encryptMessage() {
         int key = sent_to % 100;         // now 0..99  
@@ -569,6 +563,17 @@ private:
     }
 
 public:
+/**
+ * Constructs a PRIVATE message object, initializing the message, sender, receiver, and recipient ID.
+ * Encrypts the message using a key derived from the recipient ID on construction.
+ * 
+ * @param m The message content.
+ * @param s The sender of the message.
+ * @param r The receiver of the message.
+ * @param id The ID of the intended recipient, used for encryption.
+ */
+
+
     PRIVATE(const string& m, const string& s, const string& r, int id)
       : Messages(m, s, r)
     {
@@ -580,6 +585,14 @@ public:
         type   = "PRIVATE";
         isRead = false;
     }
+    char caesarShift(char c, int shift) {
+        if (isupper(c))
+            return char((c - 'A' + shift + 260) % 26 + 'A');
+        if (islower(c))
+            return char((c - 'a' + shift + 260) % 26 + 'a');
+        return c;
+    }
+
 
     // setting the recipient ID also re-encrypts
     void setSentTo(int id) {
@@ -605,36 +618,43 @@ public:
             << encrypted_message << "\n";
     }
 
-    // interactive decryption: asks user for last two digits
-    void decryptInteractive() {
-        if (encrypted_message.empty()) {
-            cout << "No message to decrypt.\n";
-            return;
-        }
-
-        cout << "Enter your last two digits of ID to decrypt: ";
-        int userKey;
-        cin  >> userKey;
-        int expected = sent_to % 100;
-        if (userKey != expected) {
-            cout << "Incorrect key—cannot decrypt.\n";
-            return;
-        }
-
-        int s = userKey % 26;
-        decrypted_message.clear();
-        for (char c : encrypted_message)
-            decrypted_message += caesarShift(c, -s);
-
-        cout << "Decrypted message:\n" 
-             << decrypted_message << "\n";
-    }
+   
 
     void markAsRead() {
         isRead = true;
     }
     ~PRIVATE(){}
 };
+
+char caesarShift(char c, int shift) {
+    if (isupper(c))
+        return char((c - 'A' + shift + 260) % 26 + 'A');
+    if (islower(c))
+        return char((c - 'a' + shift + 260) % 26 + 'a');
+    return c;
+}
+
+
+void decryptInteractive(string message, int sent_to) {
+    int entered_id;
+    cout << "Decrypting message...\n";
+    cout<<"Enter your last two digits of ID to decrypt: ";
+    cin  >> entered_id;
+    int expected = sent_to % 100;
+    if (entered_id != expected) {
+        cout << "Incorrect key—cannot decrypt.\n";
+        return;
+    }
+
+    int s = entered_id % 26;
+    string decrypted_message;
+    for (char c : message){
+        decrypted_message += caesarShift(c, -s);
+    }
+
+    cout << "Decrypted message:\n" 
+         << decrypted_message << "\n";
+}
 
 
 class ALERT:public Messages{
@@ -1102,109 +1122,122 @@ class Authentication : public ActivityLog{
         PaidWorkers& login(string pos)  //string to check position
         {
             bool islogin = false;
+            attempts = 0;
             string iname, ipassword;    //input name and input password
             cout<<"Enter your Username: ";
             cin>>iname;
             int index = userExists(iname, pos);
-            while(true)
+            if(index != -1)
             {
-                if(attempts>3)
+                while(attempts <= 3)
                 {
-                    ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed (Too many attempts)! " +  " |3\n");
-                    fstream writelog;
-                    writelog.open("./ActivityLog.txt", ios::app);
-                    writelog << logging;
-                    writelog.close();
-                    cout<<endl<<endl
-                        <<"Too many attempts"<<endl
-                        <<"Please try again later"<<endl;
-                        attempts = 0;
-                        islogin = false;
+                    if(attempts > 3)
+                    {
+                        ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed (Too many attempts)! " +  " |3\n");
+                        fstream writelog;
+                        writelog.open("./ActivityLog.txt", ios::app);
+                        writelog << logging;
+                        writelog.close();
+                        cout<<endl<<endl;
+                        cout<<"Too Many Attempts Please Try Again Later!"<<endl<<endl;
+                        users[index].setLogin(false);
                         return users[index];
-                }
-                if(index != -1)
-                {
-                    cout<<endl
-                    <<"Enter your Password: ";
+                    }
+                    cout<<"Password: ";
                     cin>>ipassword;
                     ipassword = hashedPassword(ipassword);
                     if(users[index].getPassword() == ipassword)
                     {
-                        int otp = 0;
                         otpGenerator();
-                        cout<<"Enter the OTP: ";
+                        int otp = 0;
+                        cout<<"Enter OTP: ";
                         cin>>otp;
-
-                        if (!OTP_TIME()) {
-                            cout << "\n\nOTP Expired\nLogin Failed\n";
-                            remove("./OTP.txt");
-                            islogin = false;
+                        if(!OTP_TIME())
+                        {
+                            ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed Login Attempt (OTP EXPIRED)! " +  " |0\n");
+                            fstream writelog;
+                            writelog.open("./ActivityLog.txt", ios::app);
+                            writelog << logging;
+                            writelog.close();
+                            cout<<endl<<endl;
+                            cout<<"OTP Expired!"<<endl<<endl;
+                            cout<<"Please Try Again Later!"<<endl<<endl;
+                            users[index].setLogin(false);
                             break;
                         }
-
-                        if(OTP == otp)
+                        if(otp == OTP)
                         {
-                            remove("./OTP.txt");
-                            attempts = 0;
-                            cout<<"Login Success"<<endl;
                             ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Successfully! " +  " |0\n");
                             fstream writelog;
                             writelog.open("./ActivityLog.txt", ios::app);
                             writelog << logging;
                             writelog.close();
-                            cout<<"Sucessfully written";
-                            islogin = true;
-                            return users[index];
+                            cout<<endl<<endl;
+                            cout<<"Login Successful!"<<endl<<endl;
+                            users[index].setLogin(true);
+                            remove("./OTP.txt");
+                            break;
                         }
                         else
                         {
-                            ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed to login (Incorrect OTP)! " +  " |1\n");
+                            ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed Login Attempt (Wrong OTP)! " +  " |1\n");
                             fstream writelog;
                             writelog.open("./ActivityLog.txt", ios::app);
                             writelog << logging;
                             writelog.close();
-                            cout<<endl<<endl
-                                <<"OTP Incorrect"<<endl<<endl
-                                <<"Login Failed"<<endl<<endl;
+                            cout<<endl<<endl;
+                            cout<<"Wrong OTP!"<<endl<<endl;
+                            cout<<"Please Try Again Later!"<<endl<<endl;
+                            users[index].setLogin(false);
                             remove("./OTP.txt");
-                            islogin = false;
                             break;
                         }
                     }
                     else
                     {
-                        ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Failed to login (Incorrect Password)! " +  " |2\n");
+                        ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed! () " +  " |2\n");
                         fstream writelog;
                         writelog.open("./ActivityLog.txt", ios::app);
                         writelog << logging;
                         writelog.close();
-                        cout<<endl<<endl
-                            <<"Password Incorrect"<<endl<<endl
-                            <<"Please try again"<<endl<<endl;
+                        cout<<endl<<endl;
+                        cout<<"Invalid Password!"<<endl<<endl;
+                        cout<<"Please Try Again!"<<endl<<endl;
                         attempts++;
-                        continue;
+                        cout<<"Attempts: "<<attempts<<endl;
                     }
                 }
-                else
-                {
-                    cout<<endl<<endl
-                    <<"User Doesn't Exist"<<endl
-                    <<"Please Register User"<<endl;
-                    islogin = false;
-                    break;
-                }
-            }
-            cout<<endl<<"Breaking the loop"<<endl;
-            if(islogin == true)
-            {
-                cout<<endl<<"Reaching return"<<endl;
-                users[index].setLogin(true);
-                return users[index];
+                cout<<"End of loop"<<endl;
             }
             else
             {
+                cout<<endl<<endl;
+                cout<<"Invalid Username!"<<endl<<endl;
+                cout<<"Please Try Again!"<<endl<<endl;
                 mainMenu();
             }
+
+            // PaidWorkers* usertoreturn;
+            // if(pos == "Executive")
+            // {
+            //     usertoreturn = new Executive(users[index]);
+            // }
+            // else if(pos == "Director")
+            // {
+            //     usertoreturn = new Director(users[index]);
+            // }
+            // else if(pos == "Manager")
+            // {
+            //     usertoreturn = new Manager(users[index]);
+            // }
+            // else if(pos == "Employee")
+            // {
+            //     usertoreturn = new Employee(users[index]);
+            // }
+            // else if(pos == "Junior")
+            // {
+            //     usertoreturn = &users[index];
+            // } 
             return users[index];
         }
         ~Authentication()
@@ -1235,7 +1268,11 @@ void readingInfoFile(PaidWorkers* pw);
 
 int main()
 {
-    mainMenu();
+    //mainMenu();
+    PaidWorkers* pw = new Executive(1234, "Sannan", "1234");
+    PaidWorkers* pw1 = new Manager(1234, "moiz", "1234");
+    show_Message_menu(pw1);
+
 }
 
 
@@ -1686,26 +1723,33 @@ void show_Message_menu(PaidWorkers * pw)
                     <<"Error opening file"<<endl<<endl;
                 mainMenu();
             }
-            string line;
-            bool found = false;
-            while (getline(in, line))
-            {
-                ifstream ss(line);
-                string id, pname, position, password, salary, points;
-                getline(ss, id, '|');
-                getline(ss, pname, '|');
-                getline(ss, position, '|');
-                getline(ss, password, '|');
-                getline(ss, salary, '|');
-                getline(ss, points, '|');  // this will consume up to either '|' or EOF
+            
+            //1254|mannan|Manager|qF{T|1000|15
 
-                if(pname == name)
+            int id, salary, points;
+            string file_name, position, password;
+
+            bool found = false;
+            while ( in>>id)
+            {
+                //1234|moiz|Executive|1234|1000|23
+                in.ignore(1);
+                getline(in, file_name, '|');
+                getline(in, position, '|');
+                getline(in, password, '|');
+                in>>salary;
+                in.ignore(1);
+                in>>points;
+                in.ignore(1);
+
+                if(file_name == name)
                 {
                     found = true;
-                    p->setID(stoi(id));
-                    p->setName(pname);
+                    p->setID(id);
+                    p->setPosition(position);
+                    p->setName(file_name);
                     p->setPassword(password);
-                    p->setSalary(stod(salary));
+                    p->setSalary(salary);
                     break;
                 }
             }
@@ -1719,24 +1763,74 @@ void show_Message_menu(PaidWorkers * pw)
 
             
             cout<<"Enter the message you want to send: "<<endl;
-            string message;
-            cin.ignore(); // clear the newline character from the input buffer
+            string message;; // clear the newline character from the input buffer
             getline(cin, message); // read the entire line including spaces
             //PRIVATE(const string& m, const string& s, const string& r, int id)
+            cout<<"\nmessage: "<<message<<endl;
             PRIVATE *pmsg = new PRIVATE(message, pw->getName(), p->getName(), p->getID());
-            
+            pmsg->saveToFile();  // ADD THIS LINE
+            cout << "Private message sent successfully!\n";
+            delete pmsg;  // Clean up
             break;
         }
         case 4:
         {
-            readingInfoFile(pw);
-            cout<<endl
-                <<"Have a Good Day!"<<endl<<endl<<endl;
+
             break;
         }
         case 5:
         {
             
+            //viewing private messages
+            cout<<"Viewing private messages"<<endl;
+            cout<<"Checking for messages"<<endl;
+            ifstream in;
+            in.open("private_messages.txt", ios::in);
+            if(!in)
+            {
+                cout<<endl<<endl
+                    <<"Error opening file"<<endl<<endl;
+                mainMenu();
+            }
+            
+
+            //Sannan|mannan|1254|gu fcffa
+
+            string sender, receiver, message;
+            int id;
+
+
+            bool found = false;
+            while (getline(in, sender, '|'))
+            {
+                getline(in, receiver, '|');
+                in>>id;
+                in.ignore(1);
+                getline(in, message, '\n');
+                if(receiver == pw->getName())
+                {
+                    //decoding the message
+                    
+                    
+
+                    found = true;
+                    cout << "-----------------------------\n"
+                         << "Sender:             " << sender          << "\n"
+                         << "Receiver:           " << receiver        << "\n"
+                         << "Encrypted Message:  " << message         << "\n";
+                        decryptInteractive(message, id);
+                }
+            }
+            in.close();
+
+            if(found == false)
+            {
+                cout << "\n\nNo messages found for " << pw->getName() << "\n";
+                show_Message_menu(pw);
+            }
+               
+
+
             break;
         }
         default:
