@@ -1713,7 +1713,8 @@ void DirectorMenu(PaidWorkers* pw)
     <<"                              #          Press 2 to View My Tasks         #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
     <<"                              #          Press 4 to Send Message          #"<<endl
-    <<"                              #          Press 5 to Exit                  #"<<endl
+    <<"                              #          Press 5 to View Audit Report     #"<<endl
+    <<"                              #          Press 6 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
 
     cout<<"Press your option to continue: ";
@@ -1838,13 +1839,21 @@ void DirectorMenu(PaidWorkers* pw)
                 cout<<"Task Assignment Failed!"<<endl;
             }
             cout<<endl<<endl;
-
-
-            
             break;
         }
         case 4:
         {
+
+            break;
+        }
+        case 5:
+        {   
+            pe.readlogs();
+            break;
+        }
+        case 6:
+        {
+            mainMenu();
             break;
         }
         default:
@@ -1853,6 +1862,7 @@ void DirectorMenu(PaidWorkers* pw)
             DirectorMenu(pw);
         }
     }
+
 }
 
 
