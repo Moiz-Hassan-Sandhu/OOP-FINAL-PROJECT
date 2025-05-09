@@ -74,7 +74,7 @@ class task {
     string task_status;
     string task_assigned_by;
     string task_assigned_to;
-    int TTL_time;
+    time_t TTL_time;
     public:
     task(){
         task_name="";
@@ -107,7 +107,7 @@ class task {
     void setTaskAssignedTo(string assigned_to){
         task_assigned_to=assigned_to;
     }
-    void setTTLTime(int TTL){
+    void setTTLTime(time_t TTL){
         TTL_time=TTL;
     }
     string getTaskName(){
@@ -125,7 +125,7 @@ class task {
     string getTaskAssignedTo(){
         return task_assigned_to;
     }
-    int getTTLTime(){
+     time_t getTTLTime(){
         return TTL_time;
     }
     void printTask(){
@@ -706,34 +706,51 @@ class PolicyEngine : public ActivityLog{
             cout<<"You have permission to assign task to this user"<<endl;
             task* t = new task;
             cout<<"Enter Task Name: ";
+            cin.ignore();
             string name;
             getline(cin, name);
             t->setTaskName(name);
+
             cout<<"Enter Task Description: ";
             string description;
             getline(cin, description);
             t->setTaskDescription(description);
+
             t->setTaskStatus("Assigned");
             t->setTaskAssignedBy(pw->getName());
             t->setTaskAssignedTo(p->getName());
+
             cout<<"Enter TTL Time: ";
-            int TTL;
+            int assingedDays = 0;
             // I will  start working here for the TTL Assingment ( EXPIREIE DATE )
-            cin>>TTL;
-            t->setTTLTime(TTL);
+            cin>>assingedDays;
+            time_t deadline = time(0) + (assingedDays * 24 * 60 * 60);
+            t->setTTLTime(deadline);
+
+            ofstream out;
+            out.open("Task.txt",ios::app);
+            out << t->getTaskName() << "|"
+                << t->getTaskDescription() << "|"
+                << t->getTaskStatus() << "|"
+                << t->getTaskAssignedBy() << "|"
+                << t->getTaskAssignedTo() << "|"
+                << t->getTTLTime() << endl;
+            out.close();
+
             p->setTask(t);
             cout<<"Task Assigned Successfully"<<endl;
+
             cout<<"\n\n===========Task Details============ "<<endl;
             t->printTask();
             cout<<"===================================="<<endl;
-            p->setTask(t);
-
             return true;
         }
-        else{
+        else
+        {
             cout<<"You do not have permission to assign task to this user"<<endl;
             return false;
         }
+        return false;
     }
 
     bool can_send_info(PaidWorkers *p){
