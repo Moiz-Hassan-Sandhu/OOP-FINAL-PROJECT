@@ -5,10 +5,7 @@
 #include<iomanip>
 #include<cstdlib>
 #include<ctime>
-<<<<<<< HEAD
-=======
 
->>>>>>> a6b168735017dee33804fa17c1bc1ceada7df13c
 using namespace std;
 
 
@@ -538,9 +535,7 @@ private:
     string encrypted_message;
     string decrypted_message;
     int    sent_to;  
-<<<<<<< HEAD
     
-=======
 
     // simple Caesar‐shift helper (shift can be positive or negative)
     char caesarShift(char c, int shift) 
@@ -552,7 +547,6 @@ private:
         return c;
     }
 
->>>>>>> a6b168735017dee33804fa17c1bc1ceada7df13c
     // encrypt using last TWO digits of sent_to
     void encryptMessage() {
         int key = sent_to % 100;         // now 0..99  
