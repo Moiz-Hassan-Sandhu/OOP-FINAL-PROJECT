@@ -455,7 +455,7 @@ class ActivityLog{
             return;
         }
 
-        string readlogs()
+        void generateAudit()
         {
             if(countLogs != 0)
             {
@@ -463,9 +463,16 @@ class ActivityLog{
                 delete [] threatLevel;
                 countLogs = 0;
             }
+            string line;
             fstream read;
-            read.open("./Activitylogs.txt", ios::in);
-            while (read>>logs[countLogs])
+            read.open("./ActivityLog.txt", ios::in);
+            if(!read)
+            {
+                cout<<endl<<endl
+                    <<"Error Counting singin Logs!"<<endl<<endl;
+                return;
+            }
+            while (read>>line)
             {
                 countLogs++;
             }
@@ -474,7 +481,13 @@ class ActivityLog{
             logs = new string [countLogs];
             threatLevel = new int [countLogs]();
 
-            read.open("./Activitylogs.txt", ios::in);
+            read.open("./ActivityLog.txt", ios::in);
+            if(!read)
+            {
+                cout<<endl<<endl
+                    <<"Error Reading singin Logs!"<<endl<<endl;
+                return;
+            }
             int i = 0;
             while(getline(read, logs[i], '|'))
             {
@@ -488,6 +501,7 @@ class ActivityLog{
             int count = 0;
             for(int i = 0; i < countLogs; i++)
             {
+
                 if(threatLevel[i] == 3)
                 {
                     out += logs[i] + to_string(threatLevel[i]) + "\n";
@@ -518,7 +532,64 @@ class ActivityLog{
 
             count = 0;
             out += "-----------------------------------------------------------------------\n\n";
-            return out;
+            cout<< out;
+        }
+        void readAllLogs()
+        {
+            if(countLogs != 0)
+            {
+                delete [] logs;
+                delete [] threatLevel;
+                countLogs = 0;
+            }
+            string line;
+            fstream read;
+            read.open("./ActivityLog.txt", ios::in);
+            if(!read)
+            {
+                cout<<endl<<endl
+                    <<"Error Counting singin Logs!"<<endl<<endl;
+                return;
+            }
+            while (read>>line)
+            {
+                countLogs++;
+            }
+            read.close();
+
+            logs = new string [countLogs];
+            threatLevel = new int [countLogs]();
+
+            read.open("./ActivityLog.txt", ios::in);
+            if(!read)
+            {
+                cout<<endl<<endl
+                    <<"Error Reading singin Logs!"<<endl<<endl;
+                return;
+            }
+            int i = 0;
+            while(getline(read, logs[i], '|'))
+            {
+                read>>threatLevel[i];
+                read.ignore(1);
+                i++;
+            }
+            read.close();
+
+            string out = "";
+            int count = 0;
+            for(int i = 0; i < countLogs; i++)
+            {
+                out += logs[i] + to_string(threatLevel[i]) + "\n";
+                count++;
+            }
+            if(count == 0)
+            {
+                out += "No LOGS Available!\n\n";
+            }
+            count = 0;
+            cout<< out;
+            return;
         }
         friend ostream& operator<<(ostream& out, ActivityLog& write);
 };
@@ -995,7 +1066,7 @@ class Authentication : public ActivityLog{
             usercount = 0;
             users = NULL;
             OTP = 0;
-            attempts = 0;
+            attempts = 1;
             otptime = 0;
         }
         
@@ -1321,14 +1392,14 @@ class Authentication : public ActivityLog{
         PaidWorkers& login(string pos)  //string to check position
         {
             bool islogin = false;
-            attempts = 0;
+            attempts = 1;
             string iname, ipassword;    //input name and input password
             cout<<"Enter your Username: ";
             cin>>iname;
             int index = userExists(iname, pos);
             if(index != -1)
             {
-                while(attempts <= 3)
+                while(1)
                 {
                     if(attempts > 3)
                     {
@@ -1362,6 +1433,7 @@ class Authentication : public ActivityLog{
                             cout<<"OTP Expired!"<<endl<<endl;
                             cout<<"Please Try Again Later!"<<endl<<endl;
                             users[index].setLogin(false);
+                            remove("./OTP.txt");
                             break;
                         }
                         if(otp == OTP)
@@ -1394,7 +1466,7 @@ class Authentication : public ActivityLog{
                     }
                     else
                     {
-                        ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed! () " +  " |2\n");
+                        ActivityLog logging(getCurrentTime() + ", " + users[index].getName() + " Logged in Failed! (incorrect pass) " +  " |1\n");
                         fstream writelog;
                         writelog.open("./ActivityLog.txt", ios::app);
                         writelog << logging;
@@ -1403,10 +1475,8 @@ class Authentication : public ActivityLog{
                         cout<<"Invalid Password!"<<endl<<endl;
                         cout<<"Please Try Again!"<<endl<<endl;
                         attempts++;
-                        cout<<"Attempts: "<<attempts<<endl;
                     }
                 }
-                cout<<"End of loop"<<endl;
             }
             else
             {
@@ -1763,6 +1833,19 @@ void DirectorMenu(PaidWorkers* pw)
     printMenu(menuTitle, options, numOptions);
     cout << BLUE << "\n          Enter your choice (1-5): " << RESET;
         cin >> choice;
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Director Menu                    #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to see messages          #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Send Message          #"<<endl
+    <<"                              #          Press 5 to Generate Audit Report #"<<endl
+    <<"                              #          Press 6 to View ALL Logs         #"<<endl
+    <<"                              #          Press 7 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
 
 
     switch(choice)
@@ -2174,6 +2257,23 @@ void DirectorMenu(PaidWorkers* pw)
                    
             }
 
+
+            break;
+        }
+        case 5:
+        {   
+            cout<<"Incase 5"<<endl;
+            pe.generateAudit();
+            break;
+        }
+        case 6:
+        {
+            pe.readAllLogs();
+            break;
+        }
+        case 7: 
+        {
+            mainMenu();
             break;
         }
         default:
@@ -2182,6 +2282,7 @@ void DirectorMenu(PaidWorkers* pw)
             DirectorMenu(pw);
         }
     }
+
 }
 
 
