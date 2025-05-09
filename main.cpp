@@ -389,7 +389,7 @@ class ActivityLog{
                 newtime.pop_back();                         //then remove that charachter
             return newtime;                                 //return newtime
         }
-        void readSinginLogs()
+        void writeLogs()
         {
             if(countLogs != 0)
             {
@@ -430,6 +430,72 @@ class ActivityLog{
             }
             in.close();
             return;
+        }
+
+        string readlogs()
+        {
+            if(countLogs != 0)
+            {
+                delete [] logs;
+                delete [] threatLevel;
+                countLogs = 0;
+            }
+            fstream read;
+            read.open("./Activitylogs.txt", ios::in);
+            while (read>>logs[countLogs])
+            {
+                countLogs++;
+            }
+            read.close();
+
+            logs = new string [countLogs];
+            threatLevel = new int [countLogs]();
+
+            read.open("./Activitylogs.txt", ios::in);
+            int i = 0;
+            while(getline(read, logs[i], '|'))
+            {
+                read>>threatLevel[i];
+                read.ignore(1);
+                i++;
+            }
+            read.close();
+
+            string out = "------------------- High Threat Report (Failed Login Attempts): -------------------\n\n";
+            int count = 0;
+            for(int i = 0; i < countLogs; i++)
+            {
+                if(threatLevel[i] == 3)
+                {
+                    out += logs[i] + to_string(threatLevel[i]) + "\n";
+                    count++;
+                }
+            }
+            if(count == 0)
+            {
+                out += "No Failed Login Attempts!\n\n";
+            }
+            count = 0;
+
+            out += "-----------------------------------------------------------------------\n\n";
+
+            out += "--------------------- Low Threat Report (Frequent Tasks Assigned): -------------------\n\n";
+            for(int i = 0; i < countLogs; i++)
+            {
+                if(threatLevel[i] == 2)
+                {
+                    out += logs[i] + to_string(threatLevel[i]) + "\n";
+                    count++;
+                }
+            }
+            if(count == 0)
+            {
+                out += "No Frequent Tasks Assinged!\n\n";
+            }
+
+            count = 0;
+            out += "-----------------------------------------------------------------------\n\n";
+            return out;
         }
         friend ostream& operator<<(ostream& out, ActivityLog& write);
 };
@@ -833,6 +899,7 @@ class PolicyEngine : public ActivityLog{
              cout<<"You do not have permission to send information to the following workers"<<endl;
              return false;
          }
+        
     }
 
 
