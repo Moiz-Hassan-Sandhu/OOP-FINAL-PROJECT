@@ -665,10 +665,37 @@ class ALERT:public Messages{
 };
 class PolicyEngine : public ActivityLog{
     private:
+
+    //data members
     int n_users;
     PaidWorkers* pw;
     int accessLevel;
     string position;
+
+    // private member fucntions
+    
+    bool isTaskExpired(task* t){
+        if(!t)
+        {
+            return false;
+        }
+        time_t now = time(0);
+        return now > t->getTTLTime();
+    }
+
+    task* readTask(ifstream& in, PaidWorkers* user){        //TTL BY RECURRSION
+           string line;
+           if(!getline(in, line))
+           {
+                return nullptr;
+           }
+           
+           string name, description, status, assigned_by, assigned_to;
+           time_t ttl;
+           
+    }
+    
+    
     
     public:
     PolicyEngine(PaidWorkers* p){
@@ -737,6 +764,11 @@ class PolicyEngine : public ActivityLog{
                 << t->getTTLTime() << endl;
             out.close();
 
+            ActivityLog logging( "Task: " + t->getTaskName() + " assigned to " + p->getName() + " by " + pw->getName());
+            out.open("ActivityLog.txt",ios::app);
+            out << logging << endl;
+            out.close();
+
             p->setTask(t);
             cout<<"Task Assigned Successfully"<<endl;
 
@@ -752,6 +784,30 @@ class PolicyEngine : public ActivityLog{
         }
         return false;
     }
+
+
+    void viewTask(PaidWorkers* p){
+        ifstream in;
+        in.open("Task.txt");
+        task* userTask = readTask(in, p);
+        in.close();
+        
+        if(userTask)
+        {
+            cout<<"\n\n===========Task Details============ "<<endl;
+            userTask->printTask();
+            cout<<"===================================="<<endl;
+            p->setTask(userTask);
+            delete userTask;
+        }
+        else
+        {
+            cout<<endl<<endl
+                <<"No task found for current user!"<<endl<<endl;
+        }
+
+    }
+
 
     bool can_send_info(PaidWorkers *p){
         PolicyEngine pe(p);
@@ -782,6 +838,8 @@ class PolicyEngine : public ActivityLog{
              return false;
          }
     }
+
+
     bool can_send_alert(PaidWorkers *p){
         PolicyEngine pe(p);
         if(pe.accessLevel < accessLevel){
