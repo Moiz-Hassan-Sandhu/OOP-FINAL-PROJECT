@@ -767,7 +767,6 @@ class PolicyEngine : public ActivityLog{
             out << logging << endl;
             out.close();
 
-            p->setTask(t);
             cout<<"Task Assigned Successfully"<<endl;
 
             cout<<"\n\n===========Task Details============ "<<endl;
@@ -795,7 +794,6 @@ class PolicyEngine : public ActivityLog{
             cout<<"\n\n===========Task Details============ "<<endl;
             userTask->printTask();
             cout<<"===================================="<<endl;
-            p->setTask(userTask);
             delete userTask;
         }
         else
