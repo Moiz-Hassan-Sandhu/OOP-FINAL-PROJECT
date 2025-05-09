@@ -147,7 +147,6 @@ class PaidWorkers{
         string position;
         string password;
         float salary;
-        task* t;
         bool new_messages;
         int points; //Employee points added New Data member
         bool login; //Login as data member to check on the run time in main menus if the user is logged in or not
@@ -169,9 +168,6 @@ class PaidWorkers{
         void setSalary(float s){
             salary = s;
         }
-        void setTask(task* tsk){
-            t = tsk;
-        }
         void setNewMessages(bool n){
             new_messages = n;
         }
@@ -189,9 +185,6 @@ class PaidWorkers{
         }
         float getSalary(){
             return salary;
-        }
-        task* getTask(){
-            return t;
         }
         bool getNewMessages(){
             return new_messages;
@@ -220,7 +213,6 @@ class Junior: public PaidWorkers{
         position="Junior";
         password="";
         salary=1000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -232,7 +224,6 @@ class Junior: public PaidWorkers{
         position="Junior";
         password=pass;
         salary=1000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -254,7 +245,6 @@ class Employee: public Junior{
         position="Employee";
         password="";
         salary=2000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -266,7 +256,6 @@ class Employee: public Junior{
         position="Employee";
         password=pass;
         salary=2000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -289,7 +278,6 @@ class Manager: public Employee{
         position="Manager";
         password="";
         salary=3000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -301,7 +289,6 @@ class Manager: public Employee{
         position="Manager";
         password=pass;
         salary=3000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -324,7 +311,6 @@ class Director: public Manager{
         position="Director";
         password="";
         salary=4000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -335,7 +321,6 @@ class Director: public Manager{
         position="Director";
         password=pass;
         salary=4000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -358,7 +343,6 @@ class Executive: public Director {
         position="Executive";
         password="";
         salary=5000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -370,7 +354,6 @@ class Executive: public Director {
         position="Executive";
         password=pass;
         salary=5000.0;
-        t=nullptr;
         new_messages=0;
         points=0;
         login=false;
@@ -721,13 +704,22 @@ class PolicyEngine : public ActivityLog{
             // I will  start working here for the TTL Assingment ( EXPIREIE DATE )
             cin>>TTL;
             t->setTTLTime(TTL);
-            p->setTask(t);
+            //writing the task to the file
+            ofstream out("Task.txt",ios::app);
+            if(!out){
+                cout<<"Error opening file"<<endl;
+                return false;
+            }
+            //outing time also to the file
+            time_t currentTime = time(0); // Get current time
+            char* dateTime = ctime(&currentTime); // Convert to string
+            out<<t->getTaskName()<<"|"<<t->getTaskDescription()<<"|"<<t->getTaskStatus()<<"|"<<t->getTaskAssignedBy()<<"|"<<t->getTaskAssignedTo()<<"|"<<TTL<<"|"<< dateTime<< endl;
+
+
             cout<<"Task Assigned Successfully"<<endl;
             cout<<"\n\n===========Task Details============ "<<endl;
             t->printTask();
             cout<<"===================================="<<endl;
-            p->setTask(t);
-
             return true;
         }
         else{
@@ -767,14 +759,13 @@ class PolicyEngine : public ActivityLog{
     }
     bool can_send_alert(PaidWorkers *p){
         PolicyEngine pe(p);
-        if(pe.accessLevel < accessLevel){
+        if(pe.accessLevel <= accessLevel){
              cout<<"\nYou have permission to send alert to "<<p->getPosition()<<endl;
 
              cout<<"\nEnter the Alert: ";
                 string alert_message;
-                cin.ignore(); // Clear the newline character from the input buffer
                 getline(cin, alert_message);
-             ALERT* alert=new ALERT(alert_message,pw->getName(),p->getPosition());
+             ALERT* alert=new ALERT(alert_message,pw->getName(),p->getName());
              //writing the info message to the file
                 ofstream out("Alert.txt",ios::app);
                 if(!out){
@@ -784,13 +775,14 @@ class PolicyEngine : public ActivityLog{
                 //outing time also to the file
                 time_t currentTime = time(0); // Get current time
                 char* dateTime = ctime(&currentTime); // Convert to string
-                out<<alert->getSender()<<"|"<<alert->getReceiver()<<"|"<<alert->getMessage()<<"|"<<alert->getIsRead()<<"|"<< dateTime<< endl;    
+                out<<alert->getSender()<<"|"<<pw->getPosition()<<"|"<<alert->getReceiver()<<"|"<<alert->getMessage()<<"|"<<alert->getIsRead()<<"|"<< dateTime;    
                 out.close();
                 cout<<"Alert sent successfully!"<<endl;
              return true;
          }
          else{
              cout<<"You do not have permission to send alert to the following workers"<<endl;
+
              return false;
          }
     }
@@ -1613,6 +1605,7 @@ void show_Message_menu(PaidWorkers * pw)
     <<"                              #          Press 3 to send an Alert             #"<<endl
     <<"                              #          Press 4 to view Info                 #"<<endl
     <<"                              #          Press 5 to view private Message      #"<<endl
+    <<"                              #          Press 6 to view alerts               #"<<endl
     <<"                              #          Press 6 to Exit                      #"<<endl
     <<"                              #===============================================#"<<endl<<endl<<endl;
 
@@ -1770,6 +1763,7 @@ void show_Message_menu(PaidWorkers * pw)
             if(found == false)
             {
                 cout << "\n\nUser not found\n\n";
+                show_Message_menu(pw);
                 break;
             }
 
@@ -1831,6 +1825,57 @@ void show_Message_menu(PaidWorkers * pw)
                 cout<<"Invalid Option"<<endl<<endl<<endl;
                 show_Message_menu(pw);
             }
+            cout<<"Enter the name of the person you want to send message to: "<<endl;
+            string name;
+            cin.ignore(); // clear the newline character from the input buffer
+            getline(cin, name); // read the entire line including spaces
+            //opening the file to check if the person exists or not
+            //finding the person in the file
+            ifstream in;
+            in.open("./"+p->getPosition()+".txt", ios::in);
+            if(!in)
+            {
+                cout<<endl<<endl
+                    <<"Error opening file"<<endl<<endl;
+                mainMenu();
+            }
+            
+            //1254|mannan|Manager|qF{T|1000|15
+
+            int id, salary, points;
+            string file_name, position, password;
+
+            bool found = false;
+            while ( in>>id)
+            {
+                //1234|moiz|Executive|1234|1000|23
+                in.ignore(1);
+                getline(in, file_name, '|');
+                getline(in, position, '|');
+                getline(in, password, '|');
+                in>>salary;
+                in.ignore(1);
+                in>>points;
+                in.ignore(1);
+
+                if(file_name == name)
+                {
+                    found = true;
+                    p->setID(id);
+                    p->setPosition(position);
+                    p->setName(file_name);
+                    p->setPassword(password);
+                    p->setSalary(salary);
+                    break;
+                }
+            }
+            in.close();
+            if(found == false)
+            {
+                cout << "\n\nUser not found\n\n";
+                break;
+            }
+
 
             PolicyEngine pe(pw);
             if(pe.can_send_alert(p) == true)
@@ -1846,6 +1891,9 @@ void show_Message_menu(PaidWorkers * pw)
         }
         case 4:
         {
+            //viewing info messages
+            cout<<"Viewing info messages"<<endl;
+            readingInfoFile(pw);
 
             break;
         }
@@ -1904,14 +1952,102 @@ void show_Message_menu(PaidWorkers * pw)
 
             break;
         }
+        case 6:
+        {
+            // … inside your “view alerts” case …
+
+        cout << "Viewing alerts\n";
+
+            // 1) Open original for reading, temp for writing
+            ifstream  in ("Alert.txt", ios::in);
+            ofstream  out("Alert.tmp", ios::out);
+            if (!in || !out)
+            {
+                cout << "\nError opening file\n\n";
+                // make sure to clean up if necessary
+                return;
+            }
+
+        string sender, sendersPosition, receiver, message, isRead, dateTime;
+        bool   foundAny = false;
+
+// 2) Read each record
+            while (   getline(in, sender,        '|')
+            && getline(in, sendersPosition,'|')
+            && getline(in, receiver,       '|')
+            && getline(in, message,        '|')
+            && getline(in, isRead,         '|')
+            && getline(in, dateTime))           // up to end-of-line
+            {
+    // strip CR if present
+            if (!dateTime.empty() && dateTime.back() == '\r')
+            {
+                dateTime.pop_back();
+            }
+
+    // 3) If this alert is for me, display it and mark it read
+            if (receiver == pw->getName() && isRead == "0")
+            {
+
+                // display the alert
+                cout << "\n\n-----------------------------\n"
+                     << "Sender:       " << sender          << "\n"
+                     << "Position:     " << sendersPosition << "\n"
+                     << "Message:      " << message         << "\n"
+                     << "Date & Time:  " << dateTime        << "\n\n";
+
+                // flip the flag
+                isRead = "1";
+            }
+            else if (receiver == pw->getName() && isRead == "1")
+            {
+                foundAny = true;
+                cout << "-----------------------------\n"
+                << "Sender:       " << sender          << "\n"
+                << "Position:     " << sendersPosition << "\n"
+                << "Message:      " << message         << "\n"
+                << "Date & Time:  " << dateTime        << "\n\n";
+
+                // flip the flag
+                isRead = "1";
+            }
+
+            // 4) Write the (possibly updated) record to temp
+            out << sender          << '|'
+            << sendersPosition << '|'
+            << receiver        << '|'
+            << message         << '|'
+            << isRead          << '|'
+            << dateTime        << "\n";
+        }
+
+        in.close();
+        out.close();
+
+        // 5) Replace original with temp
+        if (remove("Alert.txt") != 0)
+        {
+            cout << "Error deleting original alerts file\n";
+        }
+        else if (rename("Alert.tmp", "Alert.txt") != 0)
+        {
+            cout << "Error renaming temp file\n";
+        }
+
+        if (!foundAny)
+        {
+            cout << "\nNo alerts found for " << pw->getName() << "\n";
+        }
+
+            break;
+        }
         default:
         {
             cout<<"Invalid Option"<<endl<<endl<<endl;
-            mainMenu();
+            show_Message_menu(pw);
         }
     }
 }
-
 
 void readingInfoFile(PaidWorkers* pw)
 {
