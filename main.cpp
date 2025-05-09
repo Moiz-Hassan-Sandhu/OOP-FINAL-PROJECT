@@ -1211,27 +1211,6 @@ class Authentication : public ActivityLog{
                 mainMenu();
             }
 
-            // PaidWorkers* usertoreturn;
-            // if(pos == "Executive")
-            // {
-            //     usertoreturn = new Executive(users[index]);
-            // }
-            // else if(pos == "Director")
-            // {
-            //     usertoreturn = new Director(users[index]);
-            // }
-            // else if(pos == "Manager")
-            // {
-            //     usertoreturn = new Manager(users[index]);
-            // }
-            // else if(pos == "Employee")
-            // {
-            //     usertoreturn = new Employee(users[index]);
-            // }
-            // else if(pos == "Junior")
-            // {
-            //     usertoreturn = &users[index];
-            // } 
             return users[index];
         }
         ~Authentication()
@@ -1262,10 +1241,10 @@ void readingInfoFile(PaidWorkers* pw);
 
 int main()
 {
-    //mainMenu();
-    PaidWorkers* pw = new Executive(1234, "Sannan", "1234");
-    PaidWorkers* pw1 = new Manager(1234, "moiz", "1234");
-    show_Message_menu(pw1);
+    mainMenu();
+    // PaidWorkers* pw = new Executive(1234, "Sannan", "1234");
+    // PaidWorkers* pw1 = new Manager(1234, "moiz", "1234");
+    // show_Message_menu(pw1);
 
 }
 
