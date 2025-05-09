@@ -5,6 +5,7 @@
 #include<iomanip>
 #include<cstdlib>
 #include<ctime>
+#include <windows.h>
 
 using namespace std;
 
@@ -540,16 +541,6 @@ private:
     }
 
 public:
-/**
- * Constructs a PRIVATE message object, initializing the message, sender, receiver, and recipient ID.
- * Encrypts the message using a key derived from the recipient ID on construction.
- * 
- * @param m The message content.
- * @param s The sender of the message.
- * @param r The receiver of the message.
- * @param id The ID of the intended recipient, used for encryption.
- */
-
 
     PRIVATE(const string& m, const string& s, const string& r, int id)
       : Messages(m, s, r)
@@ -716,7 +707,6 @@ class PolicyEngine : public ActivityLog{
             cout<<"You have permission to assign task to this user"<<endl;
             task* t = new task;
             cout<<"Enter Task Name: ";
-            cin.ignore();
             string name;
             getline(cin, name);
             t->setTaskName(name);
@@ -737,7 +727,7 @@ class PolicyEngine : public ActivityLog{
             cin>>TTL;
             t->setTTLTime(TTL);
             //writing the task to the file
-            ofstream out("Task.txt",ios::app);
+            ofstream out("Task.dat",ios::app);
             if(!out){
                 cout<<"Error opening file"<<endl;
                 return false;
@@ -745,15 +735,13 @@ class PolicyEngine : public ActivityLog{
             //outing time also to the file
             time_t currentTime = time(0); // Get current time
             char* dateTime = ctime(&currentTime); // Convert to string
-            out<<t->getTaskName()<<"|"<<t->getTaskDescription()<<"|"<<t->getTaskStatus()<<"|"<<t->getTaskAssignedBy()<<"|"<<t->getTaskAssignedTo()<<"|"<<TTL<<"|"<< dateTime<< endl;
+            out<<t->getTaskName()<<"|"<<t->getTaskDescription()<<"|"<<t->getTaskStatus()<<"|"<<t->getTaskAssignedBy()<<"|"<<t->getTaskAssignedTo()<<"|"<<TTL<<"|"<< dateTime;
 
 
             cin>>assingedDays;
             time_t deadline = time(0) + (assingedDays * 24 * 60 * 60);
             t->setTTLTime(deadline);
-
-            ofstream out;
-            out.open("Task.txt",ios::app);
+            out.open("Task.dat",ios::app);
             out << t->getTaskName() << "|"
                 << t->getTaskDescription() << "|"
                 << t->getTaskStatus() << "|"
@@ -785,7 +773,7 @@ class PolicyEngine : public ActivityLog{
 
     void viewTask(PaidWorkers* p){
         ifstream in;
-        in.open("Task.txt");
+        in.open("Task.dat");
         task* userTask = readTask(in, p);
         in.close();
         
@@ -1345,6 +1333,33 @@ void JuniorMenu(PaidWorkers* user);
 
 void show_Message_menu(PaidWorkers * pw);
 void readingInfoFile(PaidWorkers* pw);
+#define BLUE "\033[34m"
+#define RESET "\033[0m"
+
+void printMenu(const string& title, const string options[], int numOptions) {
+    const int boxWidth = 40;
+    const string margin = "          "; 
+    
+    cout << BLUE;
+    
+    cout << margin << "╔" << string(boxWidth, '=') << "╗\n";
+    
+    int titleLen = title.length();
+    int leftPad = (boxWidth - titleLen) / 2;
+    int rightPad = boxWidth - titleLen - leftPad;
+    cout << margin << "║" 
+         << string(leftPad, ' ') << title << string(rightPad, ' ') 
+         << "║\n";
+    
+    cout << margin << "╠" << string(boxWidth, '=') << "╣\n";
+    
+    for(int i = 0; i < numOptions; i++) {
+        cout << margin << "║  " << left << setw(boxWidth-2) 
+             << options[i] << "║\n";
+    }
+    
+    cout << margin << "╚" << string(boxWidth, '=') << "╝" << RESET << endl;
+}
 
 
 
@@ -1362,22 +1377,39 @@ int main()
 
 void mainMenu()
 {
-    int choice1;
-    cout<<endl<<endl<<endl;
-    cout<<"                              #===========================================#"<<endl
-    <<"                              #          Welcome To OFFICE PORTAL         #"<<endl
-    <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to Login as Executive    #"<<endl
-    <<"                              #          Press 2 to Login as Director     #"<<endl
-    <<"                              #          Press 3 to Login as Manager      #"<<endl
-    <<"                              #          Press 4 to Login as Employee     #"<<endl
-    <<"                              #          Press 5 to Login as Junior       #"<<endl
-    <<"                              #          Press 6 to Exit                  #"<<endl
-    <<"                              #===========================================#"<<endl<<endl<<endl;
+    SetConsoleOutputCP(CP_UTF8);
 
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
-    switch(choice1)
+    // Enable ANSI escape codes on Windows
+    system("");
+
+    int choice;
+    string menuTitle = "Welcome To OFFICE PORTAL";
+    string options[] = {
+        "Press 1 to Login as Executive",
+        "Press 2 to Login as Director",
+        "Press 3 to Login as Manager",
+        "Press 4 to Login as Employee",
+        "Press 5 to Login as Junior",
+        "Press 6 to Exit"
+    };
+    const int numOptions = 6;
+    // int choice1;
+    // cout<<endl<<endl<<endl;
+    // cout<<"                              #===========================================#"<<endl
+    // <<"                              #          Welcome To OFFICE PORTAL         #"<<endl
+    // <<"                              #===========================================#"<<endl
+    // <<"                              #          Press 1 to Login as Executive    #"<<endl
+    // <<"                              #          Press 2 to Login as Director     #"<<endl
+    // <<"                              #          Press 3 to Login as Manager      #"<<endl
+    // <<"                              #          Press 4 to Login as Employee     #"<<endl
+    // <<"                              #          Press 5 to Login as Junior       #"<<endl
+    // <<"                              #          Press 6 to Exit                  #"<<endl
+    // <<"                              #===========================================#"<<endl<<endl<<endl;
+
+    printMenu(menuTitle, options, numOptions);
+    cout << BLUE << "\n          Enter your choice (1-5): " << RESET;
+        cin >> choice;
+    switch(choice)
     {
         case 1:
         {
@@ -1456,9 +1488,9 @@ void ExecutiveMenu(PaidWorkers* pw)
     cout<<"                              #===========================================#"<<endl
     <<"                              #          Executive Menu                   #"<<endl
     <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to View Messages        #"<<endl
+    <<"                              #          Press 1 to View Messages         #"<<endl
     <<"                              #          Press 2 to View My Tasks         #"<<endl
-    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 3 to Assign New Task       #"<<endl
     <<"                              #          Press 3 to Add New               #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
     <<"                              #          Press 4 to Exit                  #"<<endl
@@ -1480,7 +1512,113 @@ void ExecutiveMenu(PaidWorkers* pw)
         }
         case 3:
         {
+            PolicyEngine pe(pw);
+            cout<<"Enter the position of the person you want to assign task to"<<endl
+                <<"Press 1 for Junior"<<endl
+                <<"Press 2 for Employee"<<endl
+                <<"Press 3 for Manager"<<endl
+                <<"Press 4 for Director"<<endl
+                <<"Press 5 for Executive"<<endl;
+            int choice2;
+            cout<<"Press your option to continue: ";
+            cin>>choice2;
+            PaidWorkers* p = NULL;
+            if(choice2 == 1)
+            {
+                cout<<"Progressing to Assign task to Junior"<<endl;
+                p = new Junior;
+            }
+            else if(choice2 == 2)
+            {
+                cout<<"Progressing to Assign task to Employee"<<endl;
+                p = new Employee;
+            }
+            else if(choice2 == 3)
+            {
+                cout<<"Progressing to Assign task to Manager"<<endl;
+                p = new Manager;
+            }
+            else if(choice2 == 4)
+            {
+                cout<<"Progressing to Assign task to Director"<<endl;
+                p = new Director;
+            }
+            else if(choice2 == 5)
+            {
+                cout<<"Progressing to Assign task to Executive"<<endl;
+                p = new Executive;
+            }
+            else
+            {
+                cout<<"Invalid Option"<<endl<<endl<<endl;
+                ExecutiveMenu(pw);
+            }
 
+            cout<<"Enter the name of the person you want to assign task to"<<endl;
+            string name;
+            cin.ignore();
+            getline(cin, name);
+
+            //checking if the user exists or not
+                        ifstream in;
+            in.open("./"+p->getPosition()+".txt", ios::in);
+            if(!in)
+            {
+                cout<<endl<<endl
+                    <<"Error opening file"<<endl<<endl;
+                mainMenu();
+            }
+            
+            //1254|mannan|Manager|qF{T|1000|15
+
+            int id, salary, points;
+            string file_name, position, password;
+
+            bool found = false;
+            while ( in>>id)
+            {
+                //1234|moiz|Executive|1234|1000|23
+                in.ignore(1);
+                getline(in, file_name, '|');
+                getline(in, position, '|');
+                getline(in, password, '|');
+                in>>salary;
+                in.ignore(1);
+                in>>points;
+                in.ignore(1);
+
+                if(file_name == name)
+                {
+                    found = true;
+                    p->setID(id);
+                    p->setPosition(position);
+                    p->setName(file_name);
+                    p->setPassword(password);
+                    p->setSalary(salary);
+                    break;
+                }
+            }
+            in.close();
+            if(found == false)
+            {
+                cout << "\n\nUser not found\n\n";
+                ExecutiveMenu(pw);
+                break;
+            }
+            cout<<"User found"<<endl;
+            PolicyEngine pe1(pw);
+            if(pe1.Assign_Task(p) == true)
+            {
+                cout<<"Task Assigned Successfully!"<<endl;
+            }
+            else
+            {
+                cout<<"Task Assignment Failed!"<<endl;
+            }
+            cout<<endl<<endl;
+
+
+            
             break;
         }
         case 4:
@@ -1523,10 +1661,119 @@ void DirectorMenu(PaidWorkers* pw)
         }
         case 2:
         {
+            
             break;
         }
         case 3:
         {
+            
+            PolicyEngine pe(pw);
+            cout<<"Enter the position of the person you want to assign task to"<<endl
+                <<"Press 1 for Junior"<<endl
+                <<"Press 2 for Employee"<<endl
+                <<"Press 3 for Manager"<<endl
+                <<"Press 4 for Director"<<endl
+                <<"Press 5 for Executive"<<endl;
+            int choice2;
+            cout<<"Press your option to continue: ";
+            cin>>choice2;
+            PaidWorkers* p = NULL;
+            if(choice2 == 1)
+            {
+                cout<<"Progressing to Assign task to Junior"<<endl;
+                p = new Junior;
+            }
+            else if(choice2 == 2)
+            {
+                cout<<"Progressing to Assign task to Employee"<<endl;
+                p = new Employee;
+            }
+            else if(choice2 == 3)
+            {
+                cout<<"Progressing to Assign task to Manager"<<endl;
+                p = new Manager;
+            }
+            else if(choice2 == 4)
+            {
+                cout<<"Progressing to Assign task to Director"<<endl;
+                p = new Director;
+            }
+            else if(choice2 == 5)
+            {
+                cout<<"Progressing to Assign task to Executive"<<endl;
+                p = new Executive;
+            }
+            else
+            {
+                cout<<"Invalid Option"<<endl<<endl<<endl;
+                ExecutiveMenu(pw);
+            }
+
+            cout<<"Enter the name of the person you want to assign task to"<<endl;
+            string name;
+            cin.ignore();
+            getline(cin, name);
+
+            //checking if the user exists or not
+                        ifstream in;
+            in.open("./"+p->getPosition()+".txt", ios::in);
+            if(!in)
+            {
+                cout<<endl<<endl
+                    <<"Error opening file"<<endl<<endl;
+                mainMenu();
+            }
+            
+            //1254|mannan|Manager|qF{T|1000|15
+
+            int id, salary, points;
+            string file_name, position, password;
+
+            bool found = false;
+            while ( in>>id)
+            {
+                //1234|moiz|Executive|1234|1000|23
+                in.ignore(1);
+                getline(in, file_name, '|');
+                getline(in, position, '|');
+                getline(in, password, '|');
+                in>>salary;
+                in.ignore(1);
+                in>>points;
+                in.ignore(1);
+
+                if(file_name == name)
+                {
+                    found = true;
+                    p->setID(id);
+                    p->setPosition(position);
+                    p->setName(file_name);
+                    p->setPassword(password);
+                    p->setSalary(salary);
+                    break;
+                }
+            }
+            in.close();
+            if(found == false)
+            {
+                cout << "\n\nUser not found\n\n";
+                ExecutiveMenu(pw);
+                break;
+            }
+            cout<<"User found"<<endl;
+            PolicyEngine pe1(pw);
+            if(pe1.Assign_Task(p) == true)
+            {
+                cout<<"Task Assigned Successfully!"<<endl;
+            }
+            else
+            {
+                cout<<"Task Assignment Failed!"<<endl;
+            }
+            cout<<endl<<endl;
+
+
+            
             break;
         }
         case 4:
