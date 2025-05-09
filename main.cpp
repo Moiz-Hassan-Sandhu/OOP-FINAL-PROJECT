@@ -579,13 +579,6 @@ public:
         type   = "PRIVATE";
         isRead = false;
     }
-    char caesarShift(char c, int shift) {
-        if (isupper(c))
-            return char((c - 'A' + shift + 260) % 26 + 'A');
-        if (islower(c))
-            return char((c - 'a' + shift + 260) % 26 + 'a');
-        return c;
-    }
 
 
     // setting the recipient ID also re-encrypts
@@ -769,6 +762,35 @@ class PolicyEngine : public ActivityLog{
          }
          else{
              cout<<"You do not have permission to send information to the following workers"<<endl;
+             return false;
+         }
+    }
+    bool can_send_alert(PaidWorkers *p){
+        PolicyEngine pe(p);
+        if(pe.accessLevel < accessLevel){
+             cout<<"\nYou have permission to send alert to "<<p->getPosition()<<endl;
+
+             cout<<"\nEnter the Alert: ";
+                string alert_message;
+                cin.ignore(); // Clear the newline character from the input buffer
+                getline(cin, alert_message);
+             ALERT* alert=new ALERT(alert_message,pw->getName(),p->getPosition());
+             //writing the info message to the file
+                ofstream out("Alert.txt",ios::app);
+                if(!out){
+                    cout<<"Error opening file"<<endl;
+                    return false;
+                }
+                //outing time also to the file
+                time_t currentTime = time(0); // Get current time
+                char* dateTime = ctime(&currentTime); // Convert to string
+                out<<alert->getSender()<<"|"<<alert->getReceiver()<<"|"<<alert->getMessage()<<"|"<<alert->getIsRead()<<"|"<< dateTime<< endl;    
+                out.close();
+                cout<<"Alert sent successfully!"<<endl;
+             return true;
+         }
+         else{
+             cout<<"You do not have permission to send alert to the following workers"<<endl;
              return false;
          }
     }
@@ -1262,10 +1284,7 @@ void readingInfoFile(PaidWorkers* pw);
 
 int main()
 {
-    //mainMenu();
-    PaidWorkers* pw = new Executive(1234, "Sannan", "1234");
-    PaidWorkers* pw1 = new Manager(1234, "moiz", "1234");
-    show_Message_menu(pw1);
+    mainMenu();
 
 }
 
@@ -1586,7 +1605,7 @@ void show_Message_menu(PaidWorkers * pw)
 {
     cout<<endl<<endl<<endl;
     cout
-    <<"                                 #===============================================#"<<endl
+    <<"                              #===============================================#"<<endl
     <<"                              #               Message Menu                    #"<<endl
     <<"                              #===============================================#"<<endl
     <<"                              #          Press 1 to send INFO                 #"<<endl
@@ -1766,6 +1785,64 @@ void show_Message_menu(PaidWorkers * pw)
             cout << "Private message sent successfully!\n";
             delete pmsg;  // Clean up
             break;
+        }
+        case 3:
+        {
+            //sending alert
+            cout<<"Sending alert"<<endl;
+            cout<<"Enter the position of the person you want to send message to"<<endl
+                <<"Press 1 for Junior"<<endl
+                <<"Press 2 for Employee"<<endl
+                <<"Press 3 for Manager"<<endl
+                <<"Press 4 for Director"<<endl
+                <<"Press 5 for Executive"<<endl;
+            int choice2;
+            cout<<"Press your option to continue: ";
+            cin>>choice2;
+            PaidWorkers* p = NULL;
+            if(choice2 == 1)
+            {
+                cout<<"Sending message to Junior"<<endl;
+                p = new Junior;
+
+            }
+            else if(choice2 == 2)
+            {
+                cout<<"Sending message to Employee"<<endl;
+                p = new Employee;
+            }
+            else if(choice2 == 3)
+            {
+                cout<<"Sending message to Manager"<<endl;
+                p = new Manager;
+            }
+            else if(choice2 == 4)
+            {
+                cout<<"Sending message to Director"<<endl;
+                p = new Director;
+            }
+            else if(choice2 == 5)
+            {
+                cout<<"Sending message to Executive"<<endl;
+                p = new Executive;
+            }
+            else
+            {
+                cout<<"Invalid Option"<<endl<<endl<<endl;
+                show_Message_menu(pw);
+            }
+
+            PolicyEngine pe(pw);
+            if(pe.can_send_alert(p) == true)
+            {
+                cout<<"Message Sent Successfully!"<<endl;
+            }
+            else
+            {
+                cout<<"Message Sending Failed!"<<endl;
+            }
+
+
         }
         case 4:
         {
