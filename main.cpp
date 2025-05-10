@@ -23,22 +23,23 @@ using namespace std;
 //Task Assingment
 //Min 3 level of inheritance (We just have to assign special tasks to users)
 //Activity Logs (AUDIT LOGOING)
+//Info
+//Messages System                                                              ----->Review Statment once again 
+//Tasks can be assigned priority levels: High, Medium, Low.
+//Encryption Key for Decrypting Private Messages, Intended Users functionality
 
 
 
 //-------------In Progress------------
 //Time To Live
-//Messages System                                                              ----->Review Statment once again 
-//Tasks can be assigned priority levels: High, Medium, Low.
-//Encryption Key for Decrypting Private Messages, Intended Users functionality
-//Info
 //ADD USER (HIRE NEW Subordinates)
+//Employee Performance (points) System
+// GUI-style dashboard using ASCII art and box formatting
 
 
 
 //-------------To Do------------
 //Task Deligation
-//Employee Performance (points) System
 //Global Notification System
 //Special Tasks for each position to justify hierarchical levels
 //still have to think about the unique ID system
@@ -49,7 +50,6 @@ using namespace std;
 //Digital signatures for task approvals (hash of username + timestamp)
 //Cycle detection in task delegation chains
 //Encrypted binary log file.
-// GUI-style dashboard using ASCII art and box formatting
 
 //------------------------------------------------------------------------------------------------------
 
@@ -847,7 +847,8 @@ class PolicyEngine : public ActivityLog{
     
     
     public:
-    PolicyEngine(PaidWorkers* p){
+    PolicyEngine(PaidWorkers* p)
+    {
         pw = p;
         if(pw->getPosition() == "Junior"){
             accessLevel = 1;
@@ -876,7 +877,8 @@ class PolicyEngine : public ActivityLog{
         return position;
     }
 
-    bool Assign_Task(PaidWorkers* p){
+    bool Assign_Task(PaidWorkers* p)
+    {
        PolicyEngine pe(p);
        if(pe.accessLevel <= accessLevel){
             cout<<"You have permission to assign task to this user"<<endl;
@@ -890,14 +892,17 @@ class PolicyEngine : public ActivityLog{
             string description;
             getline(cin, description);
             t->setTaskDescription(description);
+
             t->setTaskStatus("Assigned");
             t->setTaskAssignedBy(pw->getName());
             t->setTaskAssignedTo(p->getName());
             t->setTaskAssignedToPosition(p->getPosition());
+
             cout<<"\nEnter Task Priority: ";
             cout<<"\n1.High "<<endl;
             cout<<"2.Medium "<<endl;
             cout<<"3.Low "<<endl;
+
             int priority;
             cin>>priority;
             if(priority == 1){
@@ -921,6 +926,7 @@ class PolicyEngine : public ActivityLog{
             // I will  start working here for the TTL Assingment ( EXPIREIE DATE )
             cin>>TTL;
             t->setTTLTime(TTL);
+
             //writing the task to the file
             ofstream out("Task.dat",ios::app);
             if(!out){
@@ -931,7 +937,6 @@ class PolicyEngine : public ActivityLog{
             time_t currentTime = time(0); // Get current time
             char* dateTime = ctime(&currentTime); // Convert to string
             out<<t->getTaskName()<<"|"<<t->getTaskDescription()<<"|"<<t->getTaskStatus()<<"|"<<t->getTaskAssignedBy()<<"|"<<pw->getPosition()<<"|"<<t->getTaskAssignedTo()<<"|"<<t->getTaskAssignedToPosition()<<"|"<<t->getTaskPriority()<<"|"<<TTL<<"|"<< dateTime;
-
 
             cin>>assingedDays;
             time_t deadline = time(0) + (assingedDays * 24 * 60 * 60);
@@ -966,7 +971,8 @@ class PolicyEngine : public ActivityLog{
     }
 
 
-    void viewTask(PaidWorkers* p){
+    void viewTask(PaidWorkers* p)
+    {
         ifstream in;
         in.open("Task.dat");
         task* userTask = readTask(in, p);
@@ -1037,7 +1043,8 @@ class PolicyEngine : public ActivityLog{
 
     }
 
-    bool can_send_info(PaidWorkers *p){
+    bool can_send_info(PaidWorkers *p)
+    {
         PolicyEngine pe(p);
         if(pe.accessLevel < accessLevel){
              cout<<"\nYou have permission to send information to all "<<p->getPosition()<<endl;
@@ -1094,6 +1101,7 @@ class PolicyEngine : public ActivityLog{
         bool ok = can_delegate_task(escalated, previous_p);
         delete escalated;  // clean up
         return ok;
+        
     }
         
 
