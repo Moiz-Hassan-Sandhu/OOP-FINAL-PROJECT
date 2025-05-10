@@ -1531,7 +1531,7 @@ void readingInfoFile(PaidWorkers* pw);
 #define RESET "\033[0m"
 
 void printMenu(const string& title, const string options[], int numOptions) {
-    const int boxWidth = 40;
+    const int boxWidth = 60;
     const string margin = "          "; 
     
     cout << BLUE;
@@ -1555,6 +1555,24 @@ void printMenu(const string& title, const string options[], int numOptions) {
     cout << margin << "╚" << string(boxWidth, '=') << "╝" << RESET << endl;
 }
 
+void commanmenu( PaidWorkers* pw)
+{
+   SetConsoleOutputCP(CP_UTF8);
+
+    // Enable ANSI escape codes on Windows
+    system("");
+
+    int choice;
+    string menuTitle = "Welcome To "+ pw->getPosition() + " Menu";
+    string options[] = {
+       "Press 1 to see messages",
+        "Press 2 to View My Tasks",
+        "Press 3 to Assign New Task",
+        "Press 4 to Delegate Task",
+        "Press 5 to Exit"
+    };
+    
+}
 
 
 
@@ -1658,759 +1676,6 @@ void mainMenu()
         {
             cout<<"Invalid Option"<<endl<<endl<<endl;
             mainMenu();
-        }
-    }
-}
-
-
-void ExecutiveMenu(PaidWorkers* pw)
-{
-    int choice1 = 0;
-    cout<<endl<<endl<<endl;
-    cout<<"                              #===========================================#"<<endl
-    <<"                              #          Executive Menu                   #"<<endl
-    <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to View Messages         #"<<endl
-    <<"                              #          Press 2 to View My Tasks         #"<<endl
-    <<"                              #          Press 3 to Assign New Task       #"<<endl
-    <<"                              #          Press 3 to Add New               #"<<endl
-    <<"                              #          Press 3 to Add New Task          #"<<endl
-    <<"                              #          Press 4 to Exit                  #"<<endl
-    <<"                              #===========================================#"<<endl<<endl<<endl;
-
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
-    switch(choice1)
-    {
-        case 1:
-        {   
-            show_Message_menu(pw);
-            break;
-        }
-        case 2:
-        {
-
-            break;
-        }
-        case 3:
-        {
-            PolicyEngine pe(pw);
-            cout<<"Enter the position of the person you want to assign task to"<<endl
-                <<"Press 1 for Junior"<<endl
-                <<"Press 2 for Employee"<<endl
-                <<"Press 3 for Manager"<<endl
-                <<"Press 4 for Director"<<endl
-                <<"Press 5 for Executive"<<endl;
-            int choice2;
-            cout<<"Press your option to continue: ";
-            cin>>choice2;
-            PaidWorkers* p = NULL;
-            if(choice2 == 1)
-            {
-                cout<<"Progressing to Assign task to Junior"<<endl;
-                p = new Junior;
-            }
-            else if(choice2 == 2)
-            {
-                cout<<"Progressing to Assign task to Employee"<<endl;
-                p = new Employee;
-            }
-            else if(choice2 == 3)
-            {
-                cout<<"Progressing to Assign task to Manager"<<endl;
-                p = new Manager;
-            }
-            else if(choice2 == 4)
-            {
-                cout<<"Progressing to Assign task to Director"<<endl;
-                p = new Director;
-            }
-            else if(choice2 == 5)
-            {
-                cout<<"Progressing to Assign task to Executive"<<endl;
-                p = new Executive;
-            }
-            else
-            {
-                cout<<"Invalid Option"<<endl<<endl<<endl;
-                ExecutiveMenu(pw);
-            }
-
-            cout<<"Enter the name of the person you want to assign task to"<<endl;
-            string name;
-            cin.ignore();
-            getline(cin, name);
-
-            //checking if the user exists or not
-                        ifstream in;
-            in.open("./"+p->getPosition()+".txt", ios::in);
-            if(!in)
-            {
-                cout<<endl<<endl
-                    <<"Error opening file"<<endl<<endl;
-                mainMenu();
-            }
-            
-            //1254|mannan|Manager|qF{T|1000|15
-
-            int id, salary, points;
-            string file_name, position, password;
-
-            bool found = false;
-            while ( in>>id)
-            {
-                //1234|moiz|Executive|1234|1000|23
-                in.ignore(1);
-                getline(in, file_name, '|');
-                getline(in, position, '|');
-                getline(in, password, '|');
-                in>>salary;
-                in.ignore(1);
-                in>>points;
-                in.ignore(1);
-
-                if(file_name == name)
-                {
-                    found = true;
-                    p->setID(id);
-                    p->setPosition(position);
-                    p->setName(file_name);
-                    p->setPassword(password);
-                    p->setSalary(salary);
-                    break;
-                }
-            }
-            in.close();
-            if(found == false)
-            {
-                cout << "\n\nUser not found\n\n";
-                ExecutiveMenu(pw);
-                break;
-            }
-            cout<<"User found"<<endl;
-            PolicyEngine pe1(pw);
-            if(pe1.Assign_Task(p) == true)
-            {
-                cout<<"Task Assigned Successfully!"<<endl;
-            }
-            else
-            {
-                cout<<"Task Assignment Failed!"<<endl;
-            }
-            cout<<endl<<endl;
-
-
-            
-            break;
-        }
-        case 4:
-        {
-            break;
-        }
-        default:
-        {
-            cout<<"Invalid Option"<<endl<<endl<<endl;
-            ExecutiveMenu(pw);
-        }
-    }
-}
-
-
-void DirectorMenu(PaidWorkers* pw)
-{
-    PolicyEngine pe(pw);
-    int choice;
-    string menuTitle = "DIRRECTORS MENU";
-    string options[] = {
-        "Press 1 to see messages",
-        "Press 2 to View My Tasks",
-        "Press 3 to Assign New Task",
-        "Press 4 to Delegate Task",
-        "Press 5 to Exit"
-    };
-    const int numOptions = 5;
-    
-    printMenu(menuTitle, options, numOptions);
-    cout << BLUE << "\n          Enter your choice (1-5): " << RESET;
-        cin >> choice;
-    int choice1 = 0;
-    cout<<endl<<endl<<endl;
-    cout<<"                              #===========================================#"<<endl
-    <<"                              #          Director Menu                    #"<<endl
-    <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to see messages          #"<<endl
-    <<"                              #          Press 2 to View My Tasks         #"<<endl
-    <<"                              #          Press 3 to Add New Task          #"<<endl
-    <<"                              #          Press 4 to Send Message          #"<<endl
-    <<"                              #          Press 5 to Generate Audit Report #"<<endl
-    <<"                              #          Press 6 to View ALL Logs         #"<<endl
-    <<"                              #          Press 7 to Exit                  #"<<endl
-    <<"                              #===========================================#"<<endl<<endl<<endl;
-
-
-    switch(choice)
-    {
-        case 1:
-        {
-            show_Message_menu(pw);
-            
-            break;
-        }
-        case 2:
-        {
-            cout<<"Progressing to View My Tasks"<<endl;
-            //opening task.dat file to find the assigned to name and match it
-            //making tasttemp.dat file to note down changes
-            //if the task is viewed changing the status to inprogress
-            //if the task is completed changing the status to completed
-            //if the task is too difficult changing the status to incompetent
-            ifstream in;
-            ofstream out;
-            in.open("Task.dat", ios::in);
-            out.open("Tasktemp.dat", ios::out);
-            if(!in)
-            {
-                cout<<endl<<endl
-                    <<"Error opening file"<<endl<<endl;
-                mainMenu();
-            }
-            
-            //kuchu puchu|qwertyuiop[]|Assigned|mannan|Director|moiz|Low|15|Sat May 10 00:40:27 2025
-            string task_name, task_description, task_status, task_assigned_by, task_assigned_by_position, task_assigned_to,task_assigned_to_pos, task_priority, task_assigned_time;
-            int task_ttl_time;
-
-            bool found = false;
-
-            while (getline(in, task_name, '|'))
-            {
-                getline(in, task_description, '|');
-                getline(in, task_status, '|');
-                getline(in, task_assigned_by, '|');
-                getline(in, task_assigned_by_position, '|');
-                getline(in, task_assigned_to, '|');
-                getline(in, task_assigned_to_pos, '|');
-                getline(in, task_priority, '|');
-                in>>task_ttl_time;
-                in.ignore(1);
-                getline(in, task_assigned_time, '\n');
-                cout<<endl<<endl;
-                    
-                if(task_assigned_to == pw->getName())
-                {
-                    found = true;
-
-                    string menuTitle = " TASK DETAILS ";
-                    string options[] = {
-                        "Task Name: "+task_name,
-                        "Task Description: "+task_description,
-                        "Task Status: "+task_status,
-                        "Task Assigned By: "+task_assigned_by,
-                        "Task Assigned By Position: "+task_assigned_by_position,
-                        "Task Assigned To: "+task_assigned_to,
-                        "Task Assigned To Position: "+task_assigned_to_pos,
-                        "Task Priority: "+task_priority,
-                        "Task Assigned Time: "+task_assigned_time,
-                        "Task Total Time: "+to_string(task_ttl_time)
-                    };
-                    const int numOptions = 10;
-    
-                    printMenu(menuTitle, options, numOptions);
-                   
-                    cout<<endl<<endl;
-                    cout<<"Enter the status of the task"<<endl
-                        <<"Press 1 for In Progress"<<endl
-                        <<"Press 2 for Completed"<<endl
-                        <<"Press 3 for Incompetent"<<endl;
-                    int status;
-                    cout<<"Press your option to continue: ";
-                    cin>>status;
-                    if(status == 1)
-                    {
-                        task_status = "In Progress";
-                    }
-                    else if(status == 2)
-                    {
-                        task_status = "Completed";
-                    }
-                    else if(status == 3)
-                    {
-                        task_status = "Incompetent";
-                        //sending alert to the assigned by
-                        string message = pw->getName()+" isnt competent enought to complete "+"("+task_name+")"+" task";
-                        ALERT* alert=new ALERT(message,pw->getName(),task_assigned_by);
-                        //writing the info message to the file
-                        ofstream out("Alert.txt",ios::app);
-                        if(!out){
-                            cout<<"Error opening file"<<endl;
-                            return;
-                        }
-                        //outing time also to the file
-                        time_t currentTime = time(0); // Get current time
-                        char* dateTime = ctime(&currentTime); // Convert to string
-                        out<<alert->getSender()<<"|"<<pw->getPosition()<<"|"<<alert->getReceiver()<<"|"<<alert->getMessage()<<"|"<<alert->getIsRead()<<"|"<< dateTime;
-
-                    }
-                    else
-                    {
-                        cout<<"Invalid Option"<<endl<<endl<<endl;
-                        DirectorMenu(pw);
-                    }
-                    cout<<"Task Status Changed Successfully!"<<endl;
-                    cout<<endl<<endl;
-                }
-                //writing the task to the temp file
-                out<<task_name<<"|"<<task_description<<"|"<<task_status<<"|"<<task_assigned_by<<"|"<<task_assigned_by_position<<"|"<<task_assigned_to<<"|"<<task_assigned_to_pos<<"|"<<task_priority<<"|"<<task_ttl_time<<"|"<<task_assigned_time<<endl;
-            
-            }
-            in.close();
-            out.close();
-            //removing the original file
-            remove("Task.dat");
-            //renaming the temp file to original file
-            rename("Tasktemp.dat", "Task.dat");
-
-            if(found == false)
-            {
-                cout << "\n\nNo tasks for u hurray\n\n";
-                DirectorMenu(pw);
-                break;
-            }
-
-            
-            break;
-        }
-        case 3:
-        {
-            
-            PolicyEngine pe(pw);
-            cout<<"Enter the position of the person you want to assign task to"<<endl
-                <<"Press 1 for Junior"<<endl
-                <<"Press 2 for Employee"<<endl
-                <<"Press 3 for Manager"<<endl
-                <<"Press 4 for Director"<<endl
-                <<"Press 5 for Executive"<<endl;
-            int choice2;
-            cout<<"Press your option to continue: ";
-            cin>>choice2;
-            PaidWorkers* p = NULL;
-            if(choice2 == 1)
-            {
-                cout<<"Progressing to Assign task to Junior"<<endl;
-                p = new Junior;
-            }
-            else if(choice2 == 2)
-            {
-                cout<<"Progressing to Assign task to Employee"<<endl;
-                p = new Employee;
-            }
-            else if(choice2 == 3)
-            {
-                cout<<"Progressing to Assign task to Manager"<<endl;
-                p = new Manager;
-            }
-            else if(choice2 == 4)
-            {
-                cout<<"Progressing to Assign task to Director"<<endl;
-                p = new Director;
-            }
-            else if(choice2 == 5)
-            {
-                cout<<"Progressing to Assign task to Executive"<<endl;
-                p = new Executive;
-            }
-            else
-            {
-                cout<<"Invalid Option"<<endl<<endl<<endl;
-                ExecutiveMenu(pw);
-            }
-
-            cout<<"Enter the name of the person you want to assign task to"<<endl;
-            string name;
-            cin.ignore();
-            getline(cin, name);
-
-            //checking if the user exists or not
-                        ifstream in;
-            in.open("./"+p->getPosition()+".txt", ios::in);
-            if(!in)
-            {
-                cout<<endl<<endl
-                    <<"Error opening file"<<endl<<endl;
-                mainMenu();
-            }
-            
-            //1254|mannan|Manager|qF{T|1000|15
-
-            int id, salary, points;
-            string file_name, position, password;
-
-            bool found = false;
-            while ( in>>id)
-            {
-                //1234|moiz|Executive|1234|1000|23
-                in.ignore(1);
-                getline(in, file_name, '|');
-                getline(in, position, '|');
-                getline(in, password, '|');
-                in>>salary;
-                in.ignore(1);
-                in>>points;
-                in.ignore(1);
-
-                if(file_name == name)
-                {
-                    found = true;
-                    p->setID(id);
-                    p->setPosition(position);
-                    p->setName(file_name);
-                    p->setPassword(password);
-                    p->setSalary(salary);
-                    break;
-                }
-            }
-            in.close();
-            if(found == false)
-            {
-                cout << "\n\nUser not found\n\n";
-                ExecutiveMenu(pw);
-                break;
-            }
-            cout<<"User found"<<endl;
-            PolicyEngine pe1(pw);
-            if(pe1.Assign_Task(p) == true)
-            {
-                cout<<"Task Assigned Successfully!"<<endl;
-            }
-            else
-            {
-                cout<<"Task Assignment Failed!"<<endl;
-            }
-            cout<<endl<<endl;
-            break;
-        }
-        case 4:
-        {
-            //delegating incompotent tasks
-            //opening task.dat file to find the assigned to name and match it and to also see if its status is incompotent
-            //making tasttemp.dat file to note down changes
-
-            ifstream in;
-            ofstream out;
-            in.open("Task.dat", ios::in);
-            out.open("Tasktemp.dat", ios::out);
-            if(!in)
-            {
-                cout<<endl<<endl
-                    <<"Error opening file"<<endl<<endl;
-                mainMenu();
-            }
-            //kuchu puchu|qwertyuiop[]|Assigned|mannan|Director|moiz|Low|15|Sat May 10 00:40:27 2025
-            string task_name, task_description, task_status, task_assigned_by, task_assigned_by_position, task_assigned_to,task_assigned_to_pos, task_priority, task_assigned_time;
-            int task_ttl_time;
-            bool found = false;
-            while (getline(in, task_name, '|'))
-            {
-                getline(in, task_description, '|');
-                getline(in, task_status, '|');
-                getline(in, task_assigned_by, '|');
-                getline(in, task_assigned_by_position, '|');
-                getline(in, task_assigned_to, '|');
-                getline(in, task_assigned_to_pos, '|');
-                getline(in, task_priority, '|');
-                in>>task_ttl_time;
-                in.ignore(1);
-                getline(in, task_assigned_time, '\n');
-
-                cout<<endl<<endl;
-                if(task_assigned_to == pw->getName() && task_status == "Incompetent")
-                {
-                    PaidWorkers* prev_p = NULL;
-                    prev_p->setPosition(task_assigned_to_pos);
-
-                    found = true;
-
-                    string menuTitle = " TASK DETAILS ";
-                    string options[] = {
-                        "Task Name: "+task_name,
-                        "Task Description: "+task_description,
-                        "Task Status: "+task_status,
-                        "Task Assigned By: "+task_assigned_by,
-                        "Task Assigned By Position: "+task_assigned_by_position,
-                        "Task Assigned To: "+task_assigned_to,
-                        "Task Assigned To Position: "+task_assigned_to_pos,
-                        "Task Priority: "+task_priority,
-                        "Task Assigned Time: "+task_assigned_time,
-                        "Task Total Time: "+to_string(task_ttl_time)
-                    };
-                    const int numOptions = 10;
-    
-                    printMenu(menuTitle, options, numOptions);
-                    cout<<endl<<endl;
-                    cout<<"Enter the position of the person you want to delegate task to"<<endl
-                        <<"Press 1 for Junior"<<endl
-                        <<"Press 2 for Employee"<<endl
-                        <<"Press 3 for Manager"<<endl
-                        <<"Press 4 for Director"<<endl
-                        <<"Press 5 for Executive"<<endl;
-                    int choice2;
-                    cout<<"Press your option to continue: ";
-                    cin>>choice2;
-                    PaidWorkers* p = NULL;
-                    if(choice2 == 1)
-                    {
-                        cout<<"Progressing to Assign task to Junior"<<endl;
-                        p = new Junior;
-                    }
-                    else if(choice2 == 2)
-                    {
-                        cout<<"Progressing to Assign task to Employee"<<endl;
-                        p = new Employee;
-                    }
-                    else if(choice2 == 3)
-                    {
-                        cout<<"Progressing to Assign task to Manager"<<endl;
-                        p = new Manager;
-                    }
-                    else if(choice2 == 4)
-                    {
-                        cout<<"Progressing to Assign task to Director"<<endl;
-                        p = new Director;
-                    }
-                    else if(choice2 == 5)
-                    {
-                        cout<<"Progressing to Assign task to Executive"<<endl;
-                        p = new Executive;
-                    }
-                    else
-                    {
-                        cout<<"Invalid Option"<<endl<<endl<<endl;
-                        ExecutiveMenu(pw);
-                    }
-                    PolicyEngine pe1(pw);
-                    if (pe1.can_delegate_task(p, prev_p)){
-                        cout<<"Enter the name of the person you want to delegate task to"<<endl;
-                        string name;
-                        cin.ignore();
-                        getline(cin, name);
-                        //checking if the user exists or not
-                        ifstream in;
-                        in.open("./"+p->getPosition()+".txt", ios::in);
-                        if(!in)
-                        {
-                            cout<<endl<<endl
-                                <<"Error opening file"<<endl<<endl;
-                            mainMenu();
-                        }
-                        int id, salary, points;
-                        string file_name, position, password;
-                        bool found = false;
-                        while ( in>>id)
-                        {
-                            //1234|moiz|Executive|1234|1000|23
-                            in.ignore(1);
-                            getline(in, file_name, '|');
-                            getline(in, position, '|');
-                            getline(in, password, '|');
-                            in>>salary;
-                            in.ignore(1);
-                            in>>points;
-                            in.ignore(1);
-
-                            if(file_name == name)
-                            {
-                                found = true;
-                                p->setID(id);
-                                p->setPosition(position);
-                                p->setName(file_name);
-                                p->setPassword(password);
-                                p->setSalary(salary);
-                                break;
-                            }
-                        }
-                        in.close();
-                        if(found == false)
-                        {
-                            cout << "\n\nUser not found\n\n";
-                            DirectorMenu(pw);
-                            break;
-                        }
-                        cout<<"User found"<<endl;
-                        PolicyEngine pe1(pw);
-                        if(pe1.Assign_Task(p) == true)
-                        {
-                            cout<<"Task Assigned Successfully!"<<endl;
-                        }
-                        else
-                        {
-                            cout<<"Task Assignment Failed!"<<endl;
-                        }
-                        cout<<endl<<endl;
-                        //writing the task to the temp file
-                        out<<task_name<<"|"<<task_description<<"|"<<task_status<<"|"<<task_assigned_by<<"|"<<task_assigned_by_position<<"|"<<task_assigned_to<<"|"<<task_assigned_to_pos<<"|"<<task_priority<<"|"<<task_ttl_time<<"|"<<task_assigned_time<<endl;
-
-                    }
-
-
-
-                }
-                   
-                   
-            }
-
-
-            break;
-        }
-        case 5:
-        {   
-            cout<<"Incase 5"<<endl;
-            pe.generateAudit();
-            break;
-        }
-        case 6:
-        {
-            pe.readAllLogs();
-            break;
-        }
-        case 7: 
-        {
-            mainMenu();
-            break;
-        }
-        default:
-        {
-            cout<<"Invalid Option"<<endl<<endl<<endl;
-            DirectorMenu(pw);
-        }
-    }
-
-}
-
-
-void ManagerMenu(PaidWorkers* pw){
-    PolicyEngine pe(pw);
-    int choice1 = 0;
-    cout<<endl<<endl<<endl;
-    cout<<"                              #===========================================#"<<endl
-    <<"                              #          Manager Menu                     #"<<endl
-    <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to View All Tasks        #"<<endl
-    <<"                              #          Press 2 to View My Tasks         #"<<endl
-    <<"                              #          Press 3 to Add New Task          #"<<endl
-    <<"                              #          Press 4 to Exit                  #"<<endl
-    <<"                              #===========================================#"<<endl<<endl<<endl;
-
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
-    switch(choice1)
-    {
-        case 1:
-        {
-            break;
-        }
-        case 2:
-        {
-            break;
-        }
-        case 3:
-        {
-            break;
-        }
-        case 4:
-        {
-            break;
-        }
-        default:
-        {
-            cout<<"Invalid Option"<<endl<<endl<<endl;
-            ManagerMenu(pw);
-        }
-    }
-}
-
-
-void EmployeeMenu(PaidWorkers* pw)
-{
-    PolicyEngine pe(pw);
-    int choice1 = 0;
-    cout<<endl<<endl<<endl;
-    cout<<"                              #===========================================#"<<endl
-    <<"                              #          Employee Menu                    #"<<endl
-    <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to open Message menu     #"<<endl
-    <<"                              #          Press 1 to View All Tasks        #"<<endl
-    <<"                              #          Press 2 to View My Tasks         #"<<endl
-    <<"                              #          Press 3 to Add New Task          #"<<endl
-    <<"                              #          Press 4 to Exit                  #"<<endl
-    <<"                              #===========================================#"<<endl<<endl<<endl;
-
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
-    switch(choice1)
-    {
-        case 1:
-        {
-            show_Message_menu(pw);
-            break;
-        }
-        case 2:
-        {
-            break;
-        }
-        case 3:
-        {
-            break;
-        }
-        case 4:
-        {
-            break;
-        }
-        default:
-        {
-            cout<<"Invalid Option"<<endl<<endl<<endl;
-            EmployeeMenu(pw);
-        }
-    }
-}
-
-
-void JuniorMenu(PaidWorkers* pw)
-{
-    PolicyEngine pe(pw);
-    int choice1 = 0;
-    cout<<endl<<endl<<endl;
-    cout<<"                              #===========================================#"<<endl
-    <<"                              #          Junior Menu                      #"<<endl
-    <<"                              #===========================================#"<<endl
-    <<"                              #          Press 1 to View All Tasks        #"<<endl
-    <<"                              #          Press 2 to View My Tasks         #"<<endl
-    <<"                              #          Press 3 to Add New Task          #"<<endl
-    <<"                              #          Press 4 to Exit                  #"<<endl
-    <<"                              #===========================================#"<<endl<<endl<<endl;
-
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
-    switch(choice1)
-    {
-        case 1:
-        {
-            break;
-        }
-        case 2:
-        {
-            break;
-        }
-        case 3:
-        {
-            break;
-        }
-        case 4:
-        {
-            break;
-        }
-        default:
-        {
-            cout<<"Invalid Option"<<endl<<endl<<endl;
-            JuniorMenu(pw);
         }
     }
 }
@@ -2917,6 +2182,753 @@ void readingInfoFile(PaidWorkers* pw)
 
     if (!foundAny) {
         cout << "\nNo messages found for " << pw->getName() << "\n";
+    }
+}
+
+
+void viewMyTasks(PaidWorkers* pw) {
+    cout << "Progressing to View My Tasks" << endl;
+
+    ifstream in("Task.dat");
+    ofstream out("Tasktemp.dat");
+    if (!in) {
+        cerr << "Error opening Task.dat" << endl;
+        return;
+    }
+
+    bool found = false;
+    string task_name, task_description, task_status;
+    string task_assigned_by, task_assigned_by_position;
+    string task_assigned_to, task_assigned_to_pos;
+    string task_priority, task_assigned_time;
+    int task_ttl_time;
+
+    while (getline(in, task_name, '|')) {
+        getline(in, task_description, '|');
+        getline(in, task_status, '|');
+        getline(in, task_assigned_by, '|');
+        getline(in, task_assigned_by_position, '|');
+        getline(in, task_assigned_to, '|');
+        getline(in, task_assigned_to_pos, '|');
+        getline(in, task_priority, '|');
+        in >> task_ttl_time;
+        in.ignore(1);
+        getline(in, task_assigned_time);
+
+        if (task_assigned_to == pw->getName()) {
+            found = true;
+
+            // Display task details
+            const int numOptions = 10;
+            string options[numOptions] = {
+                "Task Name: " + task_name,
+                "Task Description: " + task_description,
+                "Task Status: " + task_status,
+                "Task Assigned By: " + task_assigned_by,
+                "Task Assigned By Position: " + task_assigned_by_position,
+                "Task Assigned To: " + task_assigned_to,
+                "Task Assigned To Position: " + task_assigned_to_pos,
+                "Task Priority: " + task_priority,
+                "Task Assigned Time: " + task_assigned_time,
+                "Task Total Time: " + to_string(task_ttl_time)
+            };
+            printMenu(" TASK DETAILS ", options, numOptions);
+
+            // Prompt for status change
+            cout << "\nEnter the status of the task\n"
+                 << "Press 1 for In Progress\n"
+                 << "Press 2 for Completed\n"
+                 << "Press 3 for Incompetent\n"
+                 << "Option: ";
+            int status;
+            cin >> status;
+
+            if (status == 1) {
+                task_status = "In Progress";
+            } else if (status == 2) {
+                task_status = "Completed";
+            } else if (status == 3) {
+                task_status = "Incompetent";
+                // Send alert
+                string message = pw->getName() + " isn't competent enough to complete (" + task_name + ") task";
+                ALERT alert(message, pw->getName(), task_assigned_by);
+                ofstream alertOut("Alert.txt", ios::app);
+                if (alertOut) {
+                    time_t currentTime = time(nullptr);
+                    char* dateTime = ctime(&currentTime);
+                    alertOut << alert.getSender() << "|"
+                             << pw->getPosition() << "|"
+                             << alert.getReceiver() << "|"
+                             << alert.getMessage() << "|"
+                             << alert.getIsRead() << "|"
+                             << dateTime;
+                }
+            } else {
+                cerr << "Invalid Option" << endl;
+            }
+
+            cout << "Task Status Changed Successfully!\n\n";
+        }
+
+        // Write record (updated or unchanged)
+        out << task_name << "|"
+            << task_description << "|"
+            << task_status << "|"
+            << task_assigned_by << "|"
+            << task_assigned_by_position << "|"
+            << task_assigned_to << "|"
+            << task_assigned_to_pos << "|"
+            << task_priority << "|"
+            << task_ttl_time << "|"
+            << task_assigned_time << endl;
+    }
+
+    in.close();
+    out.close();
+    remove("Task.dat");
+    rename("Tasktemp.dat", "Task.dat");
+
+    if (!found) {
+        cout << "\n\nNo tasks for you. Hurray!\n\n";
+    }
+}
+
+void assignTask(PaidWorkers* pw) {
+    PolicyEngine pe(pw);
+
+    cout << "Enter the position of the person you want to assign task to\n"
+         << "  Press 1 for Junior\n"
+         << "  Press 2 for Employee\n"
+         << "  Press 3 for Manager\n"
+         << "  Press 4 for Director\n"
+         << "  Press 5 for Executive\n"
+         << "Option: ";
+    int choice2;
+    cin >> choice2;
+
+    PaidWorkers* p = nullptr;
+    switch (choice2) {
+      case 1:
+        cout << "Progressing to Assign task to Junior\n";
+        p = new Junior;
+        break;
+      case 2:
+        cout << "Progressing to Assign task to Employee\n";
+        p = new Employee;
+        break;
+      case 3:
+        cout << "Progressing to Assign task to Manager\n";
+        p = new Manager;
+        break;
+      case 4:
+        cout << "Progressing to Assign task to Director\n";
+        p = new Director;
+        break;
+      case 5:
+        cout << "Progressing to Assign task to Executive\n";
+        p = new Executive;
+        break;
+      default:
+        cout << "Invalid Option\n\n";
+        delete p;                // safeguard
+        return;                  // back to caller menu
+    }
+
+    // Prompt for the specific user name
+    cout << "Enter the name of the person you want to assign task to: ";
+    cin.ignore();
+    string name;
+    getline(cin, name);
+
+    // Open the appropriate role file
+    ifstream in(p->getPosition() + ".txt");
+    if (!in) {
+        cerr << "Error opening " << p->getPosition() << ".txt\n";
+        delete p;
+        return;
+    }
+
+    // Parse lines like: 1254|mannan|Manager|qF{T|1000|15
+    bool found = false;
+    while (!found && in.good()) {
+        int    id, salary, points;
+        string file_name, position, password;
+        in >> id;            in.ignore(1);
+        getline(in, file_name, '|');
+        getline(in, position,  '|');
+        getline(in, password,  '|');
+        in >> salary;        in.ignore(1);
+        in >> points;        in.ignore(1);
+
+        if (file_name == name) {
+            found = true;
+            p->setID(id);
+            p->setPosition(position);
+            p->setName(file_name);
+            p->setPassword(password);
+            p->setSalary(salary);
+        }
+    }
+    in.close();
+
+    if (!found) {
+        cout << "\nUser not found\n\n";
+        delete p;
+        return;
+    }
+
+    cout << "User found\n";
+    if (pe.Assign_Task(p)) {
+        cout << "Task Assigned Successfully!\n\n";
+    } else {
+        cout << "Task Assignment Failed!\n\n";
+    }
+
+    delete p;
+}
+
+void delegateIncompetentTasks(PaidWorkers* pw) {
+    cout << "Checking for Incompetent Tasks" << endl;
+
+    ifstream in("Task.dat");
+    ofstream out("Tasktemp.dat");
+    if (!in) {
+        cerr << "\n\nError opening Task.dat\n\n";
+        return;
+    }
+
+    bool foundAny = false;
+    string task_name, task_description, task_status;
+    string task_assigned_by, task_assigned_by_position;
+    string task_assigned_to, task_assigned_to_pos;
+    string task_priority, task_assigned_time;
+    int    task_ttl_time;
+
+    while (getline(in, task_name, '|')) {
+        getline(in, task_description,   '|');
+        getline(in, task_status,        '|');
+        getline(in, task_assigned_by,   '|');
+        getline(in, task_assigned_by_position, '|');
+        getline(in, task_assigned_to,   '|');
+        getline(in, task_assigned_to_pos, '|');
+        getline(in, task_priority,      '|');
+        in >> task_ttl_time;
+        in.ignore(1);
+        getline(in, task_assigned_time);
+
+        // If it's your “Incompetent” task, offer to re-delegate it
+        if (!foundAny
+            && task_assigned_by == pw->getName()
+            && task_status    == "Incompetent")
+        {
+            foundAny = true;
+
+            // Build a PaidWorkers* for the old assignee
+            PaidWorkers* prev_p = nullptr;
+            if      (task_assigned_to_pos == "Junior")    prev_p = new Junior;
+            else if (task_assigned_to_pos == "Employee")  prev_p = new Employee;
+            else if (task_assigned_to_pos == "Manager")   prev_p = new Manager;
+            else if (task_assigned_to_pos == "Director")  prev_p = new Director;
+            else if (task_assigned_to_pos == "Executive") prev_p = new Executive;
+            else {
+                cerr << "Unknown previous role: " << task_assigned_to_pos << "\n";
+            }
+
+            // Show task details
+            const int numOptions = 10;
+            string options[numOptions] = {
+                "Task Name: "               + task_name,
+                "Task Description: "        + task_description,
+                "Task Status: "             + task_status,
+                "Task Assigned By: "        + task_assigned_by,
+                "Task By Position: "        + task_assigned_by_position,
+                "Task Assigned To: "        + task_assigned_to,
+                "Task To Position: "        + task_assigned_to_pos,
+                "Task Priority: "           + task_priority,
+                "Task Assigned Time: "      + task_assigned_time,
+                "Task Total Time: "         + to_string(task_ttl_time)
+            };
+            printMenu(" TASK DETAILS ", options, numOptions);
+
+            // Choose new role
+            cout << "\nEnter the position to delegate to:\n"
+                 << " 1) Junior\n"
+                 << " 2) Employee\n"
+                 << " 3) Manager\n"
+                 << " 4) Director\n"
+                 << " 5) Executive\n"
+                 << "Option: ";
+            int choice; cin >> choice;
+
+            PaidWorkers* new_p = nullptr;
+            switch (choice) {
+              case 1: cout<<"Assigning to Junior\n";   new_p = new Junior;   break;
+              case 2: cout<<"Assigning to Employee\n"; new_p = new Employee; break;
+              case 3: cout<<"Assigning to Manager\n";  new_p = new Manager;  break;
+              case 4: cout<<"Assigning to Director\n"; new_p = new Director; break;
+              case 5: cout<<"Assigning to Executive\n";new_p = new Executive;break;
+              default:
+                cout<<"Invalid Option\n\n";
+                delete prev_p;
+                out << task_name << '|' << task_description << '|' 
+                    << task_status << '|' << task_assigned_by << '|' 
+                    << task_assigned_by_position << '|' << task_assigned_to 
+                    << '|' << task_assigned_to_pos << '|' << task_priority 
+                    << '|' << task_ttl_time << '|' << task_assigned_time 
+                    << "\n";
+                continue;
+            }
+
+            // Policy check
+            PolicyEngine policy(pw);
+            if (!policy.can_delegate_task(new_p, prev_p)) {
+                cout << "You are not allowed to delegate this task!\n\n";
+                delete prev_p;
+                delete new_p;
+                out << task_name << '|' << task_description << '|' 
+                    << task_status << '|' << task_assigned_by << '|' 
+                    << task_assigned_by_position << '|' << task_assigned_to 
+                    << '|' << task_assigned_to_pos << '|' << task_priority 
+                    << '|' << task_ttl_time << '|' << task_assigned_time 
+                    << "\n";
+                continue;
+            }
+
+            // Prompt for actual user name
+            cin.ignore(1,'\n');
+            cout << "Enter the user name to assign to: ";
+            string uname; getline(cin, uname);
+
+            // Look up that user in new_p->getPosition() + ".txt"
+            ifstream userF(new_p->getPosition() + ".txt");
+            bool userFound = false;
+            while (!userFound && userF.good()) {
+                int   id, salary, points;
+                string file_name, pos, pwd;
+                userF >> id; userF.ignore(1);
+                getline(userF, file_name, '|');
+                getline(userF, pos,       '|');
+                getline(userF, pwd,       '|');
+                userF >> salary; userF.ignore(1);
+                userF >> points; userF.ignore(1);
+
+                if (file_name == uname) {
+                    userFound = true;
+                    new_p->setID(id);
+                    new_p->setPosition(pos);
+                    new_p->setName(file_name);
+                    new_p->setPassword(pwd);
+                    new_p->setSalary(salary);
+                }
+            }
+            userF.close();
+
+            if (!userFound) {
+                cout << "\nUser not found\n\n";
+                delete prev_p;
+                delete new_p;
+                out << task_name << '|' << task_description << '|' 
+                    << task_status << '|' << task_assigned_by << '|' 
+                    << task_assigned_by_position << '|' << task_assigned_to 
+                    << '|' << task_assigned_to_pos << '|' << task_priority 
+                    << '|' << task_ttl_time << '|' << task_assigned_time 
+                    << "\n";
+                continue;
+            }
+
+            // Perform the delegation
+            if (policy.Assign_Task(new_p)) {
+                task_assigned_to     = new_p->getName();
+                task_assigned_to_pos = new_p->getPosition();
+                task_status          = "Assigned";
+                cout << "Task delegated successfully to " 
+                     << task_assigned_to << "!\n\n";
+            } else {
+                cout << "Task delegation failed!\n\n";
+            }
+
+            // Write updated record
+            out << task_name << '|' << task_description << '|' 
+                << task_status << '|' << task_assigned_by << '|' 
+                << task_assigned_by_position << '|' << task_assigned_to 
+                << '|' << task_assigned_to_pos << '|' << task_priority 
+                << '|' << task_ttl_time << '|' << task_assigned_time 
+                << "\n";
+
+            delete prev_p;
+            delete new_p;
+        }
+        else {
+            // Not eligible → copy unchanged
+            out << task_name << '|' << task_description << '|' 
+                << task_status << '|' << task_assigned_by << '|' 
+                << task_assigned_by_position << '|' << task_assigned_to 
+                << '|' << task_assigned_to_pos << '|' << task_priority 
+                << '|' << task_ttl_time << '|' << task_assigned_time 
+                << "\n";
+        }
+    }
+
+    in.close();
+    out.close();
+    remove("Task.dat");
+    rename("Tasktemp.dat", "Task.dat");
+
+    if (!foundAny) {
+        cout << "\n\nNo Incompetent tasks—all tasks are being worked on!\n\n";
+    }
+}
+void ExecutiveMenu(PaidWorkers* pw)
+{
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Executive Menu                   #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to View Messages         #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Assign New Task       #"<<endl
+    <<"                              #          Press 3 to Add New               #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {   
+            show_Message_menu(pw);
+            break;
+        }
+        case 2:
+        {
+
+            break;
+        }
+        case 3:
+        {
+            PolicyEngine pe(pw);
+            cout<<"Enter the position of the person you want to assign task to"<<endl
+                <<"Press 1 for Junior"<<endl
+                <<"Press 2 for Employee"<<endl
+                <<"Press 3 for Manager"<<endl
+                <<"Press 4 for Director"<<endl
+                <<"Press 5 for Executive"<<endl;
+            int choice2;
+            cout<<"Press your option to continue: ";
+            cin>>choice2;
+            PaidWorkers* p = NULL;
+            if(choice2 == 1)
+            {
+                cout<<"Progressing to Assign task to Junior"<<endl;
+                p = new Junior;
+            }
+            else if(choice2 == 2)
+            {
+                cout<<"Progressing to Assign task to Employee"<<endl;
+                p = new Employee;
+            }
+            else if(choice2 == 3)
+            {
+                cout<<"Progressing to Assign task to Manager"<<endl;
+                p = new Manager;
+            }
+            else if(choice2 == 4)
+            {
+                cout<<"Progressing to Assign task to Director"<<endl;
+                p = new Director;
+            }
+            else if(choice2 == 5)
+            {
+                cout<<"Progressing to Assign task to Executive"<<endl;
+                p = new Executive;
+            }
+            else
+            {
+                cout<<"Invalid Option"<<endl<<endl<<endl;
+                ExecutiveMenu(pw);
+            }
+
+            cout<<"Enter the name of the person you want to assign task to"<<endl;
+            string name;
+            cin.ignore();
+            getline(cin, name);
+
+            //checking if the user exists or not
+                        ifstream in;
+            in.open("./"+p->getPosition()+".txt", ios::in);
+            if(!in)
+            {
+                cout<<endl<<endl
+                    <<"Error opening file"<<endl<<endl;
+                mainMenu();
+            }
+            
+            //1254|mannan|Manager|qF{T|1000|15
+
+            int id, salary, points;
+            string file_name, position, password;
+
+            bool found = false;
+            while ( in>>id)
+            {
+                //1234|moiz|Executive|1234|1000|23
+                in.ignore(1);
+                getline(in, file_name, '|');
+                getline(in, position, '|');
+                getline(in, password, '|');
+                in>>salary;
+                in.ignore(1);
+                in>>points;
+                in.ignore(1);
+
+                if(file_name == name)
+                {
+                    found = true;
+                    p->setID(id);
+                    p->setPosition(position);
+                    p->setName(file_name);
+                    p->setPassword(password);
+                    p->setSalary(salary);
+                    break;
+                }
+            }
+            in.close();
+            if(found == false)
+            {
+                cout << "\n\nUser not found\n\n";
+                ExecutiveMenu(pw);
+                break;
+            }
+            cout<<"User found"<<endl;
+            PolicyEngine pe1(pw);
+            if(pe1.Assign_Task(p) == true)
+            {
+                cout<<"Task Assigned Successfully!"<<endl;
+            }
+            else
+            {
+                cout<<"Task Assignment Failed!"<<endl;
+            }
+            cout<<endl<<endl;
+
+
+            
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            ExecutiveMenu(pw);
+        }
+    }
+}
+
+
+void DirectorMenu(PaidWorkers* pw)
+{
+    PolicyEngine pe(pw);
+    int choice;
+    string menuTitle = "DIRRECTORS MENU";
+    string options[] = {
+        "Press 1 to see messages",
+        "Press 2 to View My Tasks",
+        "Press 3 to Assign New Task",
+        "Press 4 to Delegate Task",
+        "Press 5 to Generate Audit Report",
+        "Press 6 to View ALL Logs",
+        "Press 7 to Exit"
+    };
+    const int numOptions = 7;
+    
+    printMenu(menuTitle, options, numOptions);
+    cout << BLUE << "\n          Enter your choice (1-7): " << RESET;
+        cin >> choice;
+
+
+    switch(choice)
+    {
+        case 1:
+        {
+            show_Message_menu(pw);
+            
+            break;
+        }
+        case 2:
+        {
+            viewMyTasks(pw);
+            
+            break;
+        }
+        case 3:
+        {
+            
+            assignTask(pw);
+            break;
+        }
+        case 4:
+        {
+            delegateIncompetentTasks(pw);
+            break;
+        }
+        case 5:
+        {   
+            cout<<"Incase 5"<<endl;
+            pe.generateAudit();
+            break;
+        }
+        case 6:
+        {
+            pe.readAllLogs();
+            break;
+        }
+        case 7: 
+        {
+            mainMenu();
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            DirectorMenu(pw);
+        }
+    }
+
+}
+
+
+void ManagerMenu(PaidWorkers* pw){
+    PolicyEngine pe(pw);
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Manager Menu                     #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            ManagerMenu(pw);
+        }
+    }
+}
+
+
+void EmployeeMenu(PaidWorkers* pw)
+{
+    PolicyEngine pe(pw);
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Employee Menu                    #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to open Message menu     #"<<endl
+    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            show_Message_menu(pw);
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            EmployeeMenu(pw);
+        }
+    }
+}
+
+
+void JuniorMenu(PaidWorkers* pw)
+{
+    PolicyEngine pe(pw);
+    int choice1 = 0;
+    cout<<endl<<endl<<endl;
+    cout<<"                              #===========================================#"<<endl
+    <<"                              #          Junior Menu                      #"<<endl
+    <<"                              #===========================================#"<<endl
+    <<"                              #          Press 1 to View All Tasks        #"<<endl
+    <<"                              #          Press 2 to View My Tasks         #"<<endl
+    <<"                              #          Press 3 to Add New Task          #"<<endl
+    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #===========================================#"<<endl<<endl<<endl;
+
+    cout<<"Press your option to continue: ";
+    cin>>choice1;
+    switch(choice1)
+    {
+        case 1:
+        {
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        case 4:
+        {
+            break;
+        }
+        default:
+        {
+            cout<<"Invalid Option"<<endl<<endl<<endl;
+            JuniorMenu(pw);
+        }
     }
 }
 
