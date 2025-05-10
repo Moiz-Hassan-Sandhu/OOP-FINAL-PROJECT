@@ -5,6 +5,7 @@
 #include<iomanip>
 #include<cstdlib>
 #include<ctime>
+#include <cstdio>
 #include <windows.h>
 
 using namespace std;
@@ -27,12 +28,12 @@ using namespace std;
 //Messages System                                                              ----->Review Statment once again 
 //Tasks can be assigned priority levels: High, Medium, Low.
 //Encryption Key for Decrypting Private Messages, Intended Users functionality
+//ADD USER (HIRE NEW Subordinates)
 
 
 
 //-------------In Progress------------
 //Time To Live
-//ADD USER (HIRE NEW Subordinates)
 //Employee Performance (points) System
 // GUI-style dashboard using ASCII art and box formatting
 
@@ -1604,7 +1605,7 @@ class Authentication : public ActivityLog{
         }
         
         
-        void addUser(string pos)  //string to check position
+        bool addUser(string pos)  //string to check position
         {
             string username, password;
             cout<<"Enter Username: ";
@@ -1616,9 +1617,10 @@ class Authentication : public ActivityLog{
                 cout<<endl<<endl;
                 cout<<"Username already exists!"<<endl<<endl;
                 cout<<"Please try again with a different username!"<<endl<<endl;
-                return;
+                return false;
             }
             
+            cin.ignore();
             cout<<"Enter Password: ";
             cin>>password;
             
@@ -1642,7 +1644,7 @@ class Authentication : public ActivityLog{
             
             cout<<endl<<endl;
             cout<<"User added successfully!"<<endl<<endl;
-            
+            return true;
         }
         
         int generateUserID()
@@ -1735,11 +1737,6 @@ void commanmenu( PaidWorkers* pw)
 
 
 
-#include <iostream>
-#include <fstream>
-#include <cstdio>   // for remove, rename
-#include <string>
-using namespace std;
 
 void ReadingGlobalNoti(PaidWorkers* pw)    
 {
@@ -1794,22 +1791,7 @@ void ReadingGlobalNoti(PaidWorkers* pw)
 
 int main()
 {
-    //mainMenu();
-    Director * d = new Director;
-    d->setID(1234);
-    d->setName("Mannan");
-    d->setPassword("mannan");
-    d->setSalary(1000);
-    d->setPosition("Director");
-    d->setLogin(true);
-    d->setPoints(23);
-    d->setSalary(1000);
-
-    //checking Global
-    PolicyEngine pe(d);
-    ReadingGlobalNoti(d);
-
-
+    mainMenu();
 }
 
 
@@ -1833,8 +1815,20 @@ void mainMenu()
     const int numOptions = 6;
     
     printMenu(menuTitle, options, numOptions);
-    cout << BLUE << "\n          Enter your choice (1-5): " << RESET;
+    
+    
+    int i = 0;
+    do{
+        if(i != 0)
+        {
+            cout << "\n\nInvalid Choice\n\n";
+        }
+        cout << BLUE << "\n          Enter your choice (1-6): " << RESET;
         cin >> choice;
+        i++;
+    }while(choice < 1 || choice > 6);
+    
+    
     switch(choice)
     {
         case 1:
@@ -2519,6 +2513,7 @@ void viewMyTasks(PaidWorkers* pw) {
     }
 }
 
+
 void assignTask(PaidWorkers* pw) {
     PolicyEngine pe(pw);
 
@@ -2612,6 +2607,7 @@ void assignTask(PaidWorkers* pw) {
 
     delete p;
 }
+
 
 void delegateIncompetentTasks(PaidWorkers* pw) {
     cout << "Checking for Incompetent Tasks" << endl;
@@ -2804,8 +2800,13 @@ void delegateIncompetentTasks(PaidWorkers* pw) {
         cout << "\n\nNo Incompetent tasks—all tasks are being worked on!\n\n";
     }
 }
+
+
 void ExecutiveMenu(PaidWorkers* pw)
 {
+    cout<<endl<<endl<<endl;
+    ReadingGlobalNoti(pw);  //Printing global notifications
+    
     int choice1 = 0;
     cout<<endl<<endl<<endl;
     cout<<"                              #===========================================#"<<endl
@@ -2814,13 +2815,23 @@ void ExecutiveMenu(PaidWorkers* pw)
     <<"                              #          Press 1 to View Messages         #"<<endl
     <<"                              #          Press 2 to View My Tasks         #"<<endl
     <<"                              #          Press 3 to Assign New Task       #"<<endl
-    <<"                              #          Press 3 to Add New               #"<<endl
-    <<"                              #          Press 3 to Add New Task          #"<<endl
-    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #          Press 4 to Add New               #"<<endl
+    <<"                              #          Press 5 to Add New Task          #"<<endl
+    <<"                              #          Press 6 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
 
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
+    int i = 0;
+    do{
+        if(i != 0)
+        {
+            cout << "\n\nInvalid Choice\n\n";
+        }
+        cout<<"Press your option to continue: ";
+        cin>>choice1;
+        i++;
+    }while(choice1 < 1 || choice1 > 6);
+    
+    
     switch(choice1)
     {
         case 1:
@@ -2835,7 +2846,6 @@ void ExecutiveMenu(PaidWorkers* pw)
         }
         case 3:
         {
-            PolicyEngine pe(pw);
             cout<<"Enter the position of the person you want to assign task to"<<endl
                 <<"Press 1 for Junior"<<endl
                 <<"Press 2 for Employee"<<endl
@@ -2883,7 +2893,7 @@ void ExecutiveMenu(PaidWorkers* pw)
             getline(cin, name);
 
             //checking if the user exists or not
-                        ifstream in;
+            ifstream in;
             in.open("./"+p->getPosition()+".txt", ios::in);
             if(!in)
             {
@@ -2945,6 +2955,14 @@ void ExecutiveMenu(PaidWorkers* pw)
         {
             break;
         }
+        case 5:
+        {
+            break;
+        }
+        case 6:
+        {
+            break;
+        }
         default:
         {
             cout<<"Invalid Option"<<endl<<endl<<endl;
@@ -2957,6 +2975,9 @@ void ExecutiveMenu(PaidWorkers* pw)
 void DirectorMenu(PaidWorkers* pw)
 {
     PolicyEngine pe(pw);
+    cout<<endl<<endl<<endl;
+    ReadingGlobalNoti(pw);  //Printing global notifications
+    
     int choice;
     string menuTitle = "DIRRECTORS MENU";
     string options[] = {
@@ -2971,8 +2992,17 @@ void DirectorMenu(PaidWorkers* pw)
     const int numOptions = 7;
     
     printMenu(menuTitle, options, numOptions);
-    cout << BLUE << "\n          Enter your choice (1-7): " << RESET;
+
+    int i = 0;
+    do{
+        if(i != 0)
+        {
+            cout << "\n\nInvalid Choice\n\n";
+        }
+        cout << BLUE << "\n          Enter your choice (1-7): " << RESET;
         cin >> choice;
+        i++;
+    }while(choice < 1 || choice > 7);
 
 
     switch(choice)
@@ -3023,8 +3053,12 @@ void DirectorMenu(PaidWorkers* pw)
 }
 
 
-void ManagerMenu(PaidWorkers* pw){
+void ManagerMenu(PaidWorkers* pw)
+{
     PolicyEngine pe(pw);
+    cout<<endl<<endl<<endl;
+    ReadingGlobalNoti(pw);  //Printing global notifications
+
     int choice1 = 0;
     cout<<endl<<endl<<endl;
     cout<<"                              #===========================================#"<<endl
@@ -3037,8 +3071,17 @@ void ManagerMenu(PaidWorkers* pw){
     <<"                              #          Press 5 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
 
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
+    int i = 0;
+    do{
+        if(i != 0)
+        {
+            cout << "\n\nInvalid Choice\n\n";
+        }
+        cout<<"Press your option to continue: ";
+        cin>>choice1;
+        i++;
+    }while(choice1 < 1 || choice1 > 5);
+    
     switch(choice1)
     {
         case 1:
@@ -3066,13 +3109,19 @@ void ManagerMenu(PaidWorkers* pw){
                 case 1:
                 {
                     Authentication auth;
-                    auth.addUser("Employee");
+                    if(!auth.addUser("Employee"))
+                    {
+                        ManagerMenu(pw);
+                    }
                     break;
                 }
                 case 2:
                 {
                     Authentication auth;
-                    auth.addUser("Junior");
+                    if(!auth.addUser("Junior"))
+                    {
+                        ManagerMenu(pw);
+                    }
                     break;
                 }
                 case 3:
@@ -3106,6 +3155,9 @@ void ManagerMenu(PaidWorkers* pw){
 void EmployeeMenu(PaidWorkers* pw)
 {
     PolicyEngine pe(pw);
+    cout<<endl<<endl<<endl;
+    ReadingGlobalNoti(pw);  //Printing global notifications
+
     int choice1 = 0;
     cout<<endl<<endl<<endl;
     cout<<"                              #===========================================#"<<endl
@@ -3118,8 +3170,17 @@ void EmployeeMenu(PaidWorkers* pw)
     <<"                              #          Press 4 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
 
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
+    int i = 0;
+    do{
+        if(i != 0)
+        {
+            cout << "\n\nInvalid Choice\n\n";
+        }
+        cout<<"Press your option to continue: ";
+        cin>>choice1;
+        i++;
+    }while(choice1 < 1 || choice1 > 4);
+
     switch(choice1)
     {
         case 1:
@@ -3151,6 +3212,9 @@ void EmployeeMenu(PaidWorkers* pw)
 void JuniorMenu(PaidWorkers* pw)
 {
     PolicyEngine pe(pw);
+    cout<<endl<<endl<<endl;
+    ReadingGlobalNoti(pw);  //Printing global notifications
+
     int choice1 = 0;
     cout<<endl<<endl<<endl;
     cout<<"                              #===========================================#"<<endl
@@ -3162,8 +3226,17 @@ void JuniorMenu(PaidWorkers* pw)
     <<"                              #          Press 4 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
 
-    cout<<"Press your option to continue: ";
-    cin>>choice1;
+    int i = 0;
+    do{
+        if(i != 0)
+        {
+            cout << "\n\nInvalid Choice\n\n";
+        }
+        cout<<"Press your option to continue: ";
+        cin>>choice1;
+        i++;
+    }while(choice1 < 1 || choice1 > 4);
+
     switch(choice1)
     {
         case 1:
