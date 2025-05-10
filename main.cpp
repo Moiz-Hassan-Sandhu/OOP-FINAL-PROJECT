@@ -97,6 +97,7 @@ class task {
         task_assigned_to=assigned_to;
         TTL_time=TTL;
     }
+    
     void setTaskName(string name){
         task_name=name;
     }
@@ -160,6 +161,7 @@ class task {
         return out;
     }
     ~task(){}
+    
 };
 
 
@@ -827,6 +829,20 @@ class PolicyEngine : public ActivityLog{
            time_t ttl;
            
     }
+    PaidWorkers* escalateWorker(PaidWorkers* p) {//helper function for recursion
+    
+        int    id   = p->getID();
+        string name = p->getName();
+        string pass = p->getPassword();
+
+        string pos = p->getPosition();
+        if (pos == "Junior")    return new Employee(id, name, pass);
+        if (pos == "Employee")  return new Manager(id, name, pass);
+        if (pos == "Manager")   return new Director(id, name, pass);
+        if (pos == "Director")  return new Executive(id, name, pass);
+        // if already at "Executive" or unknown, no further escalation
+        return nullptr;
+    }
     
     
     
@@ -977,6 +993,55 @@ class PolicyEngine : public ActivityLog{
 
     }
 
+    //making a global function to send information to all the workers
+    void sendGlobalAlert(){
+        if(accessLevel < 4){
+            cout<<"You do not have permission to send global alert"<<endl;
+            return;
+        }
+        cout<<"\n\n===========Global Alert============ "<<endl;
+        cout<<"\n Enter the Alert: ";
+        string alert_message;
+        getline(cin, alert_message);
+        //0|Director|Servers to be down Till 9pm|readername1readername2
+        //message id|Sender position|Message|readers names
+        //extracting the id from the file to assign 1+ id 
+        ifstream in;
+        in.open("GlobalNoti.txt");
+        if(!in){
+            cout<<"Error opening file"<<endl;
+            return;
+        }
+        int id;
+        int new_id=0;
+        string Sender_pos, message, reader_names;
+        while(in>>id)
+        {
+            in.ignore(1);
+            getline(in, Sender_pos, '|');
+            getline(in, message, '|');
+            getline(in, reader_names, '\n');
+            new_id++;
+        }
+
+        in.close();
+        //writing the alert message to the file
+        ofstream out("GlobalNoti.txt",ios::app);
+        if(!out){
+            cout<<"Error opening file"<<endl;
+            return;
+        }
+        
+        out<<endl<<new_id<<"|"<<pw->getPosition()<<"|"<<alert_message<<"|";
+
+        out.close();
+
+
+        cout<<"Notification Sent Successfully!"<<endl;
+
+    
+
+    }
 
     bool can_send_info(PaidWorkers *p)
     {
@@ -1011,18 +1076,31 @@ class PolicyEngine : public ActivityLog{
     }
 
     //to delegate task the task should be delegated to same or higher level of hierarchy
-    bool can_delegate_task(PaidWorkers *new_p, PaidWorkers *previous_p)
-    {
-        PolicyEngine pe(new_p);
-        PolicyEngine pe2(previous_p);
-        if(pe.accessLevel >= pe2.accessLevel){
-             cout<<"\nYou have permission to delegate task to "<<new_p->getPosition()<<endl;
-             return true;
-         }
-         else{
-             cout<<"You do not have permission to delegate task to the following workers"<<endl;
-             return false;
-         }
+    // ———————————— recursive delegation check ————————————
+    bool can_delegate_task(PaidWorkers* new_p, PaidWorkers* previous_p) {
+        // wrap each in a PolicyEngine to get levels
+        PolicyEngine peNew(new_p);
+        PolicyEngine pePrev(previous_p);
+
+        // Base case: new_p has equal or higher access than previous_p
+        if (peNew.getAccessLevel() >= pePrev.getAccessLevel()) {
+            cout << "Allowed to delegate to " << new_p->getPosition() << "\n";
+            return true;
+        }
+
+        // Otherwise, try the next-higher position
+        PaidWorkers* escalated = escalateWorker(new_p);
+        if (!escalated) {
+            // we’ve reached the top and still can’t delegate
+            cout << "Cannot delegate: reached top of hierarchy at "
+                 << new_p->getPosition() << "\n";
+            return false;
+        }
+
+        // recursive attempt with the escalated worker
+        bool ok = can_delegate_task(escalated, previous_p);
+        delete escalated;  // clean up
+        return ok;
         
     }
         
@@ -1656,9 +1734,81 @@ void commanmenu( PaidWorkers* pw)
 //-----------------------------------Code Execution start from here--------------------------------
 
 
+
+#include <iostream>
+#include <fstream>
+#include <cstdio>   // for remove, rename
+#include <string>
+using namespace std;
+
+void ReadingGlobalNoti(PaidWorkers* pw)    
+{
+    // 1) Open temp file for output (truncate so it starts empty)
+    ofstream outTmp("GlobalNoti_tmp.txt");
+    if (!outTmp) {
+        cout << "\n\nError opening temp file\n\n";
+        mainMenu();
+    }
+
+    // 2) Open original for reading
+    ifstream in("GlobalNoti.txt");
+    if (!in) {
+        cout << "\n\nError opening GlobalNoti.txt\n\n";
+        mainMenu();
+    }
+
+    int    id;
+    string Sender_pos, message, reader_names;
+    while (in >> id) {
+        in.ignore(1);                            // skip the '|'
+        getline(in, Sender_pos, '|');           // read sender position
+        getline(in, message,    '|');           // read message
+        getline(in, reader_names);              // read comma-sep seen list
+
+        // 3) If user hasn't seen it yet, show it and append their name
+        bool alreadySeen = (reader_names.find(pw->getName()) != string::npos);
+        if (!alreadySeen) {
+            cout << "\nNotification: " << message << "\n"
+                 << "Sender Position: " << Sender_pos << "\n";
+            if (!reader_names.empty())
+                reader_names += ",";
+            reader_names += pw->getName();
+        }
+
+        // 4) Write out either the updated or original record
+        outTmp << id << "|" 
+               << Sender_pos << "|" 
+               << message    << "|" 
+               << reader_names 
+               << "\n";
+    }
+
+    in.close();
+    outTmp.close();
+
+    // 5) Replace old file with updated temp
+    remove("GlobalNoti.txt");
+    rename("GlobalNoti_tmp.txt", "GlobalNoti.txt");
+}
+
+
 int main()
 {
-    mainMenu();
+    //mainMenu();
+    Director * d = new Director;
+    d->setID(1234);
+    d->setName("Mannan");
+    d->setPassword("mannan");
+    d->setSalary(1000);
+    d->setPosition("Director");
+    d->setLogin(true);
+    d->setPoints(23);
+    d->setSalary(1000);
+
+    //checking Global
+    PolicyEngine pe(d);
+    ReadingGlobalNoti(d);
+
 
 }
 
