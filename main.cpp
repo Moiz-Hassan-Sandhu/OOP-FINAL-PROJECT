@@ -5,8 +5,8 @@
 #include<iomanip>
 #include<cstdlib>
 #include<ctime>
-#include<conio.h>
 #include <windows.h>
+#include<conio.h>
 
 using namespace std;
 
@@ -759,33 +759,6 @@ public:
     }
     ~PRIVATE(){}
 };
-void printMenu(const string& title, const string options[], int numOptions) {
-    const string RESET = "\033[0m";
-    const string BLUE  = "\033[34m";
-    const int boxWidth = 60;
-    const string margin = "          "; 
-    
-    cout << BLUE;
-    
-    cout << margin << "╔" << string(boxWidth, '=') << "╗\n";
-    
-    int titleLen = title.length();
-    int leftPad = (boxWidth - titleLen) / 2;
-    int rightPad = boxWidth - titleLen - leftPad;
-    cout << margin << "║" 
-         << string(leftPad, ' ') << title << string(rightPad, ' ') 
-         << "║\n";
-    
-    cout << margin << "╠" << string(boxWidth, '=') << "╣\n";
-    
-    for(int i = 0; i < numOptions; i++) {
-        cout << margin << "║  " << left << setw(boxWidth-2) 
-             << options[i] << "║\n";
-    }
-    
-    cout << margin << "╚" << string(boxWidth, '=') << "╝" << RESET << endl;
-}
-
 void printInBox(const string &msg) {
     const string RESET = "\033[0m";
     const string BLUE  = "\033[31m";
@@ -1211,31 +1184,7 @@ class PolicyEngine : public ActivityLog{
          }
     }
 };
-string getPassword() {
-    string password;
-    char ch;
 
-    while (true) {
-        ch = _getch();  // get character without echoing
-
-        if (ch == 13) { // Enter key
-            cout << endl;
-            break;
-        }
-        else if (ch == 8) { // Backspace
-            if (!password.empty()) {
-                password.pop_back();
-                cout << "\b \b"; // erase * from console
-            }
-        }
-        else {
-            password += ch;
-            cout << '*';
-        }
-    }
-
-    return password;
-}
 
 class Authentication : public ActivityLog{
     protected:
@@ -1580,6 +1529,31 @@ class Authentication : public ActivityLog{
             out<< OTP << "|" << otptime << endl;
             out.close();
         }
+        string getPassword() {
+            string password;
+            char ch;
+
+            while (true) {
+                ch = _getch();  // get character without echoing
+
+                if (ch == 13) { // Enter key
+                    cout << endl;
+                    break;
+                }
+                else if (ch == 8) { // Backspace
+                    if (!password.empty()) {
+                        password.pop_back();
+                        cout << "\b \b"; // erase * from console
+                    }
+                }
+                else {
+                    password += ch;
+                    cout << '*';
+                }
+            }
+
+            return password;
+        }
 
 
         PaidWorkers& login(string pos)  //string to check position
@@ -1784,6 +1758,30 @@ void readingInfoFile(PaidWorkers*);
 #define BLUE "\033[34m"
 #define RESET "\033[0m"
 
+void printMenu(const string& title, const string options[], int numOptions) {
+    const int boxWidth = 60;
+    const string margin = "          "; 
+    
+    cout << BLUE;
+    
+    cout << margin << "╔" << string(boxWidth, '=') << "╗\n";
+    
+    int titleLen = title.length();
+    int leftPad = (boxWidth - titleLen) / 2;
+    int rightPad = boxWidth - titleLen - leftPad;
+    cout << margin << "║" 
+         << string(leftPad, ' ') << title << string(rightPad, ' ') 
+         << "║\n";
+    
+    cout << margin << "╠" << string(boxWidth, '=') << "╣\n";
+    
+    for(int i = 0; i < numOptions; i++) {
+        cout << margin << "║  " << left << setw(boxWidth-2) 
+             << options[i] << "║\n";
+    }
+    
+    cout << margin << "╚" << string(boxWidth, '=') << "╝" << RESET << endl;
+}
 
 void commanmenu( PaidWorkers* pw)
 {
