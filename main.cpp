@@ -1094,6 +1094,8 @@ class Authentication : public ActivityLog{
             }
             return hashed;
         }
+
+
         void readuser(string pos)
         {
             if(usercount != 0)
@@ -1349,6 +1351,8 @@ class Authentication : public ActivityLog{
                 mainMenu();
             }
         }
+        
+        
         int userExists(string name, string pos)
         
         {
@@ -1363,6 +1367,8 @@ class Authentication : public ActivityLog{
             return -1;
         }
         
+        
+        
         bool OTP_TIME()
         {
             ifstream in("./OTP.txt");
@@ -1376,6 +1382,7 @@ class Authentication : public ActivityLog{
             // if more than 15 seconds have passed, expire it
             return (difftime(time(0), inTime) <= 30.0);   //using a difftime() function from the predefined ctime library
         }
+        
         
         void otpGenerator()
         {
@@ -1516,6 +1523,67 @@ class Authentication : public ActivityLog{
             //     usertoreturn = &users[index];
             // } 
             return users[index];
+        }
+        
+        
+        void addUser(string pos)  //string to check position
+        {
+            string username, password;
+            cout<<"Enter Username: ";
+            cin>>username;
+            
+            int index = userExists(username, pos);
+            if(index != -1)
+            {
+                cout<<endl<<endl;
+                cout<<"Username already exists!"<<endl<<endl;
+                cout<<"Please try again with a different username!"<<endl<<endl;
+                return;
+            }
+            
+            cout<<"Enter Password: ";
+            cin>>password;
+            
+            string hashedPass = hashedPassword(password);
+            
+            int userID = generateUserID();
+            string id = to_string(userID);
+            
+            string filename = "./" + pos + ".txt";
+            fstream writeUser;
+            writeUser.open(filename, ios::app);
+            // Format: ID|name|position|password|salary|points
+            writeUser << id << "|" << username << "|" << pos << "|" << hashedPass << "|" << 1000 << "|" << 20 << endl;
+            writeUser.close();
+            
+            ActivityLog logging(getCurrentTime() + ", " + username +"  " + pos + " added new user: " + username + " |0\n");
+            fstream writelog;
+            writelog.open("./ActivityLog.txt", ios::app);
+            writelog << logging;
+            writelog.close();
+            
+            cout<<endl<<endl;
+            cout<<"User added successfully!"<<endl<<endl;
+            
+        }
+        
+        int generateUserID()
+        {
+            int id = 1000 + (rand() % 9000);
+            bool idExists = false;
+            do{
+                idExists = false;
+                for(int i = 0; i < usercount; i++)
+                {
+                    if(users[i].getID() == id)
+                    {
+                        idExists = true;
+                        id = 1000 + (rand() % 9000);
+                        break;
+                    }
+                }
+            }while(idExists);
+            return id;
         }
         ~Authentication()
         {
@@ -2721,9 +2789,6 @@ void ExecutiveMenu(PaidWorkers* pw)
                 cout<<"Task Assignment Failed!"<<endl;
             }
             cout<<endl<<endl;
-
-
-            
             break;
         }
         case 4:
@@ -2765,18 +2830,15 @@ void DirectorMenu(PaidWorkers* pw)
         case 1:
         {
             show_Message_menu(pw);
-            
             break;
         }
         case 2:
         {
             viewMyTasks(pw);
-            
             break;
         }
         case 3:
         {
-            
             assignTask(pw);
             break;
         }
@@ -2821,7 +2883,8 @@ void ManagerMenu(PaidWorkers* pw){
     <<"                              #          Press 1 to View All Tasks        #"<<endl
     <<"                              #          Press 2 to View My Tasks         #"<<endl
     <<"                              #          Press 3 to Add New Task          #"<<endl
-    <<"                              #          Press 4 to Exit                  #"<<endl
+    <<"                              #          Press 4 to ADD NEW Employee      #"<<endl
+    <<"                              #          Press 5 to Exit                  #"<<endl
     <<"                              #===========================================#"<<endl<<endl<<endl;
 
     cout<<"Press your option to continue: ";
@@ -2842,6 +2905,43 @@ void ManagerMenu(PaidWorkers* pw){
         }
         case 4:
         {
+            cout<<"Press 1 for Hiring New Employee"<<endl;
+            cout<<"Press 2 for Hiring New Junior"<<endl;
+            cout<<"Press 3 to Go Back"<<endl;
+            int choice2 = 0;
+            cout<<"Press your option to continue: ";
+            cin>>choice2;
+            switch(choice2)
+            {
+                case 1:
+                {
+                    Authentication auth;
+                    auth.addUser("Employee");
+                    break;
+                }
+                case 2:
+                {
+                    Authentication auth;
+                    auth.addUser("Junior");
+                    break;
+                }
+                case 3:
+                {
+                    ManagerMenu(pw);
+                    break;
+                }
+                default:
+                {
+                    cout<<"Invalid Option"<<endl<<endl<<endl;
+                    ManagerMenu(pw);
+                }
+            }
+            
+            break;
+        }
+        case 5:
+        {
+            mainMenu();
             break;
         }
         default:
