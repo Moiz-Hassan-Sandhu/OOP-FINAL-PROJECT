@@ -834,6 +834,33 @@ class ALERT:public Messages{
         }
         ~ALERT(){}
 };
+void printMenu(const string& title, const string options[], int numOptions) {
+    const string RESET = "\033[0m";
+    const string BLUE  = "\033[34m";
+
+    const int boxWidth = 60;
+    const string margin = "          "; 
+    
+    cout << BLUE;
+    
+    cout << margin << "╔" << string(boxWidth, '=') << "╗\n";
+    
+    int titleLen = title.length();
+    int leftPad = (boxWidth - titleLen) / 2;
+    int rightPad = boxWidth - titleLen - leftPad;
+    cout << margin << "║" 
+         << string(leftPad, ' ') << title << string(rightPad, ' ') 
+         << "║\n";
+    
+    cout << margin << "╠" << string(boxWidth, '=') << "╣\n";
+    
+    for(int i = 0; i < numOptions; i++) {
+        cout << margin << "║  " << left << setw(boxWidth-2) 
+             << options[i] << "║\n";
+    }
+    
+    cout << margin << "╚" << string(boxWidth, '=') << "╝" << RESET << endl;
+}
 class PolicyEngine : public ActivityLog{
     private:
 
@@ -1758,30 +1785,7 @@ void readingInfoFile(PaidWorkers*);
 #define BLUE "\033[34m"
 #define RESET "\033[0m"
 
-void printMenu(const string& title, const string options[], int numOptions) {
-    const int boxWidth = 60;
-    const string margin = "          "; 
-    
-    cout << BLUE;
-    
-    cout << margin << "╔" << string(boxWidth, '=') << "╗\n";
-    
-    int titleLen = title.length();
-    int leftPad = (boxWidth - titleLen) / 2;
-    int rightPad = boxWidth - titleLen - leftPad;
-    cout << margin << "║" 
-         << string(leftPad, ' ') << title << string(rightPad, ' ') 
-         << "║\n";
-    
-    cout << margin << "╠" << string(boxWidth, '=') << "╣\n";
-    
-    for(int i = 0; i < numOptions; i++) {
-        cout << margin << "║  " << left << setw(boxWidth-2) 
-             << options[i] << "║\n";
-    }
-    
-    cout << margin << "╚" << string(boxWidth, '=') << "╝" << RESET << endl;
-}
+
 
 void commanmenu( PaidWorkers* pw)
 {
