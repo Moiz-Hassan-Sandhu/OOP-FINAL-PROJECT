@@ -4,5 +4,3 @@
 4444|david|Director|tJ~T|1000|18
 5555|eve|Director|}^D|1000|12
 6666|frank|Director|CHOH~X|1000|30
-7777|moiz|Director|yBuL|1000|30
-8888|mannan|Director|yBuL|1000|30
