@@ -819,17 +819,7 @@ class PolicyEngine : public ActivityLog{
         return now > t->getTTLTime();
     }
 
-    task* readTask(ifstream& in, PaidWorkers* user){        //TTL BY RECURRSION
-           string line;
-           if(!getline(in, line))
-           {
-                return nullptr;
-           }
-           
-           string name, description, status, assigned_by, assigned_to;
-           time_t ttl;
-           
-    }
+    
     PaidWorkers* escalateWorker(PaidWorkers* p) {//helper function for recursion
     
         int    id   = p->getID();
@@ -921,11 +911,19 @@ class PolicyEngine : public ActivityLog{
             }
             
 
-            cout<<"Enter TTL Time: ";
-            time_t TTL;
-            int assingedDays = 0;
-            // I will  start working here for the TTL Assingment ( EXPIREIE DATE )
-            cin>>TTL;
+            // cout<<"Enter TTL Time: ";
+            // time_t TTL;
+            // int assingedDays = 0;
+            // // I will  start working here for the TTL Assingment ( EXPIREIE DATE )
+            // cin>>TTL;
+            // t->setTTLTime(TTL);
+
+            //TTL---------------------
+            cout<<"Enter number of days until task expires: ";
+            int assignedDays = 0;
+            cin>>assignedDays;
+
+            time_t TTL = time(0) + (assignedDays * 24 * 60 * 60);
             t->setTTLTime(TTL);
 
             //writing the task to the file
@@ -934,14 +932,8 @@ class PolicyEngine : public ActivityLog{
                 cout<<"Error opening file"<<endl;
                 return false;
             }
-            //outing time also to the file
-            time_t currentTime = time(0); // Get current time
-            char* dateTime = ctime(&currentTime); // Convert to string
-            out<<t->getTaskName()<<"|"<<t->getTaskDescription()<<"|"<<t->getTaskStatus()<<"|"<<t->getTaskAssignedBy()<<"|"<<pw->getPosition()<<"|"<<t->getTaskAssignedTo()<<"|"<<t->getTaskAssignedToPosition()<<"|"<<t->getTaskPriority()<<"|"<<TTL<<"|"<< dateTime;
 
-            cin>>assingedDays;
-            time_t deadline = time(0) + (assingedDays * 24 * 60 * 60);
-            t->setTTLTime(deadline);
+            //outing time also to the file
             out.open("Task.dat",ios::app);
             out << t->getTaskName() << "|"
                 << t->getTaskDescription() << "|"
@@ -951,6 +943,7 @@ class PolicyEngine : public ActivityLog{
                 << t->getTTLTime() << endl;
             out.close();
 
+            //For Audit logs
             ActivityLog logging( "Task: " + t->getTaskName() + " assigned to " + p->getName() + " by " + pw->getName());
             out.open("ActivityLog.txt",ios::app);
             out << logging << endl;
@@ -974,10 +967,9 @@ class PolicyEngine : public ActivityLog{
 
     void viewTask(PaidWorkers* p)
     {
-        ifstream in;
-        in.open("Task.dat");
-        task* userTask = readTask(in, p);
-        in.close();
+        
+
+        
         
         if(userTask)
         {
